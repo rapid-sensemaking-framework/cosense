@@ -1,0 +1,195 @@
+{
+    "caseSensitive": false,
+    "properties": {
+        "name": "IdeationGood",
+        "description": "",
+        "icon": "lightbulb-o",
+        "environment": {
+            "type": "noflo-nodejs"
+        }
+    },
+    "inports": {},
+    "outports": {},
+    "groups": [],
+    "processes": {
+        "core/MakeFunction_qbcnw": {
+            "component": "core/MakeFunction",
+            "metadata": {
+                "label": "MakeFunction",
+                "x": 1008,
+                "y": 360,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "rsf/CollectResponses_ey8mk": {
+            "component": "rsf/CollectResponses",
+            "metadata": {
+                "label": "CollectResponses",
+                "x": 612,
+                "y": 360,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "rsf/SendMessageToAll_4frf8": {
+            "component": "rsf/SendMessageToAll",
+            "metadata": {
+                "label": "SendMessageToAll",
+                "x": 1188,
+                "y": 360,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "rsf/FormatStatementList_m4rzd": {
+            "component": "rsf/FormatStatementList",
+            "metadata": {
+                "label": "FormatStatementList",
+                "x": 828,
+                "y": 360,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "strings/ParseJson_yfyz6": {
+            "component": "strings/ParseJson",
+            "metadata": {
+                "label": "ParseJson",
+                "x": 396,
+                "y": 540,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "core/ReadEnv_wszfg": {
+            "component": "core/ReadEnv",
+            "metadata": {
+                "label": "ReadEnv",
+                "x": 252,
+                "y": 540,
+                "width": 72,
+                "height": 72
+            }
+        }
+    },
+    "connections": [
+        {
+            "src": {
+                "process": "core/ReadEnv_wszfg",
+                "port": "out"
+            },
+            "tgt": {
+                "process": "strings/ParseJson_yfyz6",
+                "port": "in"
+            },
+            "metadata": {}
+        },
+        {
+            "src": {
+                "process": "strings/ParseJson_yfyz6",
+                "port": "out"
+            },
+            "tgt": {
+                "process": "rsf/CollectResponses_ey8mk",
+                "port": "bot_configs"
+            },
+            "metadata": {}
+        },
+        {
+            "src": {
+                "process": "strings/ParseJson_yfyz6",
+                "port": "out"
+            },
+            "tgt": {
+                "process": "rsf/SendMessageToAll_4frf8",
+                "port": "bot_configs"
+            },
+            "metadata": {
+                "route": 0
+            }
+        },
+        {
+            "src": {
+                "process": "rsf/CollectResponses_ey8mk",
+                "port": "results"
+            },
+            "tgt": {
+                "process": "rsf/FormatStatementList_m4rzd",
+                "port": "statements"
+            },
+            "metadata": {}
+        },
+        {
+            "src": {
+                "process": "rsf/FormatStatementList_m4rzd",
+                "port": "formatted"
+            },
+            "tgt": {
+                "process": "core/MakeFunction_qbcnw",
+                "port": "in"
+            },
+            "metadata": {}
+        },
+        {
+            "src": {
+                "process": "core/MakeFunction_qbcnw",
+                "port": "out"
+            },
+            "tgt": {
+                "process": "rsf/SendMessageToAll_4frf8",
+                "port": "message"
+            },
+            "metadata": {}
+        },
+        {
+            "data": "BOT_CONFIG",
+            "tgt": {
+                "process": "core/ReadEnv_wszfg",
+                "port": "key"
+            }
+        },
+        {
+            "data": "1",
+            "tgt": {
+                "process": "rsf/CollectResponses_ey8mk",
+                "port": "max_responses"
+            }
+        },
+        {
+            "data": 1,
+            "tgt": {
+                "process": "rsf/CollectResponses_ey8mk",
+                "port": "max_time"
+            }
+        },
+        {
+            "data": "x",
+            "tgt": {
+                "process": "rsf/CollectResponses_ey8mk",
+                "port": "prompt"
+            }
+        },
+        {
+            "data": [],
+            "tgt": {
+                "process": "rsf/CollectResponses_ey8mk",
+                "port": "contactable_configs"
+            }
+        },
+        {
+            "data": "return 'Here are the results: ' + x",
+            "tgt": {
+                "process": "core/MakeFunction_qbcnw",
+                "port": "function"
+            }
+        },
+        {
+            "data": [],
+            "tgt": {
+                "process": "rsf/SendMessageToAll_4frf8",
+                "port": "contactable_configs"
+            }
+        }
+    ]
+}

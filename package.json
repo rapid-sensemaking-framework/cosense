@@ -8,18 +8,30 @@
     "react-scripts": "0.8.5"
   },
   "dependencies": {
+    "express-handlebars": "^3.1.0",
+    "fbp-client": "^0.4.0",
+    "fbp-graph": "^0.4.0",
+    "fix-path": "^2.1.0",
     "react": "^16.1.1",
-    "react-dom": "^16.1.1"
+    "react-dom": "^16.1.1",
+    "react-router-dom": "^5.1.2",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0",
+    "typescript": "^3.6.4"
   },
   "homepage": "./",
-  "main": "src/electron-starter.js",
+  "main": "electron/electron-only/electron-starter.js",
   "scripts": {
     "start": "nf start -p 3000",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "electron": "electron .",
-    "electron-start": "node src/electron-wait-react",
-    "react-start": "react-scripts start"
+    "electron-start": "node electron/electron-only/electron-wait-react",
+    "react-start": "react-scripts start",
+    "tswatch-electron": "tsc --build tsconfig-electron.json --watch",
+    "tsbuild-electron": "tsc --build tsconfig-electron.json",
+    "tswatch-react": "tsc --build tsconfig-react.json --watch",
+    "tsbuild-react": "tsc --build tsconfig-react.json"
   }
 }

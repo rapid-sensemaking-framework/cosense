@@ -1,0 +1,65 @@
+{
+  "name": "Ideation/Pairwise Comparison",
+  "description": "<p>There are THREE stages to this particular process, the Ideation stage, Pairwise Comparison stage, and the Summary stage.</p><ol><li>The IDEATION stage can be used for generating one or more responses to any prompt.</li><li>The PAIRWISE COMPARISON stage can be used for comparing responses from the IDEATION stage.</li><li>The SUMMARY stage is to send the full list of ranked results to someone(s).</li></ol>",
+  "resultConnection": "rsf/FormatStatementList_1qujf() FORMATTED -> IN core/MakeFunction_z0i1o()",
+  "stages": [
+    {
+      "name": "Ideation Stage",
+      "description": "At this stage, each participant will be asked to provide responses to a given prompt, defined in this form, and limited to the number of responses set here, and the amount of time.",
+      "expectedInputs": [
+        {
+          "process": "rsf/CollectResponses_md08z",
+          "port": "prompt",
+          "placeholder": "e.g. What is your definition of Collective Intelligence?",
+          "label": "What is the prompt you would like to give participants, to reflect on and respond to?",
+          "inputTypeOverride": "textarea"
+        },
+        {
+          "process": "rsf/CollectResponses_md08z",
+          "port": "max_responses",
+          "label": "What is the maximum number of responses you would like to allow from each participant?"
+        },
+        {
+          "process": "rsf/CollectResponses_md08z",
+          "port": "max_time",
+          "label": "How many minutes would you like to leave for participants to submit their responses?"
+        },
+        {
+          "process": "rsf/CollectResponses_md08z",
+          "port": "contactable_configs"
+        }
+      ]
+    },
+    {
+      "name": "Pairwise Comparison Stage",
+      "description": "At this stage, get participants to compare statements ideated in the first stage.",
+      "expectedInputs": [
+        {
+          "process": "rsf/PairwiseComparison_gml0a",
+          "port": "choice",
+          "label": "What text would you share to explain what a vote for one or the other option in the comparisons means?",
+          "placeholder": "e.g. Select the statement you prefer more"
+        },
+        {
+          "process": "rsf/PairwiseComparison_gml0a",
+          "port": "max_time",
+          "label": "How many minutes would you like to leave for participants to submit their reactions?"
+        },
+        {
+          "process": "rsf/PairwiseComparison_gml0a",
+          "port": "contactable_configs"
+        }
+      ]
+    },
+    {
+      "name": "Summary Stage",
+      "description": "At this stage, particular people can be sent the voted upon results of the ideation of everyone.",
+      "expectedInputs": [
+        {
+          "process": "rsf/SendMessageToAll_dqbxw",
+          "port": "contactable_configs"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "name": "Reaction",
+  "description": "<p>There are TWO stages to this particular process, the Reaction stage, and the Summary stage.</p><ol><li>The REACTION stage can be used for determining reactions (feelings) about each from a list of provided statements.</li><li>The SUMMARY stage is to send the full list of results to someone(s).</li></ol>",
+  "resultConnection": "rsf/FormatReactionsList_yusc1() FORMATTED -> IN core/MakeFunction_sy01e()",
+  "stages": [
+    {
+      "name": "Reaction Stage",
+      "description": "Check for the reactions (e.g. Agree, Disagree) of particular people about a list of statements provided.",
+      "expectedInputs": [
+        {
+          "process": "rsf/ResponseForEach_x4cv2",
+          "port": "statements",
+          "label": "Provide a list of statements, one on each line, for participants to respond to"
+        },
+        {
+          "process": "rsf/ResponseForEach_x4cv2",
+          "port": "options",
+          "label": "What are the options you'd like to give participants to react with? Add custom ones by adding options in the format of 'b+B=Block, c+C=Clock' where 'b+B' are the 'triggers' that people type, and 'Block' is the thing they are choosing, and ', ' is the separator.",
+          "placeholder": "a+A=Agree, d+D=Disagree, ...",
+          "defaultValue": "a+A=Agree, d+D=Disagree, p+P=Pass",
+          "inputTypeOverride": "textarea"
+        },
+        {
+          "process": "rsf/ResponseForEach_x4cv2",
+          "port": "max_time",
+          "label": "How many minutes would you like to leave for participants to submit their reactions?"
+        },
+        {
+          "process": "rsf/ResponseForEach_x4cv2",
+          "port": "contactable_configs"
+        }
+      ]
+    },
+    {
+      "name": "Summary Stage",
+      "description": "Particular people can be sent the voted upon results of everyone.",
+      "expectedInputs": [
+        {
+          "process": "rsf/SendMessageToAll_7tqjt",
+          "port": "contactable_configs"
+        }
+      ]
+    }
+  ]
+}

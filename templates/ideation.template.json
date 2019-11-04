@@ -1,0 +1,44 @@
+{
+  "name": "Ideation",
+  "description": "<p>There are TWO stages to this particular process, the Ideation stage, and the Summary stage.</p><ol><li>The IDEATION stage can be used for generating one or more responses to any prompt.</li><li>The SUMMARY stage is to send the full list of results to someone(s).</li></ol>",
+  "resultConnection": "rsf/FormatStatementList_m4rzd() FORMATTED -> IN core/MakeFunction_qbcnw()",
+  "stages": [
+    {
+      "name": "Ideation Stage",
+      "description": "At this stage, each participant will be asked to provide responses to a given prompt, defined in this form, and limited to the number of responses set here, and the amount of time.",
+      "expectedInputs": [
+        {
+          "process": "rsf/CollectResponses_ey8mk",
+          "port": "prompt",
+          "placeholder": "e.g. What is your definition of Collective Intelligence?",
+          "label": "What is the prompt you would like to give participants, to reflect on and respond to?",
+          "inputTypeOverride": "textarea"
+        },
+        {
+          "process": "rsf/CollectResponses_ey8mk",
+          "port": "max_responses",
+          "label": "What is the maximum number of responses you would like to allow from each participant?"
+        },
+        {
+          "process": "rsf/CollectResponses_ey8mk",
+          "port": "max_time",
+          "label": "How many minutes would you like to leave for participants to submit their responses?"
+        },
+        {
+          "process": "rsf/CollectResponses_ey8mk",
+          "port": "contactable_configs"
+        }
+      ]
+    },
+    {
+      "name": "Summary Stage",
+      "description": "At this stage, particular people can be sent the aggregated results of the ideation of everyone.",
+      "expectedInputs": [
+        {
+          "process": "rsf/SendMessageToAll_4frf8",
+          "port": "contactable_configs"
+        }
+      ]
+    }
+  ]
+}

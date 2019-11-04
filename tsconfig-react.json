@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+      "sourceMap": true,
+      "outDir": "src/ts-built"
+  },
+  "include": [
+      "typescript/react-electron/**/*"
+  ]
+}

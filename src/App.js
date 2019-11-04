@@ -1,20 +1,35 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from 'react-router-dom'
+// import './App.css'
+import Template from './routes/Template/Template'
+import Process from './routes/Process'
+import Home from './routes/Home'
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React/Electron</h2>
+      <Router>
+        <Link to="/">Home</Link>
+        <div className="main">
+          <Switch>
+            <Route path="/template/:templateId">
+              <Template />
+            </Route>
+            <Route path="/process/:processId">
+              <Process />
+            </Route>
+            <Route path="/">
+              <Home />
+            </Route>
+          </Switch>
         </div>
-        <p className="App-intro">
-          Hello Electron!
-        </p>
-      </div>
-    );
+      </Router>
+    )
   }
 }
 

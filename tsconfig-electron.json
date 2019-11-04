@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+      "sourceMap": true,
+      "outDir": "electron"
+  },
+  "include": [
+      "typescript/electron-only/**/*",
+      "typescript/react-electron/**/*"
+  ]
+}
