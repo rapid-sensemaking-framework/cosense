@@ -84,7 +84,7 @@ export default function Process() {
               }, 200)
             }
             const wsUrl = new URL(registerConfig.wsUrl)
-            const url = `//${wsUrl.host}${URLS.REGISTER(registerConfig.id)}`
+            const url = `http://${wsUrl.host}${URLS.REGISTER(registerConfig.id)}`
             return <div key={`register-${expectedIndex}`}>
               {!registerConfig.isFacilitator && <RegisterLink timeLeft={timeLeft} url={url} />}
               {registerConfig.isFacilitator && participants.length === 0 && <ContactablesForm onSubmit={onSubmit} />}
