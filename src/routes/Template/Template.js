@@ -86,18 +86,9 @@ export default function Template() {
 
   return <form onSubmit={onSubmit}>
     <div id="notifier"></div>
-    <h1>Design & Run Rapid Sensemaking</h1>
-    <h2>{template.name}</h2>
+    <hr />
+    <h1>Template :: {template.name}</h1>
     <div>
-      <p>
-        "Rapid sensemaking" in the context of the "rapid sensemaking framework" (rsf) means using digital tools
-        to quickly and easily reach many people across many mediums, from Telegram to text messaging and far
-        further, and to engage them in processes of ideation, decision making, voting, or other social
-        thinking/acting.
-      </p>
-      <p>
-        You can read more about it here: <a target="_blank" href="https://github.com/rapid-sensemaking-framework/noflo-rsf">https://github.com/rapid-sensemaking-framework/noflo-rsf</a>
-      </p>
       <div dangerouslySetInnerHTML={{ __html: template.description }} />
       <p>
         As soon as you finish filling in this form and configuring participants, the rsf process will commence, meaning messages will immediately be sent to the participants.

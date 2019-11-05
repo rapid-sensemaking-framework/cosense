@@ -9,14 +9,26 @@ import {
   getTemplate
 } from './templates'
 import {
+  cloneProcess,
   getProcess,
-  getProcesses
+  getProcesses,
+  runProcess
 } from './process_model'
 
 const attachEventListeners = () => {
   ipc.on(EVENTS.IPC.HANDLE_TEMPLATE_SUBMIT, async (event, data) => {
     const processId = await handleTemplateSubmit(data)
     event.sender.send(EVENTS.IPC.TEMPLATE_SUBMIT_HANDLED, processId)
+  })
+
+  ipc.on(EVENTS.IPC.CLONE_PROCESS, async (event, processId) => {
+    const newProcessId = await cloneProcess(processId)
+    // kick it off, but don't wait on it, or depend on it for anything
+    const runtimeAddress = process.env.RUNTIME_ADDRESS
+    const runtimeSecret = process.env.RUNTIME_SECRET
+    runProcess(newProcessId, runtimeAddress, runtimeSecret)
+    console.log('running new process')
+    event.sender.send(EVENTS.IPC.PROCESS_CLONED, newProcessId)
   })
 
   ipc.on(EVENTS.IPC.GET_PROCESS, async (event, processId) => {

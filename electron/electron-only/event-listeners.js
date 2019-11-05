@@ -54,6 +54,24 @@ var attachEventListeners = function () {
             }
         });
     }); });
+    ipc.on(constants_1.EVENTS.IPC.CLONE_PROCESS, function (event, processId) { return __awaiter(void 0, void 0, void 0, function () {
+        var newProcessId, runtimeAddress, runtimeSecret;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, process_model_1.cloneProcess(processId)
+                    // kick it off, but don't wait on it, or depend on it for anything
+                ];
+                case 1:
+                    newProcessId = _a.sent();
+                    runtimeAddress = process.env.RUNTIME_ADDRESS;
+                    runtimeSecret = process.env.RUNTIME_SECRET;
+                    process_model_1.runProcess(newProcessId, runtimeAddress, runtimeSecret);
+                    console.log('running new process');
+                    event.sender.send(constants_1.EVENTS.IPC.PROCESS_CLONED, newProcessId);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
     ipc.on(constants_1.EVENTS.IPC.GET_PROCESS, function (event, processId) { return __awaiter(void 0, void 0, void 0, function () {
         var process;
         return __generator(this, function (_a) {

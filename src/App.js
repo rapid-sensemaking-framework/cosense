@@ -15,12 +15,13 @@ class App extends Component {
     return (
       <Router>
         <div className="main">
-          <Link to="/">Home</Link>
           <Switch>
             <Route path="/template/:templateId">
+              <Link to="/">Home</Link>
               <Template />
             </Route>
             <Route path="/process/:processId">
+              <Link to="/">Home</Link>
               <Process />
             </Route>
             <Route path="/">

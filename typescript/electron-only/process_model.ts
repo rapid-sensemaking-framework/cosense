@@ -1,5 +1,7 @@
+import * as electron from 'electron'
 import {
-  CONTACTABLE_CONFIG_PORT_NAME
+  CONTACTABLE_CONFIG_PORT_NAME,
+  EVENTS
 } from '../constants'
 import {
   guidGenerator
@@ -7,7 +9,6 @@ import {
 import {
   ContactableConfig,
   RegisterConfig,
-  RegisterConfigSet,
   FormInputs,
   Process,
   Template,
@@ -28,6 +29,8 @@ import {
   start
 } from './run_graph'
 
+const { BrowserWindow } = electron
+
 const processes = {}
 
 const getProcesses = async (): Promise<Process[]> => {
@@ -41,7 +44,23 @@ const getProcess = async (id: string): Promise<Process> => {
 const setProcessProp = async (id: string, key: string, value: any): Promise<boolean> => {
   console.log(`updating process ${id} value ${key}: ${JSON.stringify(value)}`)
   processes[id][key] = value
+  // send this updated value to any BrowserWindow that is listening
+  BrowserWindow.getAllWindows().forEach(win => {
+    win.webContents.send(EVENTS.IPC.PROCESS_UPDATE(id), processes[id])
+  })
   return true
+}
+
+const newProcessDefaults = () => {
+  return {
+    id: guidGenerator(),
+    startTime: Date.now(),
+    configuring: true,
+    running: false,
+    complete: false,
+    results: null,
+    error: null
+  }
 }
 
 const newProcess = async (
@@ -51,8 +70,6 @@ const newProcess = async (
   graph: Graph,
   registerWsUrl: string
 ): Promise<string> => {
-  const id = guidGenerator()
-  const startTime = Date.now()
   const registerConfigs = {}
   const participants = {}
   template.stages.forEach((stage: Stage) => {
@@ -68,29 +85,35 @@ const newProcess = async (
   })
 
   const newProcess: Process = {
-    id,
+    ...newProcessDefaults(),
     templateId,
     template,
     graph,
-    configuring: true,
-    running: false,
-    complete: false,
-    results: null,
-    error: null,
-    startTime,
     formInputs,
     registerConfigs,
     participants
   }
-  processes[id] = newProcess
-  console.log('created a new process configuration', newProcess)
-  return id
+  processes[newProcess.id] = newProcess
+  console.log('created a new process configuration', newProcess.id)
+  return newProcess.id
+}
+
+const cloneProcess = async (processId): Promise<string> => {
+  const orig = await getProcess(processId)
+  const newProcess = {
+    ...orig,
+    ...newProcessDefaults()
+  }
+  processes[newProcess.id] = newProcess
+  console.log('created a new process configuration by cloning', newProcess.id)
+  return newProcess.id
 }
 
 interface HandlerInput {
   input?: string
   registerConfig?: RegisterConfig
-  callback?: (c: ContactableConfig) => void
+  callback?: (c: ContactableConfig) => void,
+  participants?: ContactableConfig[]
 }
 type Handler = (handlerInput: HandlerInput) => Promise<any>
 
@@ -125,7 +148,10 @@ const handleOptionsData: Handler = async ({ input }): Promise<Option[]> => {
 const handleStatementsData: Handler = async ({ input }): Promise<Array<Statement>> => {
   return input.split('\n').map(s => ({ text: s }))
 }
-const handleRegisterConfig: Handler = ({ registerConfig, callback }): Promise<ContactableConfig[]> => {
+const handleRegisterConfig: Handler = ({ participants, registerConfig, callback }): Promise<ContactableConfig[]> => {
+  if (participants.length > 0) {
+    return Promise.resolve(participants)
+  }
   const { isFacilitator, maxTime, maxParticipants, processContext, id, wsUrl } = registerConfig
   return isFacilitator ? getContactablesFromFacilitator(id) : getContactablesFromRegistration(
     wsUrl,
@@ -184,42 +210,72 @@ const updateParticipants = async (processId: string, name: string, newParticipan
   setProcessProp(processId, 'participants', participants)
 }
 
-const getHandlerInput = (processId: string, expectedInput: ExpectedInput, formInputs: FormInputs, registerConfigs: RegisterConfigSet): HandlerInput => {
+const getHandlerInput = (
+  processId: string,
+  expectedInput: ExpectedInput,
+  formInputs: FormInputs,
+  registerConfig: RegisterConfig,
+  participants: ContactableConfig[]
+): HandlerInput => {
   const { process, port } = expectedInput
-
   if (port === CONTACTABLE_CONFIG_PORT_NAME) {
     return {
-      registerConfig: registerConfigs[process],
+      participants,
+      registerConfig,
       callback: (contactableConfig: ContactableConfig) => {
         updateParticipants(processId, process, [contactableConfig], false)
       }
     }
   }
-
   return {
     input: formInputs[`${process}--${port}`]
   }
 }
 
-const runProcess = async (processId: string, runtimeAddress: string , runtimeSecret: string) => {
+const resolveExpectedInput = async (
+  expectedInput: ExpectedInput,
+  processId: string,
+  formInputs: FormInputs,
+  registerConfig: RegisterConfig,
+  participants: ContactableConfig[]
+) => {
+  const { process, port } = expectedInput
+  const handler: Handler = mapInputToHandler(expectedInput)
+  const handlerInput: HandlerInput = getHandlerInput(
+    processId,
+    expectedInput,
+    formInputs,
+    registerConfig,
+    participants
+  )
+  const finalInput = await handler(handlerInput)
+  if (port === CONTACTABLE_CONFIG_PORT_NAME) {
+    updateParticipants(processId, process, finalInput, true)
+  }
+  return finalInput
+}
+
+const runProcess = async (processId: string, runtimeAddress: string, runtimeSecret: string) => {
   const {
     registerConfigs,
     formInputs,
     graph,
-    template
+    template,
+    participants
   } = await getProcess(processId)
 
   const promises = []
   template.stages.forEach((stage: Stage) => {
     stage.expectedInputs.forEach((expectedInput: ExpectedInput) => {
+      const { process, port } = expectedInput
       promises.push((async () => {
-        const handler: Handler = mapInputToHandler(expectedInput)
-        const handlerInput: HandlerInput = getHandlerInput(processId, expectedInput, formInputs, registerConfigs)
-        const finalInput = await handler(handlerInput)
-        const { process, port } = expectedInput
-        if (port === CONTACTABLE_CONFIG_PORT_NAME) {
-          updateParticipants(processId, process, finalInput, true)
-        }
+        const finalInput = await resolveExpectedInput(
+          expectedInput,
+          processId,
+          formInputs,
+          registerConfigs[process],
+          participants[process]
+        )
         return convertToGraphConnection(process, port, finalInput)
       })())
     })
@@ -237,6 +293,7 @@ const runProcess = async (processId: string, runtimeAddress: string , runtimeSec
       setProcessProp(processId, 'results', signal.data)
     }
   }
+
   start(jsonGraph, runtimeAddress, runtimeSecret, dataWatcher)
     .then(() => {
       setProcessProp(processId, 'running', false)
@@ -265,6 +322,7 @@ export {
   getProcess,
   setProcessProp,
   newProcess,
+  cloneProcess,
   runProcess,
   getRegisterConfig,
   handleRegisterConfig,
@@ -272,33 +330,3 @@ export {
   handleOptionsData,
   mapInputToHandler
 }
-
-
-/*
-  // capture the results for each as they come in
-  // do this in a non-blocking way
-  const updatePList = async (key: string, newP: ContactableConfig, allP?: ContactableConfig[]) => {
-    const old = (await getProcess(processId))[key]
-    const updated = allP ? allP : [...old].concat(newP) // clone and add
-    setProcessProp(processId, key, updated)
-  }
-  const ideationP: Promise<ContactableConfig[]> = proceedWithRegisterConfig(app, paths[0], registerConfigs[0], (newP: ContactableConfig) => {
-    updatePList('ideationParticipants', newP)
-  })
-  const reactionP: Promise<ContactableConfig[]> = proceedWithRegisterConfig(app, paths[1], registerConfigs[1], (newP: ContactableConfig) => {
-    updatePList('reactionParticipants', newP)
-  })
-  const summaryP: Promise<ContactableConfig[]> = proceedWithRegisterConfig(app, paths[2], registerConfigs[2], (newP: ContactableConfig) => {
-    updatePList('summaryParticipants', newP)
-  })
-  // capture the sum results for each
-  ideationP.then((ideationParticipants: ContactableConfig[]) => {
-    updatePList('ideationParticipants', null, ideationParticipants)
-  })
-  reactionP.then((reactionParticipants: ContactableConfig[]) => {
-    updatePList('reactionParticipants', null, reactionParticipants)
-  })
-  summaryP.then((summaryParticipants: ContactableConfig[]) => {
-    updatePList('summaryParticipants', null, summaryParticipants)
-  })
-*/

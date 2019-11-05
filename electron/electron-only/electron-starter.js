@@ -4,11 +4,10 @@ var dotenv = require("dotenv");
 var path = require("path");
 var url = require("url");
 var electron = require("electron");
-var electron_log_1 = require("electron-log");
+// import { log, transports } from 'electron-log'
 var fixPath = require("fix-path");
 fixPath();
-electron_log_1.log('process.execPath', process.execPath);
-console.log(electron_log_1.transports.file.findLogPath());
+// transports.file.findLogPath()
 var dotenvPath;
 if (process.env.ELECTRON_START_URL) {
     console.log('using development env vars');

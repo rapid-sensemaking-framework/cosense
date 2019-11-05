@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import {
-  useParams
+  useParams,
+  useHistory
 } from 'react-router-dom'
 import {
   EVENTS,
@@ -32,6 +33,7 @@ function sendContactableConfigs(id, contactableConfigs) {
 }
 
 export default function Process() {
+  const history = useHistory()
   const { processId } = useParams()
   const defaultProcess = null
   const [process, setProcess] = useState(defaultProcess)
@@ -41,31 +43,75 @@ export default function Process() {
     fetchProcess(processId).then(setProcess) // could be null
   }, [processId, cacheBreaker])
 
+  // listen for live updates
+  useEffect(() => {
+    const channelId = EVENTS.IPC.PROCESS_UPDATE(processId)
+    ipc.on(channelId, (event, updatedProcess) => {
+      setProcess(updatedProcess)
+    })
+    // cleanup
+    return () => {
+      ipc.removeAllListeners(channelId)
+    }
+  }, [processId])
+
   if (!process) {
     return <div>404 not found (requested: {processId})</div>
   }
 
-  const processResults = process.results ? process.results.replace(/\n/g, "<br />") : ''
+  const processResults = process.results ? process.results.trim().replace(/\n/g, "<br />") : ''
+
+  const rerun = async (event) => {
+    event.preventDefault()
+    ipc.send(EVENTS.IPC.CLONE_PROCESS, processId)
+    const newProcessId = await new Promise((resolve) => {
+      ipc.once(EVENTS.IPC.PROCESS_CLONED, (event, newProcessId) => resolve(newProcessId))
+    })
+    // redirect to the newly initiated process
+    console.log('processId', newProcessId)
+    history.push(`/process/${newProcessId}`)
+  }
 
   return <div>
-    <h6>Process ID: { processId }</h6>
-    <h1>{ process.configuring ? 'Configure Participants' : 'Dashboard' }</h1>
+    <hr />
+    <h6>Process ID: {processId}</h6>
+    <h2>{process.configuring ? 'Configure Participants' : ' Process Dashboard'}</h2>
     {process.running && <p>
-      The process is live and running now. The results will be posted here when it's complete.
-      Occasionally refresh the page to check completeness.
-    </p>}
+        The process is live and running now.
+        The results will be updated live here when it's complete.
+      </p>}
     {process.complete && <div>
-      <p>The process has completed.</p>
-      <p>Here are the results:</p>
+      <p>
+        The process has completed.
+        <button onClick={rerun} className="button button-clear">
+          Clone And Rerun This Process
+        </button>
+      </p>
+    </div>}
+    {process.complete && !process.error && <div>
+      <h4>Results</h4>
       <p dangerouslySetInnerHTML={{ __html: processResults }} />
+      <hr />
     </div>}
     {process.error && <div>
       <p>There was an error:</p>
-      <p>{ process.error }</p>
+      <p>{process.error}</p>
+      <hr />
     </div>}
+    {!process.configuring && <h4>Configuration</h4>}
     {process.template.stages.map((stage, stageIndex) => {
       return <div key={`stage-${stageIndex}`}>
-        <h3>{ stage.name }</h3>
+        <h3>{stage.name}</h3>
+        {stage.expectedInputs
+          .filter(e => e.port !== CONTACTABLE_CONFIG_PORT_NAME)
+          .map((e, index) => {
+            // const key = 
+            const input = process.formInputs[`${e.process}--${e.port}`]
+            return <div key={`expectedInput-${index}`}>
+              <h5>{e.port}: { input }</h5>
+            </div>
+          })
+        }
         {stage.expectedInputs
           .filter(e => e.port === CONTACTABLE_CONFIG_PORT_NAME)
           .map((expectedInput, expectedIndex) => {
@@ -86,11 +132,11 @@ export default function Process() {
               {!registerConfig.isFacilitator && <RegisterLink timeLeft={timeLeft} url={url} />}
               {registerConfig.isFacilitator && participants.length === 0 && <ContactablesForm onSubmit={onSubmit} />}
               {participants.length > 0 && <div>
-                <p>Ready</p>
+                <h5>participants</h5>
                 <ol>
                   {participants.map((participant, participantIndex) => {
                     return <li key={`participant-${participantIndex}`}>
-                      type: { participant.type }, id: { participant.id }
+                      type: {participant.type}, id: {participant.id}
                     </li>
                   })}
                 </ol>

@@ -23,10 +23,13 @@ var EVENTS = {
         PARTICIPANT_REGISTER_RESULT: 'participant_register_result'
     },
     IPC: {
+        PROCESS_UPDATE: function (id) { return "process_update_" + id; },
         HANDLE_TEMPLATE_SUBMIT: 'handle_template_submit',
         TEMPLATE_SUBMIT_HANDLED: 'template_submit_handled',
         GET_PROCESS: 'get_process',
         RETURN_PROCESS: 'return_process',
+        CLONE_PROCESS: 'clone_process',
+        PROCESS_CLONED: 'process_cloned',
         GET_PROCESSES: 'get_processes',
         RETURN_PROCESSES: 'return_processes',
         GET_TEMPLATE: 'get_template',

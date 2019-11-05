@@ -41,7 +41,15 @@ export default function Home() {
   }, []) // << super important array, prevents re-fetching
 
   return <div>
-    <h1>Design & Run Rapid Sensemaking</h1>
+    <hr />
+    <h1>Design & Run <br /> Rapid Sensemaking</h1>
+    <p>
+      "Rapid sensemaking" in the context of the "rapid sensemaking framework" (rsf) means using digital tools
+      to quickly and easily reach many people across many mediums, from Telegram to text messaging and far
+      further, and to engage them in processes of ideation, decision making, voting, or other social
+      thinking/acting. You can read more about it <a target="_blank" href="https://github.com/rapid-sensemaking-framework/noflo-rsf">here</a>.
+      The following are available templates for running rapid sensemaking.
+    </p>
     <div className="container">
       <div className="row">
         {templates.map((template, templateIndex) => {

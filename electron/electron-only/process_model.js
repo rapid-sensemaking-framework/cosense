@@ -47,10 +47,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+var electron = require("electron");
 var constants_1 = require("../constants");
 var utils_1 = require("../utils");
 var participant_register_1 = require("./participant_register");
 var run_graph_1 = require("./run_graph");
+var BrowserWindow = electron.BrowserWindow;
 var processes = {};
 var getProcesses = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
@@ -68,49 +70,68 @@ var setProcessProp = function (id, key, value) { return __awaiter(void 0, void 0
     return __generator(this, function (_a) {
         console.log("updating process " + id + " value " + key + ": " + JSON.stringify(value));
         processes[id][key] = value;
+        // send this updated value to any BrowserWindow that is listening
+        BrowserWindow.getAllWindows().forEach(function (win) {
+            win.webContents.send(constants_1.EVENTS.IPC.PROCESS_UPDATE(id), processes[id]);
+        });
         return [2 /*return*/, true];
     });
 }); };
 exports.setProcessProp = setProcessProp;
+var newProcessDefaults = function () {
+    return {
+        id: utils_1.guidGenerator(),
+        startTime: Date.now(),
+        configuring: true,
+        running: false,
+        complete: false,
+        results: null,
+        error: null
+    };
+};
 var newProcess = function (formInputs, templateId, template, graph, registerWsUrl) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, startTime, registerConfigs, participants, newProcess;
+    var registerConfigs, participants, newProcess;
     return __generator(this, function (_a) {
-        id = utils_1.guidGenerator();
-        startTime = Date.now();
         registerConfigs = {};
         participants = {};
         template.stages.forEach(function (stage) {
             stage.expectedInputs.forEach(function (expectedInput) {
                 var process = expectedInput.process, port = expectedInput.port;
                 if (port === constants_1.CONTACTABLE_CONFIG_PORT_NAME) {
-                    var id_1 = utils_1.guidGenerator();
-                    var registerConfig = getRegisterConfig(formInputs, process, id_1, registerWsUrl);
+                    var id = utils_1.guidGenerator();
+                    var registerConfig = getRegisterConfig(formInputs, process, id, registerWsUrl);
                     registerConfigs[process] = registerConfig;
                     participants[process] = []; // empty for now
                 }
             });
         });
-        newProcess = {
-            id: id,
-            templateId: templateId,
+        newProcess = __assign(__assign({}, newProcessDefaults()), { templateId: templateId,
             template: template,
             graph: graph,
-            configuring: true,
-            running: false,
-            complete: false,
-            results: null,
-            error: null,
-            startTime: startTime,
             formInputs: formInputs,
             registerConfigs: registerConfigs,
-            participants: participants
-        };
-        processes[id] = newProcess;
-        console.log('created a new process configuration', newProcess);
-        return [2 /*return*/, id];
+            participants: participants });
+        processes[newProcess.id] = newProcess;
+        console.log('created a new process configuration', newProcess.id);
+        return [2 /*return*/, newProcess.id];
     });
 }); };
 exports.newProcess = newProcess;
+var cloneProcess = function (processId) { return __awaiter(void 0, void 0, void 0, function () {
+    var orig, newProcess;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, getProcess(processId)];
+            case 1:
+                orig = _a.sent();
+                newProcess = __assign(__assign({}, orig), newProcessDefaults());
+                processes[newProcess.id] = newProcess;
+                console.log('created a new process configuration by cloning', newProcess.id);
+                return [2 /*return*/, newProcess.id];
+        }
+    });
+}); };
+exports.cloneProcess = cloneProcess;
 var handleText = function (_a) {
     var input = _a.input;
     return __awaiter(void 0, void 0, void 0, function () {
@@ -179,7 +200,10 @@ var handleStatementsData = function (_a) {
     });
 };
 var handleRegisterConfig = function (_a) {
-    var registerConfig = _a.registerConfig, callback = _a.callback;
+    var participants = _a.participants, registerConfig = _a.registerConfig, callback = _a.callback;
+    if (participants.length > 0) {
+        return Promise.resolve(participants);
+    }
     var isFacilitator = registerConfig.isFacilitator, maxTime = registerConfig.maxTime, maxParticipants = registerConfig.maxParticipants, processContext = registerConfig.processContext, id = registerConfig.id, wsUrl = registerConfig.wsUrl;
     return isFacilitator ? participant_register_1.getContactablesFromFacilitator(id) : participant_register_1.getContactablesFromRegistration(wsUrl, id, maxTime, maxParticipants, processContext, callback);
 };
@@ -235,11 +259,12 @@ var updateParticipants = function (processId, name, newParticipants, overwrite) 
         }
     });
 }); };
-var getHandlerInput = function (processId, expectedInput, formInputs, registerConfigs) {
+var getHandlerInput = function (processId, expectedInput, formInputs, registerConfig, participants) {
     var process = expectedInput.process, port = expectedInput.port;
     if (port === constants_1.CONTACTABLE_CONFIG_PORT_NAME) {
         return {
-            registerConfig: registerConfigs[process],
+            participants: participants,
+            registerConfig: registerConfig,
             callback: function (contactableConfig) {
                 updateParticipants(processId, process, [contactableConfig], false);
             }
@@ -249,30 +274,42 @@ var getHandlerInput = function (processId, expectedInput, formInputs, registerCo
         input: formInputs[process + "--" + port]
     };
 };
+var resolveExpectedInput = function (expectedInput, processId, formInputs, registerConfig, participants) { return __awaiter(void 0, void 0, void 0, function () {
+    var process, port, handler, handlerInput, finalInput;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                process = expectedInput.process, port = expectedInput.port;
+                handler = mapInputToHandler(expectedInput);
+                handlerInput = getHandlerInput(processId, expectedInput, formInputs, registerConfig, participants);
+                return [4 /*yield*/, handler(handlerInput)];
+            case 1:
+                finalInput = _a.sent();
+                if (port === constants_1.CONTACTABLE_CONFIG_PORT_NAME) {
+                    updateParticipants(processId, process, finalInput, true);
+                }
+                return [2 /*return*/, finalInput];
+        }
+    });
+}); };
 var runProcess = function (processId, runtimeAddress, runtimeSecret) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, registerConfigs, formInputs, graph, template, promises, GraphConnections, jsonGraph, dataWatcher;
+    var _a, registerConfigs, formInputs, graph, template, participants, promises, GraphConnections, jsonGraph, dataWatcher;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4 /*yield*/, getProcess(processId)];
             case 1:
-                _a = _b.sent(), registerConfigs = _a.registerConfigs, formInputs = _a.formInputs, graph = _a.graph, template = _a.template;
+                _a = _b.sent(), registerConfigs = _a.registerConfigs, formInputs = _a.formInputs, graph = _a.graph, template = _a.template, participants = _a.participants;
                 promises = [];
                 template.stages.forEach(function (stage) {
                     stage.expectedInputs.forEach(function (expectedInput) {
+                        var process = expectedInput.process, port = expectedInput.port;
                         promises.push((function () { return __awaiter(void 0, void 0, void 0, function () {
-                            var handler, handlerInput, finalInput, process, port;
+                            var finalInput;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
-                                    case 0:
-                                        handler = mapInputToHandler(expectedInput);
-                                        handlerInput = getHandlerInput(processId, expectedInput, formInputs, registerConfigs);
-                                        return [4 /*yield*/, handler(handlerInput)];
+                                    case 0: return [4 /*yield*/, resolveExpectedInput(expectedInput, processId, formInputs, registerConfigs[process], participants[process])];
                                     case 1:
                                         finalInput = _a.sent();
-                                        process = expectedInput.process, port = expectedInput.port;
-                                        if (port === constants_1.CONTACTABLE_CONFIG_PORT_NAME) {
-                                            updateParticipants(processId, process, finalInput, true);
-                                        }
                                         return [2 /*return*/, convertToGraphConnection(process, port, finalInput)];
                                 }
                             });
@@ -322,32 +359,4 @@ var getRegisterConfig = function (formInputs, process, id, wsUrl) {
     };
 };
 exports.getRegisterConfig = getRegisterConfig;
-/*
-  // capture the results for each as they come in
-  // do this in a non-blocking way
-  const updatePList = async (key: string, newP: ContactableConfig, allP?: ContactableConfig[]) => {
-    const old = (await getProcess(processId))[key]
-    const updated = allP ? allP : [...old].concat(newP) // clone and add
-    setProcessProp(processId, key, updated)
-  }
-  const ideationP: Promise<ContactableConfig[]> = proceedWithRegisterConfig(app, paths[0], registerConfigs[0], (newP: ContactableConfig) => {
-    updatePList('ideationParticipants', newP)
-  })
-  const reactionP: Promise<ContactableConfig[]> = proceedWithRegisterConfig(app, paths[1], registerConfigs[1], (newP: ContactableConfig) => {
-    updatePList('reactionParticipants', newP)
-  })
-  const summaryP: Promise<ContactableConfig[]> = proceedWithRegisterConfig(app, paths[2], registerConfigs[2], (newP: ContactableConfig) => {
-    updatePList('summaryParticipants', newP)
-  })
-  // capture the sum results for each
-  ideationP.then((ideationParticipants: ContactableConfig[]) => {
-    updatePList('ideationParticipants', null, ideationParticipants)
-  })
-  reactionP.then((reactionParticipants: ContactableConfig[]) => {
-    updatePList('reactionParticipants', null, reactionParticipants)
-  })
-  summaryP.then((summaryParticipants: ContactableConfig[]) => {
-    updatePList('summaryParticipants', null, summaryParticipants)
-  })
-*/ 
 //# sourceMappingURL=process_model.js.map
