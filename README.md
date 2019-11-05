@@ -43,3 +43,8 @@ To test this build, run
 ```
 npm run electron
 ```
+
+To package, run
+```
+npm run package-mac
+```
