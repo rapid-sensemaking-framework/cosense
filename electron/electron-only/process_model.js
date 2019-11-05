@@ -47,11 +47,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-var constants_1 = require("../react-electron/constants");
-var utils_1 = require("../react-electron/utils");
+var constants_1 = require("../constants");
+var utils_1 = require("../utils");
 var participant_register_1 = require("./participant_register");
 var run_graph_1 = require("./run_graph");
 var processes = {};
+var getProcesses = function () { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2 /*return*/, Object.values(processes)];
+    });
+}); };
+exports.getProcesses = getProcesses;
 var getProcess = function (id) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2 /*return*/, processes[id]];
@@ -66,47 +72,41 @@ var setProcessProp = function (id, key, value) { return __awaiter(void 0, void 0
     });
 }); };
 exports.setProcessProp = setProcessProp;
-var newProcess = function (formInputs, templateId, template, graph, runtimeAddress, runtimeSecret, wsUrl) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, stages, registerConfigs, participants, newProcess;
+var newProcess = function (formInputs, templateId, template, graph, registerWsUrl) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, registerConfigs, participants, newProcess;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                id = utils_1.guidGenerator();
-                return [4 /*yield*/, utils_1.componentMetaForStages(template.stages, graph, runtimeAddress, runtimeSecret)];
-            case 1:
-                stages = _a.sent();
-                registerConfigs = {};
-                participants = {};
-                stages.forEach(function (stage) {
-                    stage.expectedInputs.forEach(function (expectedInput) {
-                        var process = expectedInput.process, port = expectedInput.port;
-                        if (port === constants_1.CONTACTABLE_CONFIG_PORT_NAME) {
-                            var id_1 = utils_1.guidGenerator();
-                            var registerConfig = getRegisterConfig(formInputs, process, id_1, wsUrl);
-                            registerConfigs[process] = registerConfig;
-                            participants[process] = []; // empty for now
-                        }
-                    });
-                });
-                newProcess = {
-                    id: id,
-                    templateId: templateId,
-                    template: template,
-                    graph: graph,
-                    configuring: true,
-                    running: false,
-                    complete: false,
-                    results: null,
-                    error: null,
-                    startTime: Date.now(),
-                    formInputs: formInputs,
-                    registerConfigs: registerConfigs,
-                    participants: participants
-                };
-                processes[id] = newProcess;
-                console.log('created a new process configuration', newProcess);
-                return [2 /*return*/, id];
-        }
+        id = utils_1.guidGenerator();
+        registerConfigs = {};
+        participants = {};
+        template.stages.forEach(function (stage) {
+            stage.expectedInputs.forEach(function (expectedInput) {
+                var process = expectedInput.process, port = expectedInput.port;
+                if (port === constants_1.CONTACTABLE_CONFIG_PORT_NAME) {
+                    var id_1 = utils_1.guidGenerator();
+                    var registerConfig = getRegisterConfig(formInputs, process, id_1, registerWsUrl);
+                    registerConfigs[process] = registerConfig;
+                    participants[process] = []; // empty for now
+                }
+            });
+        });
+        newProcess = {
+            id: id,
+            templateId: templateId,
+            template: template,
+            graph: graph,
+            configuring: true,
+            running: false,
+            complete: false,
+            results: null,
+            error: null,
+            startTime: Date.now(),
+            formInputs: formInputs,
+            registerConfigs: registerConfigs,
+            participants: participants
+        };
+        processes[id] = newProcess;
+        console.log('created a new process configuration', newProcess);
+        return [2 /*return*/, id];
     });
 }); };
 exports.newProcess = newProcess;
@@ -249,19 +249,14 @@ var getHandlerInput = function (processId, expectedInput, formInputs, registerCo
     };
 };
 var runProcess = function (processId, runtimeAddress, runtimeSecret) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, registerConfigs, formInputs, graph, template, stages, promises, GraphConnections, jsonGraph, dataWatcher;
+    var _a, registerConfigs, formInputs, graph, template, promises, GraphConnections, jsonGraph, dataWatcher;
     return __generator(this, function (_b) {
         switch (_b.label) {
-            case 0: return [4 /*yield*/, getProcess(processId)
-                // load up expectedInput types, help text, and component names
-            ];
+            case 0: return [4 /*yield*/, getProcess(processId)];
             case 1:
                 _a = _b.sent(), registerConfigs = _a.registerConfigs, formInputs = _a.formInputs, graph = _a.graph, template = _a.template;
-                return [4 /*yield*/, utils_1.componentMetaForStages(template.stages, graph, runtimeAddress, runtimeSecret)];
-            case 2:
-                stages = _b.sent();
                 promises = [];
-                stages.forEach(function (stage) {
+                template.stages.forEach(function (stage) {
                     stage.expectedInputs.forEach(function (expectedInput) {
                         promises.push((function () { return __awaiter(void 0, void 0, void 0, function () {
                             var handler, handlerInput, finalInput, process, port;
@@ -287,7 +282,7 @@ var runProcess = function (processId, runtimeAddress, runtimeSecret) { return __
                     // once they're all ready, now commence the process
                     // mark as running now
                 ];
-            case 3:
+            case 2:
                 GraphConnections = _b.sent();
                 // once they're all ready, now commence the process
                 // mark as running now
@@ -353,7 +348,5 @@ exports.getRegisterConfig = getRegisterConfig;
   summaryP.then((summaryParticipants: ContactableConfig[]) => {
     updatePList('summaryParticipants', null, summaryParticipants)
   })
-
-
 */ 
 //# sourceMappingURL=process_model.js.map

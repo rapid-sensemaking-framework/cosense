@@ -36,23 +36,31 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+var electron = require("electron");
+var path = require("path");
 var process_model_1 = require("./process_model");
+var utils_1 = require("../utils");
+var fbp_1 = require("./fbp");
+var getGraph = function (templateId) {
+    var graphPath = path.join(electron.app.getAppPath(), "graphs/" + templateId + ".json");
+    return require(graphPath);
+};
 var handleTemplateSubmit = function (_a) {
-    var inputs = _a.inputs, templateId = _a.templateId, template = _a.template, graph = _a.graph;
+    var inputs = _a.inputs, templateId = _a.templateId, template = _a.template;
     return __awaiter(void 0, void 0, void 0, function () {
-        var runtimeAddress, runtimeSecret, wsUrl, processId;
+        var registerWsUrl, graph, processId, runtimeAddress, runtimeSecret;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    runtimeAddress = process.env.ADDRESS;
-                    runtimeSecret = process.env.TOP_SECRET;
-                    wsUrl = process.env.REGISTER_WS_URL;
-                    return [4 /*yield*/, process_model_1.newProcess(inputs, templateId, template, graph, runtimeAddress, runtimeSecret, wsUrl)
+                    registerWsUrl = utils_1.getRegisterAddress(process.env, 'REGISTER_WS_PROTOCOL');
+                    graph = getGraph(templateId);
+                    return [4 /*yield*/, process_model_1.newProcess(inputs, templateId, template, graph, registerWsUrl)
                         // kick it off, but don't wait on it, or depend on it for anything
                     ];
                 case 1:
                     processId = _b.sent();
-                    // kick it off, but don't wait on it, or depend on it for anything
+                    runtimeAddress = process.env.RUNTIME_ADDRESS;
+                    runtimeSecret = process.env.RUNTIME_SECRET;
                     process_model_1.runProcess(processId, runtimeAddress, runtimeSecret);
                     return [2 /*return*/, processId];
             }
@@ -60,4 +68,25 @@ var handleTemplateSubmit = function (_a) {
     });
 };
 exports.handleTemplateSubmit = handleTemplateSubmit;
+var getTemplate = function (templateId, runtimeAddress, runtimeSecret) { return __awaiter(void 0, void 0, void 0, function () {
+    var templatePath, template, graph, stages;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                templatePath = path.join(electron.app.getAppPath(), "templates/" + templateId + ".template.json");
+                template = require(templatePath);
+                if (!template) return [3 /*break*/, 2];
+                // react router route
+                template.path = "/template/" + templateId;
+                graph = getGraph(templateId);
+                return [4 /*yield*/, fbp_1.componentMetaForStages(template.stages, graph, runtimeAddress, runtimeSecret)];
+            case 1:
+                stages = _a.sent();
+                template.stages = stages;
+                _a.label = 2;
+            case 2: return [2 /*return*/, template];
+        }
+    });
+}); };
+exports.getTemplate = getTemplate;
 //# sourceMappingURL=templates.js.map

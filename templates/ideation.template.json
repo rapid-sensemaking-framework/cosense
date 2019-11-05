@@ -1,4 +1,5 @@
 {
+  "id": "ideation",
   "name": "Ideation",
   "description": "<p>There are TWO stages to this particular process, the Ideation stage, and the Summary stage.</p><ol><li>The IDEATION stage can be used for generating one or more responses to any prompt.</li><li>The SUMMARY stage is to send the full list of results to someone(s).</li></ol>",
   "resultConnection": "rsf/FormatStatementList_m4rzd() FORMATTED -> IN core/MakeFunction_qbcnw()",
@@ -12,7 +13,7 @@
           "port": "prompt",
           "placeholder": "e.g. What is your definition of Collective Intelligence?",
           "label": "What is the prompt you would like to give participants, to reflect on and respond to?",
-          "inputTypeOverride": "textarea"
+          "inputTypeOverride": "Textarea"
         },
         {
           "process": "rsf/CollectResponses_ey8mk",

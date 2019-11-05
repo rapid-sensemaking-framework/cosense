@@ -3,10 +3,10 @@ import * as fbpGraph from 'fbp-graph'
 import {
   GraphConnection,
   Graph,
-} from '../react-electron/types'
+} from '../types'
 import {
   createFbpClient
-} from '../react-electron/fbp'
+} from './fbp'
 
 
 const start = async (jsonGraph, runtimeAddress: string, runtimeSecret: string, dataWatcher = (signal) => { }): Promise<void> => {

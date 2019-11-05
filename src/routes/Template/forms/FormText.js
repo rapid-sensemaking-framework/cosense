@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-export default function Textarea({ expectedInput, onChange }) {
+export default function FormText({ expectedInput, onChange }) {
   const { process, port, placeholder, defaultValue, label } = expectedInput
   const ident = `${process}--${port}`
   const innerOnChange = (evt) => {
@@ -14,6 +14,6 @@ export default function Textarea({ expectedInput, onChange }) {
 
   return <div>
     <label htmlFor={ident}>{label}</label>
-    <textarea id={ident} name={ident} placeholder={placeholder} defaultValue={defaultValue} onChange={innerOnChange}></textarea>
+    <input type="text"  id={ident} name={ident} placeholder={placeholder} value={defaultValue} onChange={innerOnChange} />
   </div>
 }

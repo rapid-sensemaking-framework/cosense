@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var electron = require("electron");
 var ipc = electron.ipcMain;
-var constants_1 = require("../react-electron/constants");
+var constants_1 = require("../constants");
 var templates_1 = require("./templates");
 var process_model_1 = require("./process_model");
 var attachEventListeners = function () {
@@ -62,6 +62,33 @@ var attachEventListeners = function () {
                 case 1:
                     process = _a.sent();
                     event.sender.send(constants_1.EVENTS.IPC.RETURN_PROCESS, process);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    ipc.on(constants_1.EVENTS.IPC.GET_PROCESSES, function (event) { return __awaiter(void 0, void 0, void 0, function () {
+        var processes;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, process_model_1.getProcesses()];
+                case 1:
+                    processes = _a.sent();
+                    event.sender.send(constants_1.EVENTS.IPC.RETURN_PROCESSES, processes);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    ipc.on(constants_1.EVENTS.IPC.GET_TEMPLATE, function (event, templateId) { return __awaiter(void 0, void 0, void 0, function () {
+        var runtimeAddress, runtimeSecret, template;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    runtimeAddress = process.env.RUNTIME_ADDRESS;
+                    runtimeSecret = process.env.RUNTIME_SECRET;
+                    return [4 /*yield*/, templates_1.getTemplate(templateId, runtimeAddress, runtimeSecret)];
+                case 1:
+                    template = _a.sent();
+                    event.sender.send(constants_1.EVENTS.IPC.RETURN_TEMPLATE, template);
                     return [2 /*return*/];
             }
         });

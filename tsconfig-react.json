@@ -1,9 +1,20 @@
 {
   "compilerOptions": {
-      "sourceMap": true,
-      "outDir": "src/ts-built"
+    "removeComments": true,
+    "allowJs": true,
+    "module": "commonjs",
+    "sourceMap": true,
+    "outDir": "src/ts-built",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "target": "es5",
+    "lib": [
+      "dom",
+      "es6"
+    ]
   },
   "include": [
-      "typescript/react-electron/**/*"
+    "typescript/*.ts"
   ]
 }

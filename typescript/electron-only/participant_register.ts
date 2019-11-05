@@ -3,10 +3,10 @@ import * as socketClient from 'socket.io-client'
 
 import {
   EVENTS
-} from '../react-electron/constants'
+} from '../constants'
 import {
   ContactableConfig
-} from '../react-electron/types'
+} from '../types'
 
 const ipc = electron.ipcMain
 
@@ -53,7 +53,9 @@ const getContactablesFromRegistration = (
 }
 
 
+
+
 export {
   getContactablesFromFacilitator,
-  getContactablesFromRegistration,
+  getContactablesFromRegistration
 }

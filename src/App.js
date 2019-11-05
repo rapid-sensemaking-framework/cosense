@@ -14,8 +14,8 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <Link to="/">Home</Link>
         <div className="main">
+          <Link to="/">Home</Link>
           <Switch>
             <Route path="/template/:templateId">
               <Template />

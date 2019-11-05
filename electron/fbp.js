@@ -38,12 +38,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 // https://github.com/flowbased/fbp-graph/blob/master/src/Graph.coffee
 // https://flowbased.github.io/fbp-protocol/
-var fbpClient = require("fbp-client");
+var fbp_client_1 = require("fbp-client");
+console.log('fbpClient', fbp_client_1["default"]);
 var createFbpClient = function (address, secret) { return __awaiter(void 0, void 0, void 0, function () {
     var client;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, fbpClient({
+            case 0: return [4 /*yield*/, fbp_client_1["default"]({
                     address: address,
                     protocol: 'websocket',
                     secret: secret

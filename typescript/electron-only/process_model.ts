@@ -1,10 +1,9 @@
 import {
   CONTACTABLE_CONFIG_PORT_NAME
-} from '../react-electron/constants'
+} from '../constants'
 import {
-  guidGenerator,
-  componentMetaForStages
-} from '../react-electron/utils'
+  guidGenerator
+} from '../utils'
 import {
   ContactableConfig,
   RegisterConfig,
@@ -18,11 +17,11 @@ import {
   GraphConnection,
   Statement,
   Graph
-} from '../react-electron/types'
+} from '../types'
 
 import {
   getContactablesFromFacilitator,
-  getContactablesFromRegistration
+  getContactablesFromRegistration,
 } from './participant_register'
 import {
   overrideJsonGraph,
@@ -30,6 +29,10 @@ import {
 } from './run_graph'
 
 const processes = {}
+
+const getProcesses = async (): Promise<Process[]> => {
+  return Object.values(processes)
+}
 
 const getProcess = async (id: string): Promise<Process> => {
   return processes[id]
@@ -46,21 +49,17 @@ const newProcess = async (
   templateId: string,
   template: Template,
   graph: Graph,
-  runtimeAddress: string,
-  runtimeSecret: string,
-  wsUrl: string
+  registerWsUrl: string
 ): Promise<string> => {
   const id = guidGenerator()
-  // load up expectedInput types, help text, and component names
-  const stages = await componentMetaForStages(template.stages, graph, runtimeAddress, runtimeSecret)
   const registerConfigs = {}
   const participants = {}
-  stages.forEach((stage: Stage) => {
+  template.stages.forEach((stage: Stage) => {
     stage.expectedInputs.forEach((expectedInput: ExpectedInput) => {
       const { process, port } = expectedInput
       if (port === CONTACTABLE_CONFIG_PORT_NAME) {
         const id = guidGenerator()
-        const registerConfig = getRegisterConfig(formInputs, process, id, wsUrl)
+        const registerConfig = getRegisterConfig(formInputs, process, id, registerWsUrl)
         registerConfigs[process] = registerConfig
         participants[process] = [] // empty for now
       }
@@ -209,10 +208,8 @@ const runProcess = async (processId: string, runtimeAddress: string , runtimeSec
     template
   } = await getProcess(processId)
 
-  // load up expectedInput types, help text, and component names
-  const stages = await componentMetaForStages(template.stages, graph, runtimeAddress, runtimeSecret)
   const promises = []
-  stages.forEach((stage: Stage) => {
+  template.stages.forEach((stage: Stage) => {
     stage.expectedInputs.forEach((expectedInput: ExpectedInput) => {
       promises.push((async () => {
         const handler: Handler = mapInputToHandler(expectedInput)
@@ -263,6 +260,7 @@ const getRegisterConfig = (formInputs: FormInputs, process: string, id: string, 
 }
 
 export {
+  getProcesses,
   getProcess,
   setProcessProp,
   newProcess,
@@ -302,6 +300,4 @@ export {
   summaryP.then((summaryParticipants: ContactableConfig[]) => {
     updatePList('summaryParticipants', null, summaryParticipants)
   })
-
-
 */

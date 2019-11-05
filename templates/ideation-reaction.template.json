@@ -1,5 +1,6 @@
 {
-  "name": "Ideation/Reaction",
+  "id": "ideation-reaction",
+  "name": "Ideation / Reaction",
   "description": "<p>There are THREE stages to this particular process, the Ideation stage, Reaction stage, and the Summary stage.</p><ol><li>The IDEATION stage can be used for generating one or more responses to any prompt.</li><li>The REACTION stage can be used for determining reactions (feelings) about the responses from IDEATION stage.</li><li>The SUMMARY stage is to send the full list of results to someone(s).</li></ol>",
   "resultConnection": "rsf/FormatReactionsList_cukq9() FORMATTED -> IN core/MakeFunction_lsxgf()",
   "stages": [
@@ -12,7 +13,7 @@
           "port": "prompt",
           "placeholder": "e.g. What is your definition of Collective Intelligence?",
           "label": "What is the prompt you would like to give participants, to reflect on and respond to?",
-          "inputTypeOverride": "textarea"
+          "inputTypeOverride": "Textarea"
         },
         {
           "process": "rsf/CollectResponses_lctpp",
@@ -40,7 +41,7 @@
           "label": "What are the options you'd like to give participants to react with? Add custom ones by adding options in the format of 'b+B=Block, c+C=Clock' where 'b+B' are the 'triggers' that people type, and 'Block' is the thing they are choosing, and ', ' is the separator.",
           "placeholder": "a+A=Agree, d+D=Disagree, ...",
           "defaultValue": "a+A=Agree, d+D=Disagree, p+P=Pass",
-          "inputTypeOverride": "textarea"
+          "inputTypeOverride": "Textarea"
         },
         {
           "process": "rsf/ResponseForEach_cd3dx",

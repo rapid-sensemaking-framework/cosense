@@ -48,7 +48,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var fbpGraph = require("fbp-graph");
-var fbp_1 = require("../react-electron/fbp");
+var fbp_1 = require("./fbp");
 var start = function (jsonGraph, runtimeAddress, runtimeSecret, dataWatcher) {
     if (dataWatcher === void 0) { dataWatcher = function (signal) { }; }
     return __awaiter(void 0, void 0, void 0, function () {

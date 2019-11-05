@@ -1,10 +1,10 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var CONTACTABLE_CONFIG_PORT_NAME = 'contactable_configs';
 exports.CONTACTABLE_CONFIG_PORT_NAME = CONTACTABLE_CONFIG_PORT_NAME;
 var URLS = {
     DEV: {
-        REGISTER: '/dev-register'
+        REGISTER: '/dev-register',
     },
     INDEX: '/',
     REGISTER: function (id) { return "/register/" + id; },
@@ -19,9 +19,7 @@ var EVENTS = {
         PARTICIPANT_REGISTER: 'participant_register'
     },
     RECEIVE: {
-        // final / sum
         PARTICIPANT_REGISTER_RESULTS: 'participant_register_results',
-        // each individual
         PARTICIPANT_REGISTER_RESULT: 'participant_register_result'
     },
     IPC: {
@@ -29,6 +27,10 @@ var EVENTS = {
         TEMPLATE_SUBMIT_HANDLED: 'template_submit_handled',
         GET_PROCESS: 'get_process',
         RETURN_PROCESS: 'return_process',
+        GET_PROCESSES: 'get_processes',
+        RETURN_PROCESSES: 'return_processes',
+        GET_TEMPLATE: 'get_template',
+        RETURN_TEMPLATE: 'return_template',
         HANDLE_FACIL_CONTACTABLES_SUBMIT: function (id) { return "handle_facil_contactables_submit_" + id; }
     }
 };

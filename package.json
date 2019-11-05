@@ -5,13 +5,15 @@
   "devDependencies": {
     "electron": "^1.7.9",
     "foreman": "^2.0.0",
-    "react-scripts": "0.8.5"
+    "react-scripts": "^3.2.0"
   },
   "dependencies": {
+    "dotenv": "^8.2.0",
     "fbp-client": "^0.4.0",
     "fbp-graph": "^0.4.0",
     "fix-path": "^2.1.0",
     "react": "^16.1.1",
+    "react-app-polyfill": "^1.0.4",
     "react-dom": "^16.1.1",
     "react-router-dom": "^5.1.2",
     "socket.io-client": "^2.3.0",
@@ -26,10 +28,22 @@
     "eject": "react-scripts eject",
     "electron": "electron .",
     "electron-start": "node electron/electron-only/electron-wait-react",
-    "react-start": "react-scripts start",
+    "react-start": "BROWSER=none react-scripts start",
     "tswatch-electron": "tsc --build tsconfig-electron.json --watch",
     "tsbuild-electron": "tsc --build tsconfig-electron.json",
     "tswatch-react": "tsc --build tsconfig-react.json --watch",
     "tsbuild-react": "tsc --build tsconfig-react.json"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

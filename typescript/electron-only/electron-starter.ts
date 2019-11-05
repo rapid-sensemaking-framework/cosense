@@ -1,8 +1,10 @@
+import * as dotenv from 'dotenv'
 import * as path from 'path'
 import * as url from 'url'
 import * as electron from 'electron'
 import * as fixPath from 'fix-path'
 fixPath()
+dotenv.config()
 
 // handle ipc events
 import attachEventListeners from './event-listeners'
@@ -24,13 +26,13 @@ function createWindow() {
 
   // and load the index.html of the app.
   const startUrl = process.env.ELECTRON_START_URL || url.format({
-    pathname: path.join(__dirname, '/../build/index.html'),
+    pathname: path.join(__dirname, '/../../build/index.html'),
     protocol: 'file:',
     slashes: true
   })
   mainWindow.loadURL(startUrl)
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-export default function ContactableForm({ expectedInput, onChange }) {
+export default function FormTextarea({ expectedInput, onChange }) {
   const { process, port, placeholder, defaultValue, label } = expectedInput
   const ident = `${process}--${port}`
   const innerOnChange = (evt) => {
@@ -14,6 +14,6 @@ export default function ContactableForm({ expectedInput, onChange }) {
 
   return <div>
     <label htmlFor={ident}>{label}</label>
-    <input type="text"  id={ident} name={ident} placeholder={placeholder} value={defaultValue} onChange={innerOnChange} />
+    <textarea id={ident} name={ident} placeholder={placeholder} defaultValue={defaultValue} onChange={innerOnChange}></textarea>
   </div>
 }

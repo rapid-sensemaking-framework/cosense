@@ -1,4 +1,5 @@
 {
+  "id": "reaction",
   "name": "Reaction",
   "description": "<p>There are TWO stages to this particular process, the Reaction stage, and the Summary stage.</p><ol><li>The REACTION stage can be used for determining reactions (feelings) about each from a list of provided statements.</li><li>The SUMMARY stage is to send the full list of results to someone(s).</li></ol>",
   "resultConnection": "rsf/FormatReactionsList_yusc1() FORMATTED -> IN core/MakeFunction_sy01e()",
@@ -18,7 +19,7 @@
           "label": "What are the options you'd like to give participants to react with? Add custom ones by adding options in the format of 'b+B=Block, c+C=Clock' where 'b+B' are the 'triggers' that people type, and 'Block' is the thing they are choosing, and ', ' is the separator.",
           "placeholder": "a+A=Agree, d+D=Disagree, ...",
           "defaultValue": "a+A=Agree, d+D=Disagree, p+P=Pass",
-          "inputTypeOverride": "textarea"
+          "inputTypeOverride": "Textarea"
         },
         {
           "process": "rsf/ResponseForEach_x4cv2",

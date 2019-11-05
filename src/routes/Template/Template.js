@@ -7,61 +7,40 @@ import {
   getTemplate
 } from '../../templates'
 import {
-  getGraph
-} from '../../graphs'
-import {
   EVENTS
 } from '../../ts-built/constants'
 import {
-  componentMetaForStages
-} from '../../ts-built/utils'
-import {
   getElectron
 } from '../../electron-require'
+import * as forms from './forms'
 
 const electron = getElectron()
 const ipc = electron.ipcRenderer
-const runtimeAddress = electron.remote.process.env.ADDRESS
-const runtimeSecret = electron.remote.process.env.TOP_SECRET
-
-async function fetchTemplate(templateId) {
-  const t = await getTemplate(templateId)
-  if (t) {
-    const graph = await getGraph(templateId) // templateId matches graphId
-    const stages = await componentMetaForStages(t.stages, graph, runtimeAddress, runtimeSecret)
-    return {
-      ...t,
-      stages // override stages with new metadata
-    }
-  } else {
-    return null
-  }
-}
 
 // noflo input types
 // all, string, number, int, object, array, boolean, color, date, bang, function, buffer, stream
 // map these to form inputs
 // allow for overrides
 const nofloTypeMap = {
-  string: 'text',
-  number: 'text',
-  int: 'text',
-  boolean: 'checkbox',
-  array: 'text',
-  object: 'text',
-  all: 'text'
+  string: 'Text',
+  number: 'Text',
+  int: 'Text',
+  boolean: 'Checkbox', // TODO
+  array: 'Text',
+  object: 'Text',
+  all: 'Text'
   // TODO: the rest
 }
 const specialPorts = {
-  contactable_configs: 'register_config',
-  statements: 'textarea'
+  contactable_configs: 'RegisterConfig',
+  statements: 'Textarea'
 }
 // TODO: create a default?
-const mapInputToFormType = (expectedInput) => {
+const mapInputToFormFieldType = (expectedInput) => {
   const { type, port, inputTypeOverride } = expectedInput
   // specialPorts > inputTypeOverride > basic type
-  const form_partial = specialPorts[port] || inputTypeOverride || nofloTypeMap[type]
-  return `form_${form_partial}`
+  const name = specialPorts[port] || inputTypeOverride || nofloTypeMap[type]
+  return `Form${name}`
 }
 
 export default function Template() {
@@ -73,7 +52,7 @@ export default function Template() {
   const { templateId } = useParams()
 
   useEffect(() => {
-    fetchTemplate(templateId).then(setTemplate)
+    getTemplate(templateId).then(setTemplate)
   }, [templateId])
 
   if (!template) {
@@ -83,9 +62,7 @@ export default function Template() {
   const onSubmit = async (event) => {
     event.preventDefault()
     const inputs = { ...formData }
-    const template = await getTemplate(templateId)
-    const graph = await getGraph(templateId)
-    ipc.send(EVENTS.IPC.HANDLE_TEMPLATE_SUBMIT, { inputs, templateId, template, graph })
+    ipc.send(EVENTS.IPC.HANDLE_TEMPLATE_SUBMIT, { inputs, templateId, template })
     const processId = await new Promise((resolve) => {
       ipc.once(EVENTS.IPC.TEMPLATE_SUBMIT_HANDLED, (event, processId) => resolve(processId))
     })
@@ -131,14 +108,15 @@ export default function Template() {
         <h2>{stage.name}</h2>
         <p>{stage.description}</p>
         {stage.expectedInputs.map((expectedInput, index) => {
-          const formCompPath = `./forms/${mapInputToFormType(expectedInput)}`
-          const C = require(formCompPath).default
+          // which component to use
+          const formName = mapInputToFormFieldType(expectedInput)
+          const C = forms[formName]
           return <C key={index} expectedInput={expectedInput} onChange={onChange} />
         })}
         <hr />
       </div>
     ))}
     <br />
-    <button type="submit">Move To Configure Participants</button>
+    <button type="submit" onClick={onSubmit}>Move To Configure Participants</button>
   </form>
 }

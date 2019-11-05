@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-export default function RegisterConfig({ expectedInput, onChange }) {
+export default function FormRegisterConfig({ expectedInput, onChange }) {
   const facilChoiceString = 'facil_register'
   const publicChoiceString = 'public_choice'
   const [configChoice, setConfigChoice] = useState(facilChoiceString)

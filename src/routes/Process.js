@@ -11,7 +11,8 @@ import {
   getElectron
 } from '../electron-require'
 import {
-  remainingTime
+  remainingTime,
+  getRegisterAddress
 } from '../ts-built/utils'
 import ContactablesForm from '../components/ContactablesForm'
 import RegisterLink from '../components/RegisterLink'
@@ -33,16 +34,12 @@ function sendContactableConfigs(id, contactableConfigs) {
 export default function Process() {
   const { processId } = useParams()
   const defaultProcess = null
-  // const defaultContactableConfigs = []
   const [process, setProcess] = useState(defaultProcess)
   const [cacheBreaker, breakCache] = useState('')
-  // const [contactableConfigs, setContactableConfigs] = useState(defaultContactableConfigs)
 
   useEffect(() => {
     fetchProcess(processId).then(setProcess) // could be null
   }, [processId, cacheBreaker])
-
-  console.log(process)
 
   if (!process) {
     return <div>404 not found (requested: {processId})</div>
@@ -51,6 +48,7 @@ export default function Process() {
   const processResults = process.results ? process.results.replace(/\n/g, "<br />") : ''
 
   return <div>
+    <h6>Process ID: { processId }</h6>
     <h1>{ process.configuring ? 'Configure Participants' : 'Dashboard' }</h1>
     {process.running && <p>
       The process is live and running now. The results will be posted here when it's complete.
@@ -76,15 +74,14 @@ export default function Process() {
             const timeLeft = remainingTime(registerConfig.maxTime, process.startTime)
             // make this relate to registerConfig
             const onSubmit = (contactableConfigs) => {
-              console.log(registerConfig.id, contactableConfigs)
               sendContactableConfigs(registerConfig.id, contactableConfigs)
               // this might be bug prone
               setTimeout(() => {
                 breakCache(Math.random()) // so that it will refetch the process and display results
               }, 200)
             }
-            const wsUrl = new URL(registerConfig.wsUrl)
-            const url = `http://${wsUrl.host}${URLS.REGISTER(registerConfig.id)}`
+            const hostUrl = getRegisterAddress(electron.remote.process.env, 'REGISTER_HTTP_PROTOCOL')
+            const url = hostUrl + URLS.REGISTER(registerConfig.id)
             return <div key={`register-${expectedIndex}`}>
               {!registerConfig.isFacilitator && <RegisterLink timeLeft={timeLeft} url={url} />}
               {registerConfig.isFacilitator && participants.length === 0 && <ContactablesForm onSubmit={onSubmit} />}
@@ -104,9 +101,3 @@ export default function Process() {
     })}
   </div>
 }
-
-/*
-
-url: `${process.env.URL}${registerConfig.path}`
-
-*/

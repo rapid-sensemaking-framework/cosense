@@ -1,10 +1,12 @@
 "use strict";
 exports.__esModule = true;
+var dotenv = require("dotenv");
 var path = require("path");
 var url = require("url");
 var electron = require("electron");
 var fixPath = require("fix-path");
 fixPath();
+dotenv.config();
 // handle ipc events
 var event_listeners_1 = require("./event-listeners");
 event_listeners_1["default"]();
@@ -20,13 +22,13 @@ function createWindow() {
     mainWindow = new BrowserWindow({ width: 800, height: 600, webPreferences: { nodeIntegration: true } });
     // and load the index.html of the app.
     var startUrl = process.env.ELECTRON_START_URL || url.format({
-        pathname: path.join(__dirname, '/../build/index.html'),
+        pathname: path.join(__dirname, '/../../build/index.html'),
         protocol: 'file:',
         slashes: true
     });
     mainWindow.loadURL(startUrl);
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools()
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
         // Dereference the window object, usually you would store windows

@@ -2,7 +2,7 @@
 exports.__esModule = true;
 var electron = require("electron");
 var socketClient = require("socket.io-client");
-var constants_1 = require("../react-electron/constants");
+var constants_1 = require("../constants");
 var ipc = electron.ipcMain;
 // ipc local
 var getContactablesFromFacilitator = function (id) {
