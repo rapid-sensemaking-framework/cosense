@@ -1,11 +1,11 @@
 {
-  "name": "electron-with-create-react-app",
+  "name": "rapid-sensemaking-framework",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
     "electron": "^1.7.9",
-    "foreman": "^2.0.0",
-    "react-scripts": "^3.2.0"
+    "react-scripts": "^3.2.0",
+    "foreman": "^3.0.1"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
