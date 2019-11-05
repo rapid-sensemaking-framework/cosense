@@ -73,9 +73,10 @@ var setProcessProp = function (id, key, value) { return __awaiter(void 0, void 0
 }); };
 exports.setProcessProp = setProcessProp;
 var newProcess = function (formInputs, templateId, template, graph, registerWsUrl) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, registerConfigs, participants, newProcess;
+    var id, startTime, registerConfigs, participants, newProcess;
     return __generator(this, function (_a) {
         id = utils_1.guidGenerator();
+        startTime = Date.now();
         registerConfigs = {};
         participants = {};
         template.stages.forEach(function (stage) {
@@ -99,7 +100,7 @@ var newProcess = function (formInputs, templateId, template, graph, registerWsUr
             complete: false,
             results: null,
             error: null,
-            startTime: Date.now(),
+            startTime: startTime,
             formInputs: formInputs,
             registerConfigs: registerConfigs,
             participants: participants

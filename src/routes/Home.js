@@ -51,11 +51,14 @@ export default function Home() {
             {matchedProcesses.length > 0 && <div>
               Processes<br />
               {matchedProcesses.map((mp, mpIndex) => {
-                return <Link key={`mp-${mpIndex}`} to={`/process/${mp.id}`}>
-                  {mp.id.slice(0, 10)}...
-                  {mp.complete && `✓`}
-                  {mp.error && `❌`}
-                </Link>
+                return <div>
+                  <Link key={`mp-${mpIndex}`} to={`/process/${mp.id}`}>
+                    {mp.id.slice(0, 10)}...
+                    {mp.complete && `✓`}
+                    {mp.error && `❌`}
+                  </Link>
+                  <br />
+                </div>
               })}
             </div>}
           </div>

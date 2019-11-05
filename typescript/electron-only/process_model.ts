@@ -52,6 +52,7 @@ const newProcess = async (
   registerWsUrl: string
 ): Promise<string> => {
   const id = guidGenerator()
+  const startTime = Date.now()
   const registerConfigs = {}
   const participants = {}
   template.stages.forEach((stage: Stage) => {
@@ -76,7 +77,7 @@ const newProcess = async (
     complete: false,
     results: null,
     error: null,
-    startTime: Date.now(),
+    startTime,
     formInputs,
     registerConfigs,
     participants

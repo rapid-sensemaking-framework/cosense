@@ -4,9 +4,21 @@ var dotenv = require("dotenv");
 var path = require("path");
 var url = require("url");
 var electron = require("electron");
+var electron_log_1 = require("electron-log");
 var fixPath = require("fix-path");
 fixPath();
-dotenv.config();
+electron_log_1.log('process.execPath', process.execPath);
+console.log(electron_log_1.transports.file.findLogPath());
+var dotenvPath;
+if (process.env.ELECTRON_START_URL) {
+    console.log('using development env vars');
+    dotenvPath = path.join(electron.app.getAppPath(), '.env-dev');
+}
+else {
+    console.log('using production env vars');
+    dotenvPath = path.join(electron.app.getAppPath(), '.env-prod');
+}
+dotenv.config({ path: dotenvPath });
 // handle ipc events
 var event_listeners_1 = require("./event-listeners");
 event_listeners_1["default"]();

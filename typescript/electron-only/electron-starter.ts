@@ -2,9 +2,21 @@ import * as dotenv from 'dotenv'
 import * as path from 'path'
 import * as url from 'url'
 import * as electron from 'electron'
+// import { log, transports } from 'electron-log'
 import * as fixPath from 'fix-path'
 fixPath()
-dotenv.config()
+
+// transports.file.findLogPath()
+
+let dotenvPath
+if (process.env.ELECTRON_START_URL) {
+  console.log('using development env vars')
+  dotenvPath = path.join(electron.app.getAppPath(), '.env-dev')
+} else {
+  console.log('using production env vars')
+  dotenvPath = path.join(electron.app.getAppPath(), '.env-prod')
+}
+dotenv.config({ path: dotenvPath })
 
 // handle ipc events
 import attachEventListeners from './event-listeners'
