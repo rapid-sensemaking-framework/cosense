@@ -34,7 +34,8 @@
     "tsbuild-electron": "tsc --build tsconfig-electron.json",
     "tswatch-react": "tsc --build tsconfig-react.json --watch",
     "tsbuild-react": "tsc --build tsconfig-react.json",
-    "package-mac": "electron-packager . RSF --platform=darwin --overwrite"
+    "package-mac": "electron-packager . RSF --platform=darwin --overwrite",
+    "package-win": "electron-packager . RSF --platform=win32 --overwrite"
   },
   "browserslist": {
     "production": [
