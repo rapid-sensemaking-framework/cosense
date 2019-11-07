@@ -9,13 +9,13 @@ export default function RegisterLink({ timeLeft, url }) {
     e.preventDefault()
     shell.openExternal(url)
   }
-  return <div>
-    {!over && <div>
+  return <>
+    {!over && <>
       <p>Registration will remain open for another <SecondCountdown seconds={timeLeft} over={() => setOver(true)} /> seconds.</p>
       <div>Link to share</div>
       <a className="float-right" href={ url } onClick={onClickLink}>preview</a>
       <input type="text" readOnly value={ url }></input>
-    </div>}
+    </>}
     {over && <p>Registration is now closed.</p>}
-  </div>
+  </>
 }

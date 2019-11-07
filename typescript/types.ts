@@ -49,6 +49,7 @@ interface Template {
   resultConnection: string,
   id: string
   path?: string
+  parentTemplate?: string // references another template by its id
 }
 
 type RegisterConfigSet = {
