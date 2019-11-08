@@ -72,6 +72,7 @@ export default function Template() {
     <form onSubmit={onSubmit}>
       <hr />
       <h1>Template :: {template.name}</h1>
+      {template.parentTemplate && <>Parent Template: <Link to={`/template/${template.parentTemplate}`}>{ template.parentTemplate }</Link></>}
       <div dangerouslySetInnerHTML={{ __html: template.description }} />
       <p>
         As soon as you finish filling in this form and configuring participants, the rsf process will commence, meaning messages will immediately be sent to the participants.
