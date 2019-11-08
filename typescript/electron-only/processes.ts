@@ -1,4 +1,6 @@
 import * as electron from 'electron'
+import * as path from 'path'
+import * as fs from 'fs'
 import {
   CONTACTABLE_CONFIG_PORT_NAME,
   EVENTS
@@ -31,22 +33,55 @@ import {
 
 const { BrowserWindow } = electron
 
-const processes = {}
+const PROCESSES_FOLDER = 'processes'
+
+const getProcessPath = (processId: string) => {
+  return path.join(electron.app.getAppPath(), `${PROCESSES_FOLDER}/${processId}.json`)
+}
+
+const getProcessAsObject = (processId: string) => {
+  const processPath = getProcessPath(processId)
+  const processString = fs.readFileSync(processPath, { encoding: 'utf8' })
+  const process: Process = JSON.parse(processString)
+  return process
+}
+
+const writeProcess = (processId, process) => {
+  const processPath = getProcessPath(processId)
+  fs.writeFileSync(processPath, JSON.stringify(process))
+}
 
 const getProcesses = async (): Promise<Process[]> => {
-  return Object.values(processes)
+  return new Promise((resolve, reject) => {
+    const processesPath = path.join(electron.app.getAppPath(), PROCESSES_FOLDER)
+    fs.readdir(processesPath, (err, files) => {
+      if (err) {
+        reject(err)
+        return
+      }
+      const templates = files.map(filename => {
+        return getProcessAsObject(filename.replace('.json', ''))
+      })
+      resolve(templates)
+    })
+  })
 }
 
 const getProcess = async (id: string): Promise<Process> => {
-  return processes[id]
+  return getProcessAsObject(id)
 }
 
 const setProcessProp = async (id: string, key: string, value: any): Promise<boolean> => {
   console.log(`updating process ${id} value ${key}: ${JSON.stringify(value)}`)
-  processes[id][key] = value
+  const orig = await getProcess(id)
+  const newProcess = {
+    ...orig,
+    [key]: value
+  }
+  writeProcess(id, newProcess)
   // send this updated value to any BrowserWindow that is listening
   BrowserWindow.getAllWindows().forEach(win => {
-    win.webContents.send(EVENTS.IPC.PROCESS_UPDATE(id), processes[id])
+    win.webContents.send(EVENTS.IPC.PROCESS_UPDATE(id), newProcess)
   })
   return true
 }
@@ -93,7 +128,7 @@ const newProcess = async (
     registerConfigs,
     participants
   }
-  processes[newProcess.id] = newProcess
+  writeProcess(newProcess.id, newProcess)
   console.log('created a new process configuration', newProcess.id)
   return newProcess.id
 }
@@ -104,7 +139,7 @@ const cloneProcess = async (processId): Promise<string> => {
     ...orig,
     ...newProcessDefaults()
   }
-  processes[newProcess.id] = newProcess
+  writeProcess(newProcess.id, newProcess)
   console.log('created a new process configuration by cloning', newProcess.id)
   return newProcess.id
 }
@@ -207,7 +242,7 @@ const updateParticipants = async (processId: string, name: string, newParticipan
     ...p.participants,
     [name]: overwrite ? newParticipants : p.participants[name].concat(newParticipants)
   }
-  setProcessProp(processId, 'participants', participants)
+  await setProcessProp(processId, 'participants', participants)
 }
 
 const getHandlerInput = (
@@ -284,24 +319,24 @@ const runProcess = async (processId: string, runtimeAddress: string, runtimeSecr
 
   // once they're all ready, now commence the process
   // mark as running now
-  setProcessProp(processId, 'configuring', false)
-  setProcessProp(processId, 'running', true)
+  await setProcessProp(processId, 'configuring', false)
+  await setProcessProp(processId, 'running', true)
   const jsonGraph = overrideJsonGraph(GraphConnections, graph)
-  const dataWatcher = (signal) => {
+  const dataWatcher = async (signal) => {
     if (signal.id === template.resultConnection) {
       // save the results to the process
-      setProcessProp(processId, 'results', signal.data)
+      await setProcessProp(processId, 'results', signal.data)
     }
   }
 
   start(jsonGraph, runtimeAddress, runtimeSecret, dataWatcher)
-    .then(() => {
-      setProcessProp(processId, 'running', false)
-      setProcessProp(processId, 'complete', true)
+    .then(async () => {
+      await setProcessProp(processId, 'running', false)
+      await setProcessProp(processId, 'complete', true)
     }) // logs and save to memory
-    .catch((e) => {
-      setProcessProp(processId, 'running', false)
-      setProcessProp(processId, 'error', e)
+    .catch(async (e) => {
+      await setProcessProp(processId, 'running', false)
+      await setProcessProp(processId, 'error', e)
     }) // logs and save to memory
 }
 

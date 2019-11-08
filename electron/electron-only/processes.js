@@ -48,33 +48,69 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var electron = require("electron");
+var path = require("path");
+var fs = require("fs");
 var constants_1 = require("../constants");
 var utils_1 = require("../utils");
 var participant_register_1 = require("./participant_register");
 var run_graph_1 = require("./run_graph");
 var BrowserWindow = electron.BrowserWindow;
-var processes = {};
+var PROCESSES_FOLDER = 'processes';
+var getProcessPath = function (processId) {
+    return path.join(electron.app.getAppPath(), PROCESSES_FOLDER + "/" + processId + ".json");
+};
+var getProcessAsObject = function (processId) {
+    var processPath = getProcessPath(processId);
+    var processString = fs.readFileSync(processPath, { encoding: 'utf8' });
+    var process = JSON.parse(processString);
+    return process;
+};
+var writeProcess = function (processId, process) {
+    var processPath = getProcessPath(processId);
+    fs.writeFileSync(processPath, JSON.stringify(process));
+};
 var getProcesses = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        return [2 /*return*/, Object.values(processes)];
+        return [2 /*return*/, new Promise(function (resolve, reject) {
+                var processesPath = path.join(electron.app.getAppPath(), PROCESSES_FOLDER);
+                fs.readdir(processesPath, function (err, files) {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    var templates = files.map(function (filename) {
+                        return getProcessAsObject(filename.replace('.json', ''));
+                    });
+                    resolve(templates);
+                });
+            })];
     });
 }); };
 exports.getProcesses = getProcesses;
 var getProcess = function (id) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        return [2 /*return*/, processes[id]];
+        return [2 /*return*/, getProcessAsObject(id)];
     });
 }); };
 exports.getProcess = getProcess;
 var setProcessProp = function (id, key, value) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        console.log("updating process " + id + " value " + key + ": " + JSON.stringify(value));
-        processes[id][key] = value;
-        // send this updated value to any BrowserWindow that is listening
-        BrowserWindow.getAllWindows().forEach(function (win) {
-            win.webContents.send(constants_1.EVENTS.IPC.PROCESS_UPDATE(id), processes[id]);
-        });
-        return [2 /*return*/, true];
+    var orig, newProcess;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                console.log("updating process " + id + " value " + key + ": " + JSON.stringify(value));
+                return [4 /*yield*/, getProcess(id)];
+            case 1:
+                orig = _b.sent();
+                newProcess = __assign(__assign({}, orig), (_a = {}, _a[key] = value, _a));
+                writeProcess(id, newProcess);
+                // send this updated value to any BrowserWindow that is listening
+                BrowserWindow.getAllWindows().forEach(function (win) {
+                    win.webContents.send(constants_1.EVENTS.IPC.PROCESS_UPDATE(id), newProcess);
+                });
+                return [2 /*return*/, true];
+        }
     });
 }); };
 exports.setProcessProp = setProcessProp;
@@ -111,7 +147,7 @@ var newProcess = function (formInputs, templateId, template, graph, registerWsUr
             formInputs: formInputs,
             registerConfigs: registerConfigs,
             participants: participants });
-        processes[newProcess.id] = newProcess;
+        writeProcess(newProcess.id, newProcess);
         console.log('created a new process configuration', newProcess.id);
         return [2 /*return*/, newProcess.id];
     });
@@ -125,7 +161,7 @@ var cloneProcess = function (processId) { return __awaiter(void 0, void 0, void 
             case 1:
                 orig = _a.sent();
                 newProcess = __assign(__assign({}, orig), newProcessDefaults());
-                processes[newProcess.id] = newProcess;
+                writeProcess(newProcess.id, newProcess);
                 console.log('created a new process configuration by cloning', newProcess.id);
                 return [2 /*return*/, newProcess.id];
         }
@@ -254,7 +290,9 @@ var updateParticipants = function (processId, name, newParticipants, overwrite) 
             case 1:
                 p = _b.sent();
                 participants = __assign(__assign({}, p.participants), (_a = {}, _a[name] = overwrite ? newParticipants : p.participants[name].concat(newParticipants), _a));
-                setProcessProp(processId, 'participants', participants);
+                return [4 /*yield*/, setProcessProp(processId, 'participants', participants)];
+            case 2:
+                _b.sent();
                 return [2 /*return*/];
         }
     });
@@ -324,24 +362,57 @@ var runProcess = function (processId, runtimeAddress, runtimeSecret) { return __
                 GraphConnections = _b.sent();
                 // once they're all ready, now commence the process
                 // mark as running now
-                setProcessProp(processId, 'configuring', false);
-                setProcessProp(processId, 'running', true);
+                return [4 /*yield*/, setProcessProp(processId, 'configuring', false)];
+            case 3:
+                // once they're all ready, now commence the process
+                // mark as running now
+                _b.sent();
+                return [4 /*yield*/, setProcessProp(processId, 'running', true)];
+            case 4:
+                _b.sent();
                 jsonGraph = run_graph_1.overrideJsonGraph(GraphConnections, graph);
-                dataWatcher = function (signal) {
-                    if (signal.id === template.resultConnection) {
-                        // save the results to the process
-                        setProcessProp(processId, 'results', signal.data);
-                    }
-                };
+                dataWatcher = function (signal) { return __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                if (!(signal.id === template.resultConnection)) return [3 /*break*/, 2];
+                                // save the results to the process
+                                return [4 /*yield*/, setProcessProp(processId, 'results', signal.data)];
+                            case 1:
+                                // save the results to the process
+                                _a.sent();
+                                _a.label = 2;
+                            case 2: return [2 /*return*/];
+                        }
+                    });
+                }); };
                 run_graph_1.start(jsonGraph, runtimeAddress, runtimeSecret, dataWatcher)
-                    .then(function () {
-                    setProcessProp(processId, 'running', false);
-                    setProcessProp(processId, 'complete', true);
-                }) // logs and save to memory
-                ["catch"](function (e) {
-                    setProcessProp(processId, 'running', false);
-                    setProcessProp(processId, 'error', e);
-                }); // logs and save to memory
+                    .then(function () { return __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, setProcessProp(processId, 'running', false)];
+                            case 1:
+                                _a.sent();
+                                return [4 /*yield*/, setProcessProp(processId, 'complete', true)];
+                            case 2:
+                                _a.sent();
+                                return [2 /*return*/];
+                        }
+                    });
+                }); }) // logs and save to memory
+                ["catch"](function (e) { return __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, setProcessProp(processId, 'running', false)];
+                            case 1:
+                                _a.sent();
+                                return [4 /*yield*/, setProcessProp(processId, 'error', e)];
+                            case 2:
+                                _a.sent();
+                                return [2 /*return*/];
+                        }
+                    });
+                }); }); // logs and save to memory
                 return [2 /*return*/];
         }
     });
