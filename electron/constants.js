@@ -26,16 +26,22 @@ var EVENTS = {
     },
     IPC: {
         PROCESS_UPDATE: function (id) { return "process_update_" + id; },
-        HANDLE_TEMPLATE_SUBMIT: 'handle_template_submit',
-        TEMPLATE_SUBMIT_HANDLED: 'template_submit_handled',
+        CREATE_AND_RUN_PROCESS: 'create_and_run_process',
+        PROCESS_CREATED_AND_RUN: 'process_created_and_run',
+        UPDATE_TEMPLATE: 'update_template',
+        TEMPLATE_UPDATED: 'template_updated',
         GET_PROCESS: 'get_process',
         RETURN_PROCESS: 'return_process',
         CLONE_PROCESS: 'clone_process',
         PROCESS_CLONED: 'process_cloned',
+        CLONE_TEMPLATE: 'clone_template',
+        TEMPLATE_CLONED: 'template_cloned',
         GET_PROCESSES: 'get_processes',
         RETURN_PROCESSES: 'return_processes',
         GET_TEMPLATE: 'get_template',
         RETURN_TEMPLATE: 'return_template',
+        GET_TEMPLATES: 'get_templates',
+        RETURN_TEMPLATES: 'return_templates',
         HANDLE_FACIL_CONTACTABLES_SUBMIT: function (id) { return "handle_facil_contactables_submit_" + id; }
     }
 };

@@ -1,6 +1,7 @@
 {
   "id": "ideation-reaction",
   "name": "Ideation / Reaction",
+  "graphName": "ideation-reaction.json",
   "description": "<p>There are THREE stages to this particular process, the Ideation stage, Reaction stage, and the Summary stage.</p><ol><li>The IDEATION stage can be used for generating one or more responses to any prompt.</li><li>The REACTION stage can be used for determining reactions (feelings) about the responses from IDEATION stage.</li><li>The SUMMARY stage is to send the full list of results to someone(s).</li></ol>",
   "resultConnection": "rsf/FormatReactionsList_cukq9() FORMATTED -> IN core/MakeFunction_lsxgf()",
   "stages": [

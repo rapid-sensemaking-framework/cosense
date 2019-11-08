@@ -1,6 +1,7 @@
 {
   "id": "ideation",
   "name": "Ideation",
+  "graphName": "ideation.json",
   "description": "<p>There are TWO stages to this particular process, the Ideation stage, and the Summary stage.</p><ol><li>The IDEATION stage can be used for generating one or more responses to any prompt.</li><li>The SUMMARY stage is to send the full list of results to someone(s).</li></ol>",
   "resultConnection": "rsf/FormatStatementList_m4rzd() FORMATTED -> IN core/MakeFunction_qbcnw()",
   "stages": [

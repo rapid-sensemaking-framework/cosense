@@ -3,10 +3,10 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  Link
 } from 'react-router-dom'
 // import './App.css'
-import Template from './routes/Template/Template'
+import Template from './routes/Template'
+import EditTemplate from './routes/EditTemplate'
 import Process from './routes/Process'
 import Home from './routes/Home'
 
@@ -16,17 +16,10 @@ class App extends Component {
       <Router>
         <div className="main">
           <Switch>
-            <Route path="/template/:templateId">
-              <Link to="/">Home</Link>
-              <Template />
-            </Route>
-            <Route path="/process/:processId">
-              <Link to="/">Home</Link>
-              <Process />
-            </Route>
-            <Route path="/">
-              <Home />
-            </Route>
+            <Route exact path="/template/:templateId" component={Template} />
+            <Route path="/template/:templateId/edit" component={EditTemplate} />
+            <Route path="/process/:processId" component={Process} />
+            <Route path="/" component={Home} />
           </Switch>
         </div>
       </Router>

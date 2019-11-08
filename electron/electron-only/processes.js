@@ -359,4 +359,4 @@ var getRegisterConfig = function (formInputs, process, id, wsUrl) {
     };
 };
 exports.getRegisterConfig = getRegisterConfig;
-//# sourceMappingURL=process_model.js.map
+//# sourceMappingURL=processes.js.map

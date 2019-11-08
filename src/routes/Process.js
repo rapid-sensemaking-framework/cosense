@@ -1,29 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import {
+  Link,
   useParams,
   useHistory
 } from 'react-router-dom'
 import {
-  EVENTS,
-} from '../ts-built/constants'
-import {
-  getElectron
-} from '../electron-require'
+  getProcess,
+  cloneProcess,
+  onProcessUpdate,
+  sendContactableConfigs
+} from '../ipc'
 import Stage from '../components/Stage'
-
-const electron = getElectron()
-const ipc = electron.ipcRenderer
-
-async function fetchProcess(processId) {
-  ipc.send(EVENTS.IPC.GET_PROCESS, processId)
-  return await new Promise((resolve) => {
-    ipc.once(EVENTS.IPC.RETURN_PROCESS, (event, process) => resolve(process))
-  })
-}
-
-function sendContactableConfigs(id, contactableConfigs) {
-  return ipc.send(EVENTS.IPC.HANDLE_FACIL_CONTACTABLES_SUBMIT(id), contactableConfigs)
-}
 
 export default function Process() {
   const history = useHistory()
@@ -33,18 +20,16 @@ export default function Process() {
 
   // do initial fetch, on initial load
   useEffect(() => {
-    fetchProcess(processId).then(setProcess) // could be null
+    getProcess(processId).then(setProcess) // could be null
   }, [processId])
 
   // listen for live updates
   useEffect(() => {
-    const channelId = EVENTS.IPC.PROCESS_UPDATE(processId)
-    ipc.on(channelId, (event, updatedProcess) => {
+    const cleanup = onProcessUpdate(processId, (updatedProcess) => {
       setProcess(updatedProcess)
     })
-    // cleanup
     return () => {
-      ipc.removeAllListeners(channelId)
+      cleanup()
     }
   }, [processId])
 
@@ -56,16 +41,14 @@ export default function Process() {
 
   const rerun = async (event) => {
     event.preventDefault()
-    ipc.send(EVENTS.IPC.CLONE_PROCESS, processId)
-    const newProcessId = await new Promise((resolve) => {
-      ipc.once(EVENTS.IPC.PROCESS_CLONED, (event, newProcessId) => resolve(newProcessId))
-    })
+    const newProcessId = await cloneProcess(processId)
     // redirect to the newly initiated process
     console.log('processId', newProcessId)
     history.push(`/process/${newProcessId}`)
   }
 
   return <>
+    <Link to="/">Home</Link>
     <hr />
     <h6>Process ID: {processId}</h6>
     <h2>{process.configuring ? 'Configure Participants' : ' Process Dashboard'}</h2>

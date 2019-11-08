@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -38,13 +49,55 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var electron = require("electron");
 var path = require("path");
-var process_model_1 = require("./process_model");
+var fs = require("fs");
+var processes_1 = require("./processes");
 var utils_1 = require("../utils");
 var fbp_1 = require("./fbp");
-var getGraph = function (templateId) {
-    var graphPath = path.join(electron.app.getAppPath(), "graphs/" + templateId + ".json");
+var TEMPLATES_FOLDER = 'templates';
+var getGraph = function (graphName) {
+    var graphPath = path.join(electron.app.getAppPath(), "graphs/" + graphName);
     return require(graphPath);
 };
+var getTemplatePath = function (templateId) {
+    return path.join(electron.app.getAppPath(), TEMPLATES_FOLDER + "/" + templateId + ".template.json");
+};
+var getTemplateAsObject = function (templateId) {
+    var templatePath = getTemplatePath(templateId);
+    var templateString = fs.readFileSync(templatePath, { encoding: "utf8" });
+    var template = JSON.parse(templateString);
+    return template;
+};
+var writeTemplate = function (templateId, template) {
+    var templatePath = getTemplatePath(templateId);
+    fs.writeFileSync(templatePath, JSON.stringify(template));
+};
+var updateTemplate = function (_a) {
+    var name = _a.name, description = _a.description, expectedInputs = _a.expectedInputs, templateId = _a.templateId;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var orig, newTemplate;
+        return __generator(this, function (_b) {
+            orig = getTemplateAsObject(templateId);
+            newTemplate = __assign(__assign({}, orig), { name: name,
+                description: description, stages: orig.stages.map(function (stage) {
+                    return __assign(__assign({}, stage), { expectedInputs: stage.expectedInputs.map(function (e) {
+                            // TODO consolidate references like these
+                            var key = e.process + "--" + e.port;
+                            var defaultValue = expectedInputs[key];
+                            if (defaultValue) {
+                                return __assign(__assign({}, e), { defaultValue: defaultValue });
+                            }
+                            else {
+                                return e;
+                            }
+                        }) });
+                }) });
+            writeTemplate(templateId, newTemplate);
+            return [2 /*return*/, true];
+        });
+    });
+};
+exports.updateTemplate = updateTemplate;
+// TODO: should this be in processes file?
 var handleTemplateSubmit = function (_a) {
     var inputs = _a.inputs, templateId = _a.templateId, template = _a.template;
     return __awaiter(void 0, void 0, void 0, function () {
@@ -53,40 +106,80 @@ var handleTemplateSubmit = function (_a) {
             switch (_b.label) {
                 case 0:
                     registerWsUrl = utils_1.getRegisterAddress(process.env, 'REGISTER_WS_PROTOCOL');
-                    graph = getGraph(templateId);
-                    return [4 /*yield*/, process_model_1.newProcess(inputs, templateId, template, graph, registerWsUrl)
+                    graph = getGraph(template.graphName);
+                    return [4 /*yield*/, processes_1.newProcess(inputs, templateId, template, graph, registerWsUrl)
                         // kick it off, but don't wait on it, or depend on it for anything
                     ];
                 case 1:
                     processId = _b.sent();
                     runtimeAddress = process.env.RUNTIME_ADDRESS;
                     runtimeSecret = process.env.RUNTIME_SECRET;
-                    process_model_1.runProcess(processId, runtimeAddress, runtimeSecret);
+                    processes_1.runProcess(processId, runtimeAddress, runtimeSecret);
                     return [2 /*return*/, processId];
             }
         });
     });
 };
 exports.handleTemplateSubmit = handleTemplateSubmit;
+var getTemplates = function () { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2 /*return*/, new Promise(function (resolve, reject) {
+                var templatesPath = path.join(electron.app.getAppPath(), TEMPLATES_FOLDER);
+                fs.readdir(templatesPath, function (err, files) {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    var templates = files.map(function (filename) {
+                        var templatePath = path.join(electron.app.getAppPath(), TEMPLATES_FOLDER + "/" + filename);
+                        var template = JSON.parse(fs.readFileSync(templatePath, { encoding: 'utf8' }));
+                        var shortName = filename.replace('.template.json', '');
+                        // react router route
+                        template.path = "/template/" + shortName;
+                        return template;
+                    });
+                    resolve(templates);
+                });
+            })];
+    });
+}); };
+exports.getTemplates = getTemplates;
 var getTemplate = function (templateId, runtimeAddress, runtimeSecret) { return __awaiter(void 0, void 0, void 0, function () {
-    var templatePath, template, graph, stages;
+    var template, reactPath, stages, graph;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                templatePath = path.join(electron.app.getAppPath(), "templates/" + templateId + ".template.json");
-                template = require(templatePath);
+                try {
+                    template = getTemplateAsObject(templateId);
+                }
+                catch (e) {
+                    console.log(e);
+                }
                 if (!template) return [3 /*break*/, 2];
                 // react router route
-                template.path = "/template/" + templateId;
-                graph = getGraph(templateId);
+                reactPath = "/template/" + templateId;
+                graph = getGraph(template.graphName);
                 return [4 /*yield*/, fbp_1.componentMetaForStages(template.stages, graph, runtimeAddress, runtimeSecret)];
             case 1:
                 stages = _a.sent();
-                template.stages = stages;
                 _a.label = 2;
-            case 2: return [2 /*return*/, template];
+            case 2: return [2 /*return*/, __assign(__assign({}, template), { path: reactPath, stages: stages })];
         }
     });
 }); };
 exports.getTemplate = getTemplate;
+var cloneTemplate = function (templateId) { return __awaiter(void 0, void 0, void 0, function () {
+    var orig, newGuid, id, name, newTemplate;
+    return __generator(this, function (_a) {
+        orig = getTemplateAsObject(templateId);
+        newGuid = utils_1.guidGenerator();
+        id = orig.id + '-' + newGuid;
+        name = orig.name + '-' + newGuid.slice(0, 5);
+        newTemplate = __assign(__assign({}, orig), { id: id,
+            name: name, parentTemplate: orig.id });
+        writeTemplate(id, newTemplate);
+        return [2 /*return*/, newTemplate.id];
+    });
+}); };
+exports.cloneTemplate = cloneTemplate;
 //# sourceMappingURL=templates.js.map

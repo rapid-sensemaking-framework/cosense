@@ -44,6 +44,7 @@ interface Stage {
 
 interface Template {
   name: string
+  graphName: string
   description: string
   stages: Stage[],
   resultConnection: string,

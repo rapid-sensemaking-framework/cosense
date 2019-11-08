@@ -1,6 +1,7 @@
 {
   "id": "reaction",
   "name": "Reaction",
+  "graphName": "reaction.json",
   "description": "<p>There are TWO stages to this particular process, the Reaction stage, and the Summary stage.</p><ol><li>The REACTION stage can be used for determining reactions (feelings) about each from a list of provided statements.</li><li>The SUMMARY stage is to send the full list of results to someone(s).</li></ol>",
   "resultConnection": "rsf/FormatReactionsList_yusc1() FORMATTED -> IN core/MakeFunction_sy01e()",
   "stages": [

@@ -14,6 +14,6 @@ export default function FormText({ expectedInput, onChange }) {
 
   return <div>
     <label htmlFor={ident}>{label}</label>
-    <input type="text"  id={ident} name={ident} placeholder={placeholder} value={defaultValue} onChange={innerOnChange} />
+    <input type="text"  id={ident} name={ident} placeholder={placeholder} defaultValue={defaultValue} onChange={innerOnChange} />
   </div>
 }

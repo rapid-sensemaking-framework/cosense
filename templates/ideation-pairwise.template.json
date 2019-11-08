@@ -1,6 +1,7 @@
 {
   "id": "ideation-pairwise",
   "name": "Ideation / Pairwise Comparison",
+  "graphName": "ideation-pairwise.json",
   "description": "<p>There are THREE stages to this particular process, the Ideation stage, Pairwise Comparison stage, and the Summary stage.</p><ol><li>The IDEATION stage can be used for generating one or more responses to any prompt.</li><li>The PAIRWISE COMPARISON stage can be used for comparing responses from the IDEATION stage.</li><li>The SUMMARY stage is to send the full list of ranked results to someone(s).</li></ol>",
   "resultConnection": "rsf/FormatStatementList_1qujf() FORMATTED -> IN core/MakeFunction_z0i1o()",
   "stages": [
