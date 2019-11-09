@@ -18,16 +18,24 @@ export default function Template() {
   const history = useHistory()
   const defaultTemplate = null
   const defaultFormData = {}
+  const [loading, setLoading] = useState(true)
   const [template, setTemplate] = useState(defaultTemplate)
   const [formData, setFormData] = useState(defaultFormData)
   const { templateId } = useParams()
 
   useEffect(() => {
-    getTemplate(templateId).then(setTemplate)
+    getTemplate(templateId).then((template) => {
+      setTemplate(template)
+      setLoading(false)
+    })
   }, [templateId])
 
+  if (loading) {
+    return <>Loading...</>
+  }
+
   if (!template) {
-    return <div>404 not found</div>
+    return <>404 not found</>
   }
 
   const onSubmit = async (event) => {
