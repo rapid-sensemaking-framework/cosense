@@ -2,25 +2,27 @@ import * as electron from 'electron'
 import * as path from 'path'
 import * as fs from 'fs'
 import {
-  CONTACTABLE_CONFIG_PORT_NAME,
-  EVENTS
-} from '../constants'
+  Statement,
+  Option,
+  ContactableConfig
+} from 'rsf-types'
 import {
-  guidGenerator
-} from '../utils'
-import {
-  ContactableConfig,
   RegisterConfig,
   FormInputs,
   Process,
   Template,
   ExpectedInput,
   Stage,
-  Option,
   GraphConnection,
-  Statement,
   Graph
 } from '../types'
+import {
+  CONTACTABLE_CONFIG_PORT_NAME,
+  EVENTS
+} from '../constants'
+import {
+  guidGenerator
+} from '../utils'
 
 import {
   getContactablesFromFacilitator,

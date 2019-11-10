@@ -1,15 +1,4 @@
-interface ContactableConfig {
-    type: string;
-    id: string;
-    name?: string;
-}
-interface Statement {
-    text: string;
-}
-interface Option {
-    triggers: string[];
-    text: string;
-}
+import { ContactableConfig } from 'rsf-types';
 interface RegisterConfig {
     stage: string;
     isFacilitator: boolean;
@@ -89,4 +78,4 @@ interface GraphConnection {
     };
     data?: any;
 }
-export { ContactableConfig, ContactableConfigSet, Statement, Option, RegisterConfig, RegisterConfigSet, Template, Stage, FormInputs, ExpectedInput, Process, GraphConnection, Graph };
+export { ContactableConfigSet, RegisterConfig, RegisterConfigSet, Template, Stage, FormInputs, ExpectedInput, Process, GraphConnection, Graph };

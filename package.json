@@ -17,6 +17,7 @@
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
     "react-router-dom": "^5.1.2",
+    "rsf-types": "0.0.23",
     "socket.io-client": "^2.3.0",
     "typescript": "^3.7.2"
   },

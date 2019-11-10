@@ -1,4 +1,5 @@
-import { ContactableConfig, RegisterConfig, Process, Template, ExpectedInput, GraphConnection, Graph } from '../types';
+import { ContactableConfig } from 'rsf-types';
+import { RegisterConfig, Process, Template, ExpectedInput, GraphConnection, Graph } from '../types';
 declare const getProcesses: () => Promise<Process[]>;
 declare const getProcess: (id: string) => Promise<Process>;
 declare const setProcessProp: (id: string, key: string, value: any) => Promise<boolean>;

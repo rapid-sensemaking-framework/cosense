@@ -1,18 +1,6 @@
-
-interface ContactableConfig {
-  type: string
-  id: string
-  name?: string
-}
-
-interface Statement {
-  text: string
-}
-
-interface Option {
-  triggers: string[],
-  text: string
-}
+import {
+  ContactableConfig
+} from 'rsf-types'
 
 interface RegisterConfig {
   stage: string
@@ -79,12 +67,6 @@ interface Process {
   participants: ContactableConfigSet
 }
 
-/*
-interface Reaction {
-	statement
-}
-*/
-
 interface Graph {
   properties: object
   connections: Array<GraphConnection>
@@ -110,10 +92,7 @@ interface GraphConnection {
 }
 
 export {
-  ContactableConfig,
   ContactableConfigSet,
-  Statement,
-  Option,
   RegisterConfig,
   RegisterConfigSet,
   Template,

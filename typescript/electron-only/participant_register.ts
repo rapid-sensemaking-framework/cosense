@@ -1,12 +1,12 @@
 import * as electron from 'electron'
 import * as socketClient from 'socket.io-client'
+import {
+  ContactableConfig
+} from 'rsf-types'
 
 import {
   EVENTS
 } from '../constants'
-import {
-  ContactableConfig
-} from '../types'
 
 const ipc = electron.ipcMain
 
