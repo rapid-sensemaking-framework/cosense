@@ -1,7 +1,8 @@
 # electron
 RSF-darwin-x64
 
-processes
+processes/**
+templates/*-*-**.template.json
 
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
