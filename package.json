@@ -8,6 +8,7 @@
     "foreman": "^3.0.1"
   },
   "dependencies": {
+    "@types/socket.io-client": "^1.4.32",
     "dotenv": "^8.2.0",
     "electron-log": "^3.0.8",
     "electron-packager": "^14.1.0",
@@ -17,7 +18,7 @@
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
     "react-router-dom": "^5.1.2",
-    "rsf-types": "0.0.23",
+    "rsf-types": "0.0.25",
     "socket.io-client": "^2.3.0",
     "typescript": "^3.7.2"
   },

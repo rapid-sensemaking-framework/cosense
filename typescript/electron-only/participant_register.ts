@@ -7,6 +7,7 @@ import {
 import {
   EVENTS
 } from '../constants'
+import { ParticipantRegisterData } from 'rsf-types'
 
 const ipc = electron.ipcMain
 
@@ -32,18 +33,19 @@ const getContactablesFromRegistration = (
   ): Promise<ContactableConfig[]> => {
   return new Promise((resolve) => {
 
+    const participantRegisterData: ParticipantRegisterData = {
+      id,
+      maxParticipants,
+      maxTime,
+      processDescription
+    }
     // TODO: handle timeout
     // capture the process kickoff time for reference
     // const startTime = Date.now()
     const socket = socketClient(wsUrl)
     socket.on('connect', () => {
       // initialize it
-      socket.emit(EVENTS.SEND.PARTICIPANT_REGISTER, {
-        id,
-        maxParticipants,
-        maxTime,
-        processDescription
-      })
+      socket.emit(EVENTS.SEND.PARTICIPANT_REGISTER, participantRegisterData)
     })
     // single one
     socket.on(EVENTS.RECEIVE.PARTICIPANT_REGISTER_RESULT, eachNew)
