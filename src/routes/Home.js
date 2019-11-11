@@ -38,9 +38,9 @@ export default function Home() {
     </p>
     {templates.map((template, templateIndex) => {
       const matchedProcesses = processes.filter(x => x.templateId === template.id)
-      return <div key={`template-${templateIndex}`}>
-        <Link to={template.path}><h4>{template.name}</h4></Link>
-        {matchedProcesses.length > 0 && <div>
+      return <div className="home-template" key={`template-${templateIndex}`}>
+        <Link to={template.path}><h4 className="home-template-name">{template.name}</h4></Link>
+        {matchedProcesses.length > 0 && <div className="home-template-processes">
           Processes<br />
           {matchedProcesses.map((mp, mpIndex) => {
             return <div>

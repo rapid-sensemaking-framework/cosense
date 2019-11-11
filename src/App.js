@@ -4,7 +4,7 @@ import {
   Switch,
   Route,
 } from 'react-router-dom'
-// import './App.css'
+import './App.css'
 import Template from './routes/Template'
 import EditTemplate from './routes/EditTemplate'
 import Process from './routes/Process'
