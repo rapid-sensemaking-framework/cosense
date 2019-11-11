@@ -22,6 +22,7 @@ export default function Template() {
   const defaultFormData = {}
   const defaultName = ''
   const defaultDescription = ''
+  const [loading, setLoading] = useState(true)
   const [template, setTemplate] = useState(defaultTemplate)
   const [name, setName] = useState(defaultName)
   const [description, setDescription] = useState(defaultDescription)
@@ -35,8 +36,13 @@ export default function Template() {
         setName(template.name)
         setDescription(template.description)
       }
+      setLoading(false)
     })
   }, [templateId])
+
+  if (loading) {
+    return <>Loading...</>
+  }
 
   if (!template) {
     return <div>404 not found</div>
@@ -44,6 +50,7 @@ export default function Template() {
 
   const onSubmit = async (event) => {
     event.preventDefault()
+    setLoading(true)
     await updateTemplate({
       name,
       description,
