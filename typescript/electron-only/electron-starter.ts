@@ -8,7 +8,7 @@ fixPath()
 
 // transports.file.findLogPath()
 
-let dotenvPath
+let dotenvPath: string
 if (process.env.ELECTRON_START_URL) {
   console.log('using development env vars')
   dotenvPath = path.join(electron.app.getAppPath(), '.env-dev')
@@ -29,7 +29,7 @@ const BrowserWindow = electron.BrowserWindow
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow: electron.BrowserWindow
 
 function createWindow() {
   // Create the browser window.
