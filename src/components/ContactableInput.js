@@ -1,23 +1,26 @@
 import React, { useState } from 'react'
+import { TYPE_KEY as SMS_TYPE_KEY } from 'rsf-smsable'
+import { TYPE_KEY as TELEGRAM_TYPE_KEY } from 'rsf-telegramable'
+import { TYPE_KEY as MATTERMOST_TYPE_KEY } from 'rsf-mattermostable'
 
 export default function ContactableInput({ onChange, showRemove, onRemove }) {
   const [type, setType] = useState('telegram')
   const [telegram, setTelegram] = useState('')
   const [mattermost, setMattermost] = useState('@') // looks like 'username@https://chatserver.org'
-  const [phone, setPhone] = useState('')
+  const [sms, setSms] = useState('')
 
   const doSetType = (e) => {
     const t = e.target.value
     setType(t)
-    if (t === 'telegram') onChange(telegram)
-    else if (t === 'mattermost') onChange(mattermost)
-    else if (t === 'phone') onChange(phone)
+    if (t === TELEGRAM_TYPE_KEY) onChange(telegram)
+    else if (t === MATTERMOST_TYPE_KEY) onChange(mattermost)
+    else if (t === SMS_TYPE_KEY) onChange(sms)
   }
   const updateTelegram = (e) => {
     const val = e.target.value
     setTelegram(val)
     onChange({
-      type: 'telegram',
+      type: TELEGRAM_TYPE_KEY,
       id: val
     })
   }
@@ -26,7 +29,7 @@ export default function ContactableInput({ onChange, showRemove, onRemove }) {
     const val = e.target.value + '@' + mattermost.split('@')[1]
     setMattermost(val)
     onChange({
-      type: 'mattermost',
+      type: MATTERMOST_TYPE_KEY,
       id: val
     })
   }
@@ -35,15 +38,15 @@ export default function ContactableInput({ onChange, showRemove, onRemove }) {
     const val = mattermost.split('@')[0] + '@' + e.target.value
     setMattermost(val)
     onChange({
-      type: 'mattermost',
+      type: MATTERMOST_TYPE_KEY,
       id: val
     })
   }
-  const updatePhone = (e) => {
+  const updateSms = (e) => {
     const val = e.target.value
-    setPhone(val)
+    setSms(val)
     onChange({
-      type: 'phone',
+      type: SMS_TYPE_KEY,
       id: val
     })
   }
@@ -57,92 +60,25 @@ export default function ContactableInput({ onChange, showRemove, onRemove }) {
       <label htmlFor="type">Contact Type</label>
       <select onChange={doSetType}>
         <option value="telegram">Telegram</option>
-        <option value="phone">Phone</option>
+        <option value="sms">SMS</option>
         <option value="mattermost">Mattermost</option>
       </select>
     </div>
-    {type === 'phone' && <div>
-      <label htmlFor="phone-number">Number</label>
-      <input type="text" name="phone-number" placeholder="+12223334444" value={phone} onChange={updatePhone} />
+    {type === SMS_TYPE_KEY && <div>
+      <label htmlFor="sms-number">Number</label>
+      <input type="text" name="sms-number" placeholder="+12223334444" value={sms} onChange={updateSms} />
     </div>}
-    {type === 'mattermost' && <div>
+    {type === MATTERMOST_TYPE_KEY && <div>
       <label htmlFor="mattermost-username">Username</label>
       <input type="text" name="mattermost-username" value={mattermost.split('@')[0]} onChange={updateMattermostUsername} />
       <label htmlFor="mattermost-chat-server">Chat Server URL</label>
       <input type="text" name="mattermost-chat-server"
         placeholder="https://chat.server.org" value={mattermost.split('@')[1]} onChange={updateMattermostChatServer} />
     </div>}
-    {type === 'telegram' && <div>
+    {type === TELEGRAM_TYPE_KEY && <div>
       <label htmlFor="telegram-username">Username</label>
       <input type="text" name="telegram-username" autoFocus value={telegram} onChange={updateTelegram} />
     </div>}
     {showRemove && <button className="button button-clear" onClick={clickRemove}>Remove</button>}
   </div>
 }
-
-/*
-
-	function clearAndSetupContactableFormListeners() {
-		// handle the onchange events for the 'type' select field
-		// toggling the display of particular form fields associated
-		// with that type
-		document.querySelectorAll('.type').forEach(node => {
-			const cb = (event) => {
-				// the type from the option value
-				const type = event.target.value
-				// hide all the other type form fields
-				const contactableFormWrapper = node.parentNode.parentNode
-				const nodes = contactableFormWrapper.querySelectorAll('.contactable-type')
-				nodes.forEach(n => {
-					n.classList.remove('show')
-				})
-				// show the form field for the selected type
-				contactableFormWrapper.querySelector(`.${type}`).classList.add('show')
-				// reset value
-				contactableFormWrapper.querySelector('.id').value = ''
-			}
-			node.removeEventListener('change', cb)
-			node.addEventListener('change', cb)
-		})
-
-		// bind mattermost fields event listeners
-		// to update the hidden id field
-		function updateIdForMattermost(event) {
-			const node = event.target
-			const contactableFormWrapper = node.parentNode.parentNode
-			const username = contactableFormWrapper.querySelector('.mattermost-username').value
-			const chatServer = contactableFormWrapper.querySelector('.mattermost-chat-server').value
-			contactableFormWrapper.querySelector('.id').value = `${username}@${chatServer}`
-		}
-		document.querySelectorAll('.mattermost-username').forEach(n => {
-			n.onkeyup = updateIdForMattermost
-			n.onchange = updateIdForMattermost
-		})
-		document.querySelectorAll('.mattermost-chat-server').forEach(n => {
-			n.onkeyup = updateIdForMattermost
-			n.onchange = updateIdForMattermost
-		})
-
-		function updateIdForTelegram(event) {
-			const node = event.target
-			const contactableFormWrapper = node.parentNode.parentNode
-			const value = contactableFormWrapper.querySelector('.telegram-username').value
-			contactableFormWrapper.querySelector('.id').value = value
-		}
-		document.querySelectorAll('.telegram-username').forEach(n => {
-			n.onkeyup = updateIdForTelegram
-			n.onchange = updateIdForTelegram
-		})
-
-		function updateIdForPhone(event) {
-			const node = event.target
-			const contactableFormWrapper = node.parentNode.parentNode
-			const value = contactableFormWrapper.querySelector('.phone-number').value
-			contactableFormWrapper.querySelector('.id').value = value
-		}
-		document.querySelectorAll('.phone-number').forEach(n => {
-			n.onkeyup = updateIdForPhone
-			n.onchange = updateIdForPhone
-		})
-	}
-*/
