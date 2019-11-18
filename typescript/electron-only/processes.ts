@@ -328,14 +328,12 @@ const runProcess = async (processId: string, runtimeAddress: string, runtimeSecr
     if (signal.id === template.resultConnection) {
       // save the results to the process
       await setProcessProp(processId, 'results', signal.data)
+      await setProcessProp(processId, 'running', false)
+      await setProcessProp(processId, 'complete', true)
     }
   }
 
   start(jsonGraph, runtimeAddress, runtimeSecret, dataWatcher)
-    .then(async () => {
-      await setProcessProp(processId, 'running', false)
-      await setProcessProp(processId, 'complete', true)
-    }) // logs and save to memory
     .catch(async (e) => {
       await setProcessProp(processId, 'running', false)
       await setProcessProp(processId, 'error', e)
