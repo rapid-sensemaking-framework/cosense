@@ -31,7 +31,7 @@ export default function FormTimePicker({ expectedInput, onChange }) {
   }, []) // only occurs on initialize
 
   return <div className="input-wrapper time-picker">
-    <label htmlFor={ident}>{shortLabel}</label>
+    <label htmlFor={ident} className="input-label">{shortLabel}</label>
     <div className="input-help-label">{label}</div>
     <input type="text" id={ident} name={ident} placeholder={placeholder} defaultValue={defaultValue} onChange={onInputChange} />
     <select onChange={onMultiplierChange} value={multiplier}>

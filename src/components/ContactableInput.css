@@ -1,0 +1,4 @@
+.contactable-input input[type="text"], .contactable-input select {
+  display: inline-block;
+  margin-right: 16px;
+}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import ContactableInput from './ContactableInput'
+import './ContactablesForm.css'
 
 export default function ContactablesForm({ onSubmit }) {
   const [els, setEls] = useState([{}])
@@ -21,7 +22,12 @@ export default function ContactablesForm({ onSubmit }) {
     e.preventDefault()
     setEls(els.concat([{}]))
   }
-  return <form onSubmit={innerOnSubmit}>
+  return <div className="contactables-form">
+    <div className="input-label">Configure your participants</div>
+    <div className="input-help-label">
+      Select participants and their communication platform for participation or select a pre-existing list.
+    </div>
+    <button className="participant-list-button">Choose Participant List</button>
     {els.map((id, index) => {
       return <ContactableInput
         showRemove={els.length > 1}
@@ -29,6 +35,6 @@ export default function ContactablesForm({ onSubmit }) {
         onChange={(val) => updateEl(val, index)}
         onRemove={() => removeEl(index)} />
     })}
-    <button className="button button-clear" onClick={clickAddOne}>Add One</button>
-  </form>
+    <button className="add-more-button" onClick={clickAddOne}>Add More</button>
+  </div>
 }

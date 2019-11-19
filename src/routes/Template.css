@@ -19,7 +19,7 @@
   margin-bottom: 36px;
 }
 
-.template label {
+.template .input-label {
   font-family: Helvetica, sans-serif;
   font-size: 18px;
   line-height: 20px;
@@ -58,15 +58,14 @@
 }
 
 .template select {
-  margin-left: 20px;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 }
 
 .template button {
-  background-color: #FFFFFF;
-  color: #B1B1B1;
+  background-color: #4A4A4A;
+  color: #FFFFFF;
   outline: none;
   border: 1px solid #B4B4B4;
   border-radius: 4px;
@@ -76,9 +75,13 @@
   cursor: pointer;
   margin-right: 16px;
 }
-.template button.button-selected {
-  background-color: #4A4A4A;
-  color: #FFFFFF;
+.template .button-inactive {
+  background-color: #FFFFFF;
+  color: #B1B1B1;
+}
+
+.template .time-picker input {
+  margin-right: 16px;
 }
 
 .template-labels {

@@ -26,10 +26,10 @@ export default function FormLimitPicker({ expectedInput, onChange }) {
   }, []) // only occurs on initialize
 
   return <div className="input-wrapper">
-    <label htmlFor={ident}>{shortLabel}</label>
+    <label htmlFor={ident} className="input-label">{shortLabel}</label>
     <div className="input-help-label">{label}</div>
-    <button className={limitDefined ? '' : 'button-selected'} onClick={() => setLimitDefined(false)}>Unlimited</button>
-    <button className={limitDefined ? 'button-selected' : ''} onClick={() => setLimitDefined(true)}>Limited</button>
+    <button className={limitDefined ? 'button-inactive' : ''} onClick={() => setLimitDefined(false)}>Unlimited</button>
+    <button className={limitDefined ? '' : 'button-inactive'} onClick={() => setLimitDefined(true)}>Limited</button>
     <input type="text"
       onClick={() => setLimitDefined(true)}
       id={ident}

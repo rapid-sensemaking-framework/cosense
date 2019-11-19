@@ -3,6 +3,8 @@ import { TYPE_KEY as SMS_TYPE_KEY } from 'rsf-smsable'
 import { TYPE_KEY as TELEGRAM_TYPE_KEY } from 'rsf-telegramable'
 import { TYPE_KEY as MATTERMOST_TYPE_KEY } from 'rsf-mattermostable'
 
+import './ContactableInput.css'
+
 export default function ContactableInput({ onChange, showRemove, onRemove }) {
   const [type, setType] = useState('telegram')
   const [telegram, setTelegram] = useState('')
@@ -55,30 +57,20 @@ export default function ContactableInput({ onChange, showRemove, onRemove }) {
     onRemove()
   }
 
-  return <div className="input-wrapper">
-    <div>
-      <label htmlFor="type">Contact Type</label>
-      <select onChange={doSetType}>
-        <option value="telegram">Telegram</option>
-        <option value="sms">SMS</option>
-        <option value="mattermost">Mattermost</option>
-      </select>
-    </div>
-    {type === SMS_TYPE_KEY && <div>
-      <label htmlFor="sms-number">Number</label>
-      <input type="text" name="sms-number" placeholder="+12223334444" value={sms} onChange={updateSms} />
-    </div>}
-    {type === MATTERMOST_TYPE_KEY && <div>
-      <label htmlFor="mattermost-username">Username</label>
-      <input type="text" name="mattermost-username" value={mattermost.split('@')[0]} onChange={updateMattermostUsername} />
-      <label htmlFor="mattermost-chat-server">Chat Server URL</label>
+  return <div className="contactable-input">
+    <input type="text" placeholder="Harry Potter"></input>
+    <select onChange={doSetType}>
+      <option value="telegram">Telegram</option>
+      <option value="sms">SMS</option>
+      <option value="mattermost">Mattermost</option>
+    </select>
+    {type === SMS_TYPE_KEY && <input type="text" name="sms-number" placeholder="+12223334444" value={sms} onChange={updateSms} />}
+    {type === MATTERMOST_TYPE_KEY && <>
+      <input type="text" name="mattermost-username" value={mattermost.split('@')[0]} onChange={updateMattermostUsername} placeholder="username" />
       <input type="text" name="mattermost-chat-server"
         placeholder="https://chat.server.org" value={mattermost.split('@')[1]} onChange={updateMattermostChatServer} />
-    </div>}
-    {type === TELEGRAM_TYPE_KEY && <div>
-      <label htmlFor="telegram-username">Username</label>
-      <input type="text" name="telegram-username" autoFocus value={telegram} onChange={updateTelegram} />
-    </div>}
+    </>}
+    {type === TELEGRAM_TYPE_KEY && <input type="text" name="telegram-username" value={telegram} onChange={updateTelegram}  placeholder="username" />}
     {showRemove && <button onClick={clickRemove}>Remove</button>}
   </div>
 }
