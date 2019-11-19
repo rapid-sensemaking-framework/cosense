@@ -12,6 +12,7 @@ interface ExpectedInput {
     process: string;
     port: string;
     help?: string;
+    shortLabel?: string;
     label?: string;
     type?: string;
     component?: string;
@@ -19,16 +20,11 @@ interface ExpectedInput {
     defaultValue?: any;
     placeholder?: string;
 }
-interface Stage {
-    name: string;
-    description: string;
-    expectedInputs: ExpectedInput[];
-}
 interface Template {
     name: string;
     graphName: string;
     description: string;
-    stages: Stage[];
+    expectedInputs: ExpectedInput[];
     resultConnection: string;
     id: string;
     path?: string;
@@ -78,4 +74,4 @@ interface GraphConnection {
     };
     data?: any;
 }
-export { ContactableConfigSet, RegisterConfig, RegisterConfigSet, Template, Stage, FormInputs, ExpectedInput, Process, GraphConnection, Graph };
+export { ContactableConfigSet, RegisterConfig, RegisterConfigSet, Template, FormInputs, ExpectedInput, Process, GraphConnection, Graph };

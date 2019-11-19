@@ -12,7 +12,6 @@ import {
   Process,
   Template,
   ExpectedInput,
-  Stage,
   GraphConnection,
   Graph
 } from '../types'
@@ -109,16 +108,14 @@ const newProcess = async (
 ): Promise<string> => {
   const registerConfigs = {}
   const participants = {}
-  template.stages.forEach((stage: Stage) => {
-    stage.expectedInputs.forEach((expectedInput: ExpectedInput) => {
-      const { process, port } = expectedInput
-      if (port === CONTACTABLE_CONFIG_PORT_NAME) {
-        const id = guidGenerator()
-        const registerConfig = getRegisterConfig(formInputs, process, id, registerWsUrl)
-        registerConfigs[process] = registerConfig
-        participants[process] = [] // empty for now
-      }
-    })
+  template.expectedInputs.forEach((expectedInput: ExpectedInput) => {
+    const { process, port } = expectedInput
+    if (port === CONTACTABLE_CONFIG_PORT_NAME) {
+      const id = guidGenerator()
+      const registerConfig = getRegisterConfig(formInputs, process, id, registerWsUrl)
+      registerConfigs[process] = registerConfig
+      participants[process] = [] // empty for now
+    }
   })
 
   const newProcess: Process = {
@@ -301,29 +298,25 @@ const runProcess = async (processId: string, runtimeAddress: string, runtimeSecr
     participants
   } = await getProcess(processId)
 
-  const promises = []
-  template.stages.forEach((stage: Stage) => {
-    stage.expectedInputs.forEach((expectedInput: ExpectedInput) => {
-      const { process, port } = expectedInput
-      promises.push((async () => {
-        const finalInput = await resolveExpectedInput(
-          expectedInput,
-          processId,
-          formInputs,
-          registerConfigs[process],
-          participants[process]
-        )
-        return convertToGraphConnection(process, port, finalInput)
-      })())
-    })
-  })
-  const GraphConnections = await Promise.all(promises)
+  const resolveAndConvert = async (expectedInput: ExpectedInput): Promise<GraphConnection> => {
+    const { process, port } = expectedInput
+    const finalInput = await resolveExpectedInput(
+      expectedInput,
+      processId,
+      formInputs,
+      registerConfigs[process],
+      participants[process]
+    )
+    return convertToGraphConnection(process, port, finalInput)
+  }
+  const promises: Promise<GraphConnection>[] = template.expectedInputs.map(resolveAndConvert)
+  const graphConnections = await Promise.all(promises)
 
   // once they're all ready, now commence the process
   // mark as running now
   await setProcessProp(processId, 'configuring', false)
   await setProcessProp(processId, 'running', true)
-  const jsonGraph = overrideJsonGraph(GraphConnections, graph)
+  const jsonGraph = overrideJsonGraph(graphConnections, graph)
   const dataWatcher = async (signal) => {
     if (signal.id === template.resultConnection) {
       // save the results to the process

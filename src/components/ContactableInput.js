@@ -55,7 +55,7 @@ export default function ContactableInput({ onChange, showRemove, onRemove }) {
     onRemove()
   }
 
-  return <div>
+  return <div className="input-wrapper">
     <div>
       <label htmlFor="type">Contact Type</label>
       <select onChange={doSetType}>
@@ -79,6 +79,6 @@ export default function ContactableInput({ onChange, showRemove, onRemove }) {
       <label htmlFor="telegram-username">Username</label>
       <input type="text" name="telegram-username" autoFocus value={telegram} onChange={updateTelegram} />
     </div>}
-    {showRemove && <button className="button button-clear" onClick={clickRemove}>Remove</button>}
+    {showRemove && <button onClick={clickRemove}>Remove</button>}
   </div>
 }

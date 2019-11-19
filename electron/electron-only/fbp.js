@@ -71,7 +71,7 @@ var createFbpClient = function (address, secret) { return __awaiter(void 0, void
     });
 }); };
 exports.createFbpClient = createFbpClient;
-var componentMetaForStages = function (stages, graph, runtimeAddress, runtimeSecret) { return __awaiter(void 0, void 0, void 0, function () {
+var componentMeta = function (expectedInputs, graph, runtimeAddress, runtimeSecret) { return __awaiter(void 0, void 0, void 0, function () {
     var client, components;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -84,18 +84,16 @@ var componentMetaForStages = function (stages, graph, runtimeAddress, runtimeSec
             case 2:
                 components = _a.sent();
                 /// TODO: disconnect?
-                return [2 /*return*/, stages.map(function (stage) {
-                        return __assign(__assign({}, stage), { expectedInputs: stage.expectedInputs.map(function (e) {
-                                var componentName = graph.processes[e.process].component;
-                                var component = components.find(function (c) { return c.name === componentName; });
-                                var port = component.inPorts.find(function (i) { return i.id === e.port; });
-                                return __assign(__assign({}, e), { label: e.label || port.description, type: port.type, component: componentName });
-                            }) });
+                return [2 /*return*/, expectedInputs.map(function (e) {
+                        var componentName = graph.processes[e.process].component;
+                        var component = components.find(function (c) { return c.name === componentName; });
+                        var port = component.inPorts.find(function (i) { return i.id === e.port; });
+                        return __assign(__assign({}, e), { label: e.label || port.description, type: port.type, component: componentName });
                     })];
         }
     });
 }); };
-exports.componentMetaForStages = componentMetaForStages;
+exports.componentMeta = componentMeta;
 /*
 client.protocol = {
     component: {

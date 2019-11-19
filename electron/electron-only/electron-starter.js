@@ -30,7 +30,7 @@ var BrowserWindow = electron.BrowserWindow;
 var mainWindow;
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({ width: 800, height: 600, webPreferences: { nodeIntegration: true } });
+    mainWindow = new BrowserWindow({ width: 1200, height: 900, webPreferences: { nodeIntegration: true } });
     // and load the index.html of the app.
     var startUrl = process.env.ELECTRON_START_URL || url.format({
         pathname: path.join(__dirname, '/../../build/index.html'),

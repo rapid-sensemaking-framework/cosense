@@ -2,7 +2,7 @@ import * as electron from 'electron'
 import * as path from 'path'
 import * as fs from 'fs'
 import {
-  Template, Graph,
+  Template, Graph, ExpectedInput,
 } from '../types'
 import {
   newProcess,
@@ -11,7 +11,7 @@ import {
 import {
   getRegisterAddress, guidGenerator
 } from '../utils'
-import { componentMetaForStages } from './fbp'
+import { componentMeta } from './fbp'
 
 const TEMPLATES_FOLDER = 'templates'
 
@@ -20,11 +20,11 @@ const getGraph = (graphName: string): Graph => {
   return require(graphPath)
 }
 
-const getTemplatePath = (templateId: string) => {
+const getTemplatePath = (templateId: string): string => {
   return path.join(electron.app.getAppPath(), `${TEMPLATES_FOLDER}/${templateId}.template.json`)
 }
 
-const getTemplateAsObject = (templateId) => {
+const getTemplateAsObject = (templateId: string): Template => {
   const templatePath = getTemplatePath(templateId)
   const templateString = fs.readFileSync(templatePath, { encoding: "utf8" })
   const template: Template = JSON.parse(templateString)
@@ -38,29 +38,24 @@ const writeTemplate = (templateId, template) => {
 
 const updateTemplate = async (
   { name, description, expectedInputs, templateId }:
-  { name: string, description: string, expectedInputs, templateId: string }
-) => {
+    { name: string, description: string, expectedInputs, templateId: string }
+): Promise<boolean> => {
   const orig = getTemplateAsObject(templateId)
   const newTemplate: Template = {
     ...orig,
     name,
     description,
-    stages: orig.stages.map(stage => {
-      return {
-        ...stage,
-        expectedInputs: stage.expectedInputs.map(e => {
-          // TODO consolidate references like these
-          const key = `${e.process}--${e.port}`
-          const defaultValue = expectedInputs[key]
-          if (defaultValue) {
-            return {
-              ...e,
-              defaultValue
-            }
-          } else {
-            return e
-          }
-        })
+    expectedInputs: orig.expectedInputs.map(e => {
+      // TODO consolidate references like these
+      const key = `${e.process}--${e.port}`
+      const defaultValue = expectedInputs[key]
+      if (defaultValue) {
+        return {
+          ...e,
+          defaultValue
+        }
+      } else {
+        return e
       }
     })
   }
@@ -70,9 +65,9 @@ const updateTemplate = async (
 
 // TODO: should this be in processes file?
 const handleTemplateSubmit = async (
-    { inputs, templateId, template }:
+  { inputs, templateId, template }:
     { inputs, templateId: string, template: Template }
-  ) => {
+) => {
   const registerWsUrl = getRegisterAddress(process.env, 'REGISTER_WS_PROTOCOL')
   // not a bug, templateId is shared with graphId
   const graph = getGraph(template.graphName)
@@ -112,25 +107,25 @@ const getTemplates = async (): Promise<Template[]> => {
 }
 
 const getTemplate = async (templateId: string, runtimeAddress: string, runtimeSecret: string): Promise<Template> => {
-  let template
+  let template: Template
   try {
     template = getTemplateAsObject(templateId)
   } catch (e) {
     console.log(e)
   }
-  let reactPath, stages
+  let reactPath: string, expectedInputs: ExpectedInput[]
   if (template) {
     // react router route
     reactPath = `/template/${templateId}`
     // use parentTemplate as the default,
     // because it will have the id that matches the graph file name
     const graph = getGraph(template.graphName)
-    stages = await componentMetaForStages(template.stages, graph, runtimeAddress, runtimeSecret)
+    expectedInputs = await componentMeta(template.expectedInputs, graph, runtimeAddress, runtimeSecret)
   }
   return {
     ...template,
     path: reactPath,
-    stages
+    expectedInputs
   }
 }
 

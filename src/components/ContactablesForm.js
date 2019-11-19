@@ -30,6 +30,5 @@ export default function ContactablesForm({ onSubmit }) {
         onRemove={() => removeEl(index)} />
     })}
     <button className="button button-clear" onClick={clickAddOne}>Add One</button>
-    <input className="button float-right" type="submit" value="Submit"></input>
   </form>
 }

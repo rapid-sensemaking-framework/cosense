@@ -1,11 +1,68 @@
-.home-template {
-  margin-bottom: 20px;
+.app {
+  display: flex;
+  flex-direction: row;
+  margin: 60px 0;
 }
 
-.home-template-name {
-  margin-bottom: 0;
+.menu {
+  padding: 0 20px 0 40px;
+  border-right: 1px solid #E3E3E3;
 }
 
-.home-template-processes {
-  margin-left: 20px;
+.logo {
+  width: 77px;
+  height: 77px;
+  border-radius: 38px;
+  background-color: #DEDEDE;
+  margin-bottom: 50px;
+}
+
+.nav > a {
+  margin-top: 24px;
+  padding: 8px;
+  min-width: 190px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: #707070;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+}
+.nav > a:hover, .nav > a.active {
+  background-color: #F2F2F2;
+}
+
+.nav .menuImage {
+  background-color: #DEDEDE;
+  border-radius: 18px;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  margin-right: 12px;
+}
+
+.main {
+  padding: 0 60px;
+}
+
+.main h1 {
+  margin: 0;
+}
+
+.main h2 {
+  margin: 10px 0 60px 0;
+}
+
+h1 {
+  font-size: 40px;
+  color: #4A4A4A;
+  font-weight: normal;
+}
+
+h2 {
+  font-size: 22px;
+  color: #707070;
+  font-weight: normal;
 }

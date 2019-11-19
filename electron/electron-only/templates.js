@@ -78,18 +78,16 @@ var updateTemplate = function (_a) {
         return __generator(this, function (_b) {
             orig = getTemplateAsObject(templateId);
             newTemplate = __assign(__assign({}, orig), { name: name,
-                description: description, stages: orig.stages.map(function (stage) {
-                    return __assign(__assign({}, stage), { expectedInputs: stage.expectedInputs.map(function (e) {
-                            // TODO consolidate references like these
-                            var key = e.process + "--" + e.port;
-                            var defaultValue = expectedInputs[key];
-                            if (defaultValue) {
-                                return __assign(__assign({}, e), { defaultValue: defaultValue });
-                            }
-                            else {
-                                return e;
-                            }
-                        }) });
+                description: description, expectedInputs: orig.expectedInputs.map(function (e) {
+                    // TODO consolidate references like these
+                    var key = e.process + "--" + e.port;
+                    var defaultValue = expectedInputs[key];
+                    if (defaultValue) {
+                        return __assign(__assign({}, e), { defaultValue: defaultValue });
+                    }
+                    else {
+                        return e;
+                    }
                 }) });
             writeTemplate(templateId, newTemplate);
             return [2 /*return*/, true];
@@ -145,7 +143,7 @@ var getTemplates = function () { return __awaiter(void 0, void 0, void 0, functi
 }); };
 exports.getTemplates = getTemplates;
 var getTemplate = function (templateId, runtimeAddress, runtimeSecret) { return __awaiter(void 0, void 0, void 0, function () {
-    var template, reactPath, stages, graph;
+    var template, reactPath, expectedInputs, graph;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -159,11 +157,11 @@ var getTemplate = function (templateId, runtimeAddress, runtimeSecret) { return 
                 // react router route
                 reactPath = "/template/" + templateId;
                 graph = getGraph(template.graphName);
-                return [4 /*yield*/, fbp_1.componentMetaForStages(template.stages, graph, runtimeAddress, runtimeSecret)];
+                return [4 /*yield*/, fbp_1.componentMeta(template.expectedInputs, graph, runtimeAddress, runtimeSecret)];
             case 1:
-                stages = _a.sent();
+                expectedInputs = _a.sent();
                 _a.label = 2;
-            case 2: return [2 /*return*/, __assign(__assign({}, template), { path: reactPath, stages: stages })];
+            case 2: return [2 /*return*/, __assign(__assign({}, template), { path: reactPath, expectedInputs: expectedInputs })];
         }
     });
 }); };

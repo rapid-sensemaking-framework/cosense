@@ -1,0 +1,135 @@
+.template .steps-button {
+  font-family: Helvetica, sans-serif;
+  font-size: 15px;
+  outline: none;
+  border: none;
+  width: 214px;
+  height: 53px;
+  color: #FFFFFF;
+  background-color: #8B8B8B;
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+.template .steps-button:hover {
+  background-color: #372888;
+}
+
+.template .input-wrapper {
+  margin-bottom: 36px;
+}
+
+.template label {
+  font-family: Helvetica, sans-serif;
+  font-size: 18px;
+  line-height: 20px;
+  color: #4A4A4A;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.template .input-help-label {
+  color: #969696;
+  font-size: 14px;
+}
+
+.template input[type="text"], .template textarea, .template select {
+  border: 1px solid #B1B1B1;
+  padding: 10px;
+  font-size: 14px;
+  line-height: 17px;
+  outline: none;
+  border-radius: 4px;
+  font-family: Helvetica, sans-serif;
+  color: #4D4F5C;
+  display: inline-block;
+  margin-top: 16px;
+  background: #FFFFFF;
+}
+
+.template input[type="text"]::placeholder, .template textarea::placeholder {
+  color: #B1B1B1;
+}
+
+.template textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.template select {
+  margin-left: 20px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.template button {
+  background-color: #FFFFFF;
+  color: #B1B1B1;
+  outline: none;
+  border: 1px solid #B4B4B4;
+  border-radius: 4px;
+  font-family: Helvetica, sans-serif;
+  font-size: 16px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-right: 16px;
+}
+.template button.button-selected {
+  background-color: #4A4A4A;
+  color: #FFFFFF;
+}
+
+.template-labels {
+  text-align: center;
+}
+
+.template-steps {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 42px;
+}
+
+.template-steps>div {
+  display: flex;
+  flex-direction: row;
+}
+
+.step-spacer {
+  margin-top: 19px;
+  width: 146px;
+  height: 2px;
+  background-color: #E3E3E3;
+}
+
+.step-indicator {
+  text-align: center;
+  max-width: 40px;
+  font-size: 13px;
+  color: #969696;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 24px;
+}
+
+.step-circle {
+  margin: 0 auto;
+  line-height: 38px;
+  text-align: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 19px;
+  border: 1px solid #E3E3E3;
+}
+
+.step-indicator.active .step-circle {
+  background-color: #4A4A4A;
+  color: #FFFFFF;
+  border: 1px solid #4A4A4A;
+}
+
+.step-indicator.active {
+  color: #4D4F5C;
+}

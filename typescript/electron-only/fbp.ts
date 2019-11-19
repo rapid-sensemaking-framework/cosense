@@ -1,7 +1,7 @@
 // https://github.com/flowbased/fbp-graph/blob/master/src/Graph.coffee
 // https://flowbased.github.io/fbp-protocol/
 import * as fbpClient from 'fbp-client'
-import { Stage, Graph, ExpectedInput } from '../types'
+import { Graph, ExpectedInput } from '../types'
 
 const createFbpClient = async (address: string, secret: string) => {
   const client = await fbpClient({
@@ -15,31 +15,26 @@ const createFbpClient = async (address: string, secret: string) => {
   return client
 }
 
-const componentMetaForStages = async (stages: Stage[], graph: Graph, runtimeAddress: string, runtimeSecret: string): Promise<Stage[]> => {
+const componentMeta = async (expectedInputs: ExpectedInput[], graph: Graph, runtimeAddress: string, runtimeSecret: string): Promise<ExpectedInput[]> => {
   const client = await createFbpClient(runtimeAddress, runtimeSecret)
   const components = await client.protocol.component.list()
   /// TODO: disconnect?
-  return stages.map((stage: Stage): Stage => {
+  return expectedInputs.map((e: ExpectedInput): ExpectedInput => {
+    const componentName = graph.processes[e.process].component
+    const component = components.find((c) => c.name === componentName)
+    const port = component.inPorts.find((i) => i.id === e.port)
     return {
-      ...stage,
-      expectedInputs: stage.expectedInputs.map((e: ExpectedInput): ExpectedInput => {
-        const componentName = graph.processes[e.process].component
-        const component = components.find((c) => c.name === componentName)
-        const port = component.inPorts.find((i) => i.id === e.port)
-        return {
-          ...e,
-          label: e.label || port.description,
-          type: port.type,
-          component: componentName
-        }
-      })
+      ...e,
+      label: e.label || port.description,
+      type: port.type,
+      component: componentName
     }
   })
 }
 
 export {
   createFbpClient,
-  componentMetaForStages
+  componentMeta
 }
 
 

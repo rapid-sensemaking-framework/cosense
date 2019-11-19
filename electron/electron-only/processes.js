@@ -130,16 +130,14 @@ var newProcess = function (formInputs, templateId, template, graph, registerWsUr
     return __generator(this, function (_a) {
         registerConfigs = {};
         participants = {};
-        template.stages.forEach(function (stage) {
-            stage.expectedInputs.forEach(function (expectedInput) {
-                var process = expectedInput.process, port = expectedInput.port;
-                if (port === constants_1.CONTACTABLE_CONFIG_PORT_NAME) {
-                    var id = utils_1.guidGenerator();
-                    var registerConfig = getRegisterConfig(formInputs, process, id, registerWsUrl);
-                    registerConfigs[process] = registerConfig;
-                    participants[process] = []; // empty for now
-                }
-            });
+        template.expectedInputs.forEach(function (expectedInput) {
+            var process = expectedInput.process, port = expectedInput.port;
+            if (port === constants_1.CONTACTABLE_CONFIG_PORT_NAME) {
+                var id = utils_1.guidGenerator();
+                var registerConfig = getRegisterConfig(formInputs, process, id, registerWsUrl);
+                registerConfigs[process] = registerConfig;
+                participants[process] = []; // empty for now
+            }
         });
         newProcess = __assign(__assign({}, newProcessDefaults()), { templateId: templateId,
             template: template,
@@ -331,35 +329,32 @@ var resolveExpectedInput = function (expectedInput, processId, formInputs, regis
     });
 }); };
 var runProcess = function (processId, runtimeAddress, runtimeSecret) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, registerConfigs, formInputs, graph, template, participants, promises, GraphConnections, jsonGraph, dataWatcher;
+    var _a, registerConfigs, formInputs, graph, template, participants, resolveAndConvert, promises, graphConnections, jsonGraph, dataWatcher;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4 /*yield*/, getProcess(processId)];
             case 1:
                 _a = _b.sent(), registerConfigs = _a.registerConfigs, formInputs = _a.formInputs, graph = _a.graph, template = _a.template, participants = _a.participants;
-                promises = [];
-                template.stages.forEach(function (stage) {
-                    stage.expectedInputs.forEach(function (expectedInput) {
-                        var process = expectedInput.process, port = expectedInput.port;
-                        promises.push((function () { return __awaiter(void 0, void 0, void 0, function () {
-                            var finalInput;
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, resolveExpectedInput(expectedInput, processId, formInputs, registerConfigs[process], participants[process])];
-                                    case 1:
-                                        finalInput = _a.sent();
-                                        return [2 /*return*/, convertToGraphConnection(process, port, finalInput)];
-                                }
-                            });
-                        }); })());
+                resolveAndConvert = function (expectedInput) { return __awaiter(void 0, void 0, void 0, function () {
+                    var process, port, finalInput;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                process = expectedInput.process, port = expectedInput.port;
+                                return [4 /*yield*/, resolveExpectedInput(expectedInput, processId, formInputs, registerConfigs[process], participants[process])];
+                            case 1:
+                                finalInput = _a.sent();
+                                return [2 /*return*/, convertToGraphConnection(process, port, finalInput)];
+                        }
                     });
-                });
+                }); };
+                promises = template.expectedInputs.map(resolveAndConvert);
                 return [4 /*yield*/, Promise.all(promises)
                     // once they're all ready, now commence the process
                     // mark as running now
                 ];
             case 2:
-                GraphConnections = _b.sent();
+                graphConnections = _b.sent();
                 // once they're all ready, now commence the process
                 // mark as running now
                 return [4 /*yield*/, setProcessProp(processId, 'configuring', false)];
@@ -370,7 +365,7 @@ var runProcess = function (processId, runtimeAddress, runtimeSecret) { return __
                 return [4 /*yield*/, setProcessProp(processId, 'running', true)];
             case 4:
                 _b.sent();
-                jsonGraph = run_graph_1.overrideJsonGraph(GraphConnections, graph);
+                jsonGraph = run_graph_1.overrideJsonGraph(graphConnections, graph);
                 dataWatcher = function (signal) { return __awaiter(void 0, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
