@@ -52,9 +52,19 @@ export default function Home() {
     <div className="divider" />
     <div className="processes-container">
       {processes.map((process, processIndex) => {
+        const status = process.complete
+          ? 'Complete'
+          : process.error
+          ? 'Error'
+          : process.configuring
+          ? 'Configuring'
+          : process.running
+          ? 'Running'
+          : '?'
         return <Link className="home-template-link" to={URLS.PROCESS.replace(':processId', process.id)} key={`process-${processIndex}`}>
           <div className="home-template-image" />
-          <div className="home-template-name">{process.id}</div>
+          <div className="home-template-name">{process.template.name}</div>
+          <div className="home-template-one-liner">{status}</div>
         </Link>
       })}
     </div>

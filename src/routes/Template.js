@@ -27,6 +27,7 @@ export default function Template() {
   const [loading, setLoading] = useState(true)
   const [template, setTemplate] = useState(defaultTemplate)
   const [formData, setFormData] = useState(defaultFormData)
+  const [processId, setProcessId] = useState(null)
   const { templateId } = useParams()
 
   useEffect(() => {
@@ -44,17 +45,18 @@ export default function Template() {
     return <>404 not found</>
   }
 
-  const startNow = async () => {
+  const submit = async () => {
     const inputs = { ...formData }
-    const processId = await createProcess(inputs, templateId, template)
+    const pId = await createProcess(inputs, templateId, template)
+    setProcessId(pId)
+    setActiveStep(5)
+  }
+  const startNow = async () => {
     await runProcess(processId)
     // redirect to the newly initiated process
     history.push(`/process/${processId}`)
   }
-
   const startLater = async () => {
-    const inputs = { ...formData }
-    await createProcess(inputs, templateId, template)
     history.push(`/`)
   }
 
@@ -76,7 +78,7 @@ export default function Template() {
   }
 
   // TODO: live form validation
-  
+
   const steps = [
     ['Prompt', GraphConfigure],
     ['Participants', TemplateContactables],
@@ -115,10 +117,12 @@ export default function Template() {
     {/* {template.parentTemplate && <>Parent Template: <Link to={`/template/${template.parentTemplate}`}>{template.parentTemplate}</Link></>} */}
     <WhichStep template={template} onChange={onChange} startNow={startNow} startLater={startLater} />
     {activeStep > 1 && activeStep < 5 && <button className="steps-button" onClick={() => setActiveStep(activeStep - 1)}>Back</button>}
-    {activeStep < 5 &&
-      <button className="steps-button" onClick={() => setActiveStep(activeStep + 1)}>
-        { activeStep === 4 ? 'Submit' : 'Next' }
-      </button>
-    }
+    {activeStep < 4 && <button className="steps-button" onClick={() => setActiveStep(activeStep + 1)}>
+      Next
+    </button>}
+    {activeStep === 4 &&
+      <button className="steps-button" onClick={submit}>
+        Submit
+      </button>}
   </div>
 }

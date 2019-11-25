@@ -5,6 +5,7 @@ import {
   useHistory
 } from 'react-router-dom'
 import {
+  runProcess,
   getProcess,
   cloneProcess,
   onProcessUpdate
@@ -50,6 +51,10 @@ export default function Process() {
   const participants = JSON.parse(process.formInputs[ident])
   const { startTime } = process
 
+  const run = () => {
+    runProcess(processId)
+  }
+
   const rerun = async (event) => {
     event.preventDefault()
     const newProcessId = await cloneProcess(processId)
@@ -59,19 +64,27 @@ export default function Process() {
   }
 
   return <>
-    <Link to="/">Home</Link>
-    <hr />
-    <h6>Process ID: {processId}</h6>
-    <h2>{process.configuring ? 'Configure Participants' : ' Process Dashboard'}</h2>
+    <h6>Flow ID: {processId}</h6>
+    <h2>{process.configuring ? 'Configure Participants' : ' Flow Dashboard'}</h2>
+    {process.configuring && <p>
+      The flow is ready to be started.
+      <br />
+      <br />
+      <button onClick={run}>
+        Run It
+      </button>
+    </p>}
     {process.running && <p>
-      The process is live and running now.
+      The flow is live and running now.
       The results will be updated live here when it's complete.
       </p>}
     {process.complete && <p>
-      The process has completed.
-        <button onClick={rerun} className="button button-clear">
-        Clone And Rerun This Process
-        </button>
+      The flow has completed.
+      <br />
+      <br />
+      <button onClick={rerun}>
+        Clone And Rerun This Flow
+      </button>
     </p>}
     {process.complete && !process.error && <>
       <h4>Results</h4>
