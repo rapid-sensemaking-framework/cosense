@@ -4,9 +4,9 @@ import { CONTACTABLE_CONFIG_PORT_NAME } from '../ts-built/constants'
 import {
   mapInputToFormFieldType
 } from '../expected-input'
-import * as forms from '../components/forms'
+import * as forms from './forms'
 
-export default function TemplateConfigure({ template, onChange }) {
+export default function GraphConfigure({ template, onChange }) {
   return template.expectedInputs
     .filter((e) => e.port !== CONTACTABLE_CONFIG_PORT_NAME)
     .map((expectedInput, index) => {

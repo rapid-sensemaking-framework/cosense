@@ -1,5 +1,4 @@
 import * as electron from 'electron'
-import * as path from 'path'
 import * as fs from 'fs'
 import {
   Statement,
@@ -13,7 +12,9 @@ import {
   Template,
   ExpectedInput,
   GraphConnection,
-  Graph
+  Graph,
+  Handler,
+  HandlerInput
 } from '../types'
 import {
   CONTACTABLE_CONFIG_PORT_NAME,
@@ -22,9 +23,11 @@ import {
 import {
   guidGenerator
 } from '../utils'
+import {
+  USER_PROCESSES_PATH
+} from './folders'
 
 import {
-  getContactablesFromFacilitator,
   getContactablesFromRegistration,
 } from './participant_register'
 import {
@@ -34,10 +37,8 @@ import {
 
 const { BrowserWindow } = electron
 
-const PROCESSES_FOLDER = 'processes'
-
 const getProcessPath = (processId: string) => {
-  return path.join(electron.app.getAppPath(), `${PROCESSES_FOLDER}/${processId}.json`)
+  return `${USER_PROCESSES_PATH}/${processId}.json`
 }
 
 const getProcessAsObject = (processId: string) => {
@@ -47,15 +48,14 @@ const getProcessAsObject = (processId: string) => {
   return process
 }
 
-const writeProcess = (processId, process) => {
+const writeProcess = (processId: string, process: Process) => {
   const processPath = getProcessPath(processId)
   fs.writeFileSync(processPath, JSON.stringify(process))
 }
 
 const getProcesses = async (): Promise<Process[]> => {
   return new Promise((resolve, reject) => {
-    const processesPath = path.join(electron.app.getAppPath(), PROCESSES_FOLDER)
-    fs.readdir(processesPath, (err, files) => {
+    fs.readdir(USER_PROCESSES_PATH, (err, files) => {
       if (err) {
         reject(err)
         return
@@ -99,6 +99,41 @@ const newProcessDefaults = () => {
   }
 }
 
+/*
+
+const { maxTime, maxParticipants, processContext, id, wsUrl } = registerConfig
+  return getContactablesFromRegistration(
+    wsUrl,
+    id,
+    maxTime,
+    maxParticipants,
+    processContext,
+    callback
+  )
+  updateParticipants(processId, process, finalInput, true)
+*/
+
+const getRegisterConfig = (formInputs: FormInputs, process: string, id: string, wsUrl: string): RegisterConfig => {
+  return {
+    stage: process,
+    isFacilitator: formInputs[`${process}-check-facil_register`] === 'facil_register',
+    processContext: formInputs[`${process}-ParticipantRegister-process_context`] || process,
+    maxTime: (parseFloat(formInputs[`${process}-ParticipantRegister-max_time`]) || 5) * 60, // five minute default, converted to seconds
+    maxParticipants: formInputs[`${process}-ParticipantRegister-max_participants`] || '*', // unlimited default
+    id,
+    wsUrl
+  }
+}
+
+const updateParticipants = async (processId: string, name: string, newParticipants: ContactableConfig[], overwrite: boolean) => {
+  const p = await getProcess(processId)
+  const participants = {
+    ...p.participants,
+    [name]: overwrite ? newParticipants : p.participants[name].concat(newParticipants)
+  }
+  await setProcessProp(processId, 'participants', participants)
+}
+
 const newProcess = async (
   formInputs: FormInputs,
   templateId: string,
@@ -106,17 +141,18 @@ const newProcess = async (
   graph: Graph,
   registerWsUrl: string
 ): Promise<string> => {
+
   const registerConfigs = {}
   const participants = {}
-  template.expectedInputs.forEach((expectedInput: ExpectedInput) => {
-    const { process, port } = expectedInput
-    if (port === CONTACTABLE_CONFIG_PORT_NAME) {
+  template.expectedInputs
+    .filter((expectedInput: ExpectedInput) => expectedInput.port === CONTACTABLE_CONFIG_PORT_NAME)
+    .forEach((expectedInput: ExpectedInput) => {
+      const { process } = expectedInput
       const id = guidGenerator()
       const registerConfig = getRegisterConfig(formInputs, process, id, registerWsUrl)
       registerConfigs[process] = registerConfig
       participants[process] = [] // empty for now
-    }
-  })
+    })
 
   const newProcess: Process = {
     ...newProcessDefaults(),
@@ -132,7 +168,7 @@ const newProcess = async (
   return newProcess.id
 }
 
-const cloneProcess = async (processId): Promise<string> => {
+const cloneProcess = async (processId: string): Promise<string> => {
   const orig = await getProcess(processId)
   const newProcess = {
     ...orig,
@@ -143,14 +179,9 @@ const cloneProcess = async (processId): Promise<string> => {
   return newProcess.id
 }
 
-interface HandlerInput {
-  input?: string
-  registerConfig?: RegisterConfig
-  callback?: (c: ContactableConfig) => void,
-  participants?: ContactableConfig[]
-}
-type Handler = (handlerInput: HandlerInput) => Promise<any>
-
+/*
+  HANDLERS
+*/
 const handleText: Handler = async ({ input }): Promise<string> => {
   return input
 }
@@ -182,20 +213,6 @@ const handleOptionsData: Handler = async ({ input }): Promise<Option[]> => {
 const handleStatementsData: Handler = async ({ input }): Promise<Array<Statement>> => {
   return input.split('\n').map(s => ({ text: s }))
 }
-const handleRegisterConfig: Handler = ({ participants, registerConfig, callback }): Promise<ContactableConfig[]> => {
-  if (participants.length > 0) {
-    return Promise.resolve(participants)
-  }
-  const { isFacilitator, maxTime, maxParticipants, processContext, id, wsUrl } = registerConfig
-  return isFacilitator ? getContactablesFromFacilitator(id) : getContactablesFromRegistration(
-    wsUrl,
-    id,
-    maxTime,
-    maxParticipants,
-    processContext,
-    callback
-  )
-}
 
 // noflo input types
 // all, string, number, int, object, array, boolean, color, date, bang, function, buffer, stream
@@ -212,7 +229,6 @@ const nofloTypeMap = {
   // TODO: the rest
 }
 const specialPorts = {
-  contactable_configs: handleRegisterConfig,
   statements: handleStatementsData,
   options: handleOptionsData,
   max_time: handleMaxTime
@@ -235,32 +251,11 @@ const convertToGraphConnection = (process: string, port: string, data: any): Gra
   }
 }
 
-const updateParticipants = async (processId: string, name: string, newParticipants: ContactableConfig[], overwrite: boolean) => {
-  const p = await getProcess(processId)
-  const participants = {
-    ...p.participants,
-    [name]: overwrite ? newParticipants : p.participants[name].concat(newParticipants)
-  }
-  await setProcessProp(processId, 'participants', participants)
-}
-
 const getHandlerInput = (
-  processId: string,
   expectedInput: ExpectedInput,
-  formInputs: FormInputs,
-  registerConfig: RegisterConfig,
-  participants: ContactableConfig[]
+  formInputs: FormInputs
 ): HandlerInput => {
   const { process, port } = expectedInput
-  if (port === CONTACTABLE_CONFIG_PORT_NAME) {
-    return {
-      participants,
-      registerConfig,
-      callback: (contactableConfig: ContactableConfig) => {
-        updateParticipants(processId, process, [contactableConfig], false)
-      }
-    }
-  }
   return {
     input: formInputs[`${process}--${port}`]
   }
@@ -268,49 +263,33 @@ const getHandlerInput = (
 
 const resolveExpectedInput = async (
   expectedInput: ExpectedInput,
-  processId: string,
-  formInputs: FormInputs,
-  registerConfig: RegisterConfig,
-  participants: ContactableConfig[]
+  formInputs: FormInputs
 ) => {
-  const { process, port } = expectedInput
   const handler: Handler = mapInputToHandler(expectedInput)
   const handlerInput: HandlerInput = getHandlerInput(
-    processId,
     expectedInput,
     formInputs,
-    registerConfig,
-    participants
   )
   const finalInput = await handler(handlerInput)
-  if (port === CONTACTABLE_CONFIG_PORT_NAME) {
-    updateParticipants(processId, process, finalInput, true)
-  }
   return finalInput
+}
+
+const resolveAndConvert = async (expectedInput: ExpectedInput, formInputs: FormInputs): Promise<GraphConnection> => {
+  const { process, port } = expectedInput
+  const finalInput = await resolveExpectedInput(expectedInput, formInputs)
+  return convertToGraphConnection(process, port, finalInput)
 }
 
 const runProcess = async (processId: string, runtimeAddress: string, runtimeSecret: string) => {
   const {
-    registerConfigs,
     formInputs,
     graph,
     template,
-    participants
   } = await getProcess(processId)
 
-  const resolveAndConvert = async (expectedInput: ExpectedInput): Promise<GraphConnection> => {
-    const { process, port } = expectedInput
-    const finalInput = await resolveExpectedInput(
-      expectedInput,
-      processId,
-      formInputs,
-      registerConfigs[process],
-      participants[process]
-    )
-    return convertToGraphConnection(process, port, finalInput)
-  }
-  const promises: Promise<GraphConnection>[] = template.expectedInputs.map(resolveAndConvert)
-  const graphConnections = await Promise.all(promises)
+  const graphConnections = await Promise.all(template.expectedInputs.map((e: ExpectedInput) => {
+    return resolveAndConvert(e, formInputs)
+  }))
 
   // once they're all ready, now commence the process
   // mark as running now
@@ -333,18 +312,6 @@ const runProcess = async (processId: string, runtimeAddress: string, runtimeSecr
     }) // logs and save to memory
 }
 
-const getRegisterConfig = (formInputs: FormInputs, process: string, id: string, wsUrl: string): RegisterConfig => {
-  return {
-    stage: process,
-    isFacilitator: formInputs[`${process}-check-facil_register`] === 'facil_register',
-    processContext: formInputs[`${process}-ParticipantRegister-process_context`] || process,
-    maxTime: (parseFloat(formInputs[`${process}-ParticipantRegister-max_time`]) || 5) * 60, // five minute default, converted to seconds
-    maxParticipants: formInputs[`${process}-ParticipantRegister-max_participants`] || '*', // unlimited default
-    id,
-    wsUrl
-  }
-}
-
 export {
   getProcesses,
   getProcess,
@@ -353,7 +320,6 @@ export {
   cloneProcess,
   runProcess,
   getRegisterConfig,
-  handleRegisterConfig,
   convertToGraphConnection,
   handleOptionsData,
   mapInputToHandler

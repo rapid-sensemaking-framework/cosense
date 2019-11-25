@@ -9,23 +9,18 @@ import {
 import {
   getElectron
 } from '../electron-require'
-import ContactablesForm from './ContactablesForm'
 import RegisterLink from './RegisterLink'
 
 const electron = getElectron()
 
-export default function Register({ registerConfig, participants, startTime, sendContactableConfigs }) {
+export default function Register({ registerConfig, participants, startTime }) {
 
   const timeLeft = remainingTime(registerConfig.maxTime, startTime)
-  const onSubmit = (contactableConfigs) => {
-    sendContactableConfigs(registerConfig.id, contactableConfigs)
-  }
   const hostUrl = getRegisterAddress(electron.remote.process.env, 'REGISTER_HTTP_PROTOCOL')
   const url = hostUrl + URLS.REGISTER(registerConfig.id)
 
   return <>
-    {!registerConfig.isFacilitator && <RegisterLink timeLeft={timeLeft} url={url} />}
-    {registerConfig.isFacilitator && participants.length === 0 && <ContactablesForm onSubmit={onSubmit} />}
+    {/* {!registerConfig.isFacilitator && <RegisterLink timeLeft={timeLeft} url={url} />} */}
     {participants.length > 0 && <div>
       <h5>participants</h5>
       <ol>

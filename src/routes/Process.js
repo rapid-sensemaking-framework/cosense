@@ -7,10 +7,13 @@ import {
 import {
   getProcess,
   cloneProcess,
-  onProcessUpdate,
-  sendContactableConfigs
+  onProcessUpdate
 } from '../ipc'
-import Stage from '../components/Stage'
+import {
+  CONTACTABLE_CONFIG_PORT_NAME
+} from '../ts-built/constants'
+import ExpectedInputs from '../components/ExpectedInputs'
+import Register from '../components/Register'
 
 export default function Process() {
   const history = useHistory()
@@ -38,6 +41,14 @@ export default function Process() {
   }
 
   const processResults = process.results ? process.results.trim().replace(/\n/g, "<br />") : ''
+  // For now, only display one
+  // register config, for the whole thing
+  const contactableInput = process.template.expectedInputs
+    .find(e => e.port === CONTACTABLE_CONFIG_PORT_NAME)
+  const ident = contactableInput.process + '--' + CONTACTABLE_CONFIG_PORT_NAME
+  const registerConfig = process.registerConfigs[contactableInput.process]
+  const participants = JSON.parse(process.formInputs[ident])
+  const { startTime } = process
 
   const rerun = async (event) => {
     event.preventDefault()
@@ -73,8 +84,8 @@ export default function Process() {
       <hr />
     </>}
     {!process.configuring && <h4>Configuration</h4>}
-    {process.template.stages.map((stage, stageIndex) => {
-      return <Stage key={`stage-${stageIndex}`} {...{ stage, process, sendContactableConfigs }} />
-    })}
+    {/* display registered participants, or the info to register them */}
+    <Register {...{ registerConfig, participants, startTime }} />
+    <ExpectedInputs process={process} />
   </>
 }

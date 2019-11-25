@@ -7,11 +7,15 @@ import {
 import {
   getTemplate,
   cloneTemplate,
-  createProcess
+  createProcess,
+  runProcess
 } from '../ipc'
 
-import TemplateConfigure from '../components/TemplateConfigure'
-import ContactablesForm from '../components/ContactablesForm'
+import GraphConfigure from '../components/GraphConfigure'
+import TemplateContactables from '../components/TemplateContactables'
+import TemplateResults from '../components/TemplateResults'
+import TemplatePreview from '../components/TemplatePreview'
+import TemplateSubmit from '../components/TemplateSubmit'
 import './Template.css'
 
 export default function Template() {
@@ -40,13 +44,19 @@ export default function Template() {
     return <>404 not found</>
   }
 
-  // const onSubmit = async (event) => {
-  //   event.preventDefault()
-  //   const inputs = { ...formData }
-  //   const processId = await createProcess(inputs, templateId, template)
-  //   // redirect to the newly initiated process
-  //   history.push(`/process/${processId}`)
-  // }
+  const startNow = async () => {
+    const inputs = { ...formData }
+    const processId = await createProcess(inputs, templateId, template)
+    await runProcess(processId)
+    // redirect to the newly initiated process
+    history.push(`/process/${processId}`)
+  }
+
+  const startLater = async () => {
+    const inputs = { ...formData }
+    await createProcess(inputs, templateId, template)
+    history.push(`/`)
+  }
 
   const onChange = (key, value) => {
     console.log('setting:', key, value)
@@ -68,11 +78,11 @@ export default function Template() {
   // TODO: live form validation
   
   const steps = [
-    ['Prompt', TemplateConfigure],
-    ['Participants', ContactablesForm],
-    ['Results', TemplateConfigure],
-    ['Preview', TemplateConfigure],
-    ['Submit', TemplateConfigure]
+    ['Prompt', GraphConfigure],
+    ['Participants', TemplateContactables],
+    ['Results', TemplateResults],
+    ['Preview', TemplatePreview],
+    ['Submit', TemplateSubmit]
   ]
 
   // activeStep is 1 indexed, not 0 indexed
@@ -103,8 +113,12 @@ export default function Template() {
       })}
     </div>
     {/* {template.parentTemplate && <>Parent Template: <Link to={`/template/${template.parentTemplate}`}>{template.parentTemplate}</Link></>} */}
-    <WhichStep template={template} onChange={onChange} />
-    {activeStep > 1 && <button className="steps-button" onClick={() => setActiveStep(Math.max(1, activeStep - 1))}>Back</button>}
-    <button className="steps-button" onClick={() => setActiveStep(Math.min(5, activeStep + 1))}>Next</button>
+    <WhichStep template={template} onChange={onChange} startNow={startNow} startLater={startLater} />
+    {activeStep > 1 && activeStep < 5 && <button className="steps-button" onClick={() => setActiveStep(activeStep - 1)}>Back</button>}
+    {activeStep < 5 &&
+      <button className="steps-button" onClick={() => setActiveStep(activeStep + 1)}>
+        { activeStep === 4 ? 'Submit' : 'Next' }
+      </button>
+    }
   </div>
 }

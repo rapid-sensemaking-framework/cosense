@@ -74,6 +74,7 @@
   padding: 10px 20px;
   cursor: pointer;
   margin-right: 16px;
+  margin-top: 16px;
 }
 .template .button-inactive {
   background-color: #FFFFFF;

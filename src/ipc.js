@@ -7,16 +7,26 @@ const { IPC } = EVENTS
 
 // TODO: DRY up
 
-const getTemplates = async () => {
-  ipc.send(IPC.GET_TEMPLATES)
-  return await new Promise((resolve) => {
-    ipc.once(IPC.RETURN_TEMPLATES, (event, templates) => resolve(templates))
+const getSystemTemplates = async () => {
+  ipc.send(IPC.GET_SYSTEM_TEMPLATES)
+  return new Promise((resolve) => {
+    ipc.once(IPC.RETURN_SYSTEM_TEMPLATES, (event, templates) => resolve(templates))
   })
 }
 
-const getTemplate = async (templateId) => {
-  ipc.send(IPC.GET_TEMPLATE, templateId)
-  return await new Promise((resolve) => {
+const getUserTemplates = async () => {
+  ipc.send(IPC.GET_USER_TEMPLATES)
+  return new Promise((resolve) => {
+    ipc.once(IPC.RETURN_USER_TEMPLATES, (event, templates) => resolve(templates))
+  })
+}
+
+const getTemplate = async (templateId, userDefined) => {
+  ipc.send(IPC.GET_TEMPLATE, {
+    templateId,
+    userDefined
+  })
+  return new Promise((resolve) => {
     ipc.once(IPC.RETURN_TEMPLATE, (event, template) => resolve(template))
   })
 }
@@ -30,35 +40,42 @@ const updateTemplate = async (data) => {
 
 const cloneTemplate = async (templateId) => {
   ipc.send(IPC.CLONE_TEMPLATE, templateId)
-  return await new Promise((resolve) => {
+  return new Promise((resolve) => {
     ipc.once(IPC.TEMPLATE_CLONED, (event, newTemplateId) => resolve(newTemplateId))
   })
 }
 
 const getProcesses = async () => {
   ipc.send(IPC.GET_PROCESSES)
-  return await new Promise((resolve) => {
+  return new Promise((resolve) => {
     ipc.once(IPC.RETURN_PROCESSES, (event, processes) => resolve(processes))
   })
 }
 
 const getProcess = async (processId) => {
   ipc.send(IPC.GET_PROCESS, processId)
-  return await new Promise((resolve) => {
+  return new Promise((resolve) => {
     ipc.once(IPC.RETURN_PROCESS, (event, process) => resolve(process))
   })
 }
 
 const createProcess = async (inputs, templateId, template) => {
-  ipc.send(IPC.CREATE_AND_RUN_PROCESS, { inputs, templateId, template })
-  return await new Promise((resolve) => {
-    ipc.once(IPC.PROCESS_CREATED_AND_RUN, (event, processId) => resolve(processId))
+  ipc.send(IPC.CREATE_PROCESS, { inputs, templateId, template })
+  return new Promise((resolve) => {
+    ipc.once(IPC.PROCESS_CREATED, (event, processId) => resolve(processId))
+  })
+}
+
+const runProcess = async (processId) => {
+  ipc.send(IPC.RUN_PROCESS, processId)
+  return new Promise((resolve) => {
+    ipc.once(IPC.PROCESS_RUNNING, () => resolve())
   })
 }
 
 const cloneProcess = async (processId) => {
   ipc.send(IPC.CLONE_PROCESS, processId)
-  return await new Promise((resolve) => {
+  return new Promise((resolve) => {
     ipc.once(IPC.PROCESS_CLONED, (event, newProcessId) => resolve(newProcessId))
   })
 }
@@ -79,11 +96,13 @@ const sendContactableConfigs = (id, contactableConfigs) => {
 }
 
 export {
-  getTemplates,
+  getSystemTemplates,
+  getUserTemplates,
   getTemplate,
   cloneTemplate,
   updateTemplate,
   createProcess,
+  runProcess,
   getProcesses,
   getProcess,
   cloneProcess,

@@ -1,20 +1,7 @@
 "use strict";
 exports.__esModule = true;
-var electron = require("electron");
 var socketClient = require("socket.io-client");
 var constants_1 = require("../constants");
-var ipc = electron.ipcMain;
-// ipc local
-var getContactablesFromFacilitator = function (id) {
-    return new Promise(function (resolve) {
-        ipc.once(constants_1.EVENTS.IPC.HANDLE_FACIL_CONTACTABLES_SUBMIT(id), function (event, contactableConfigs) {
-            resolve(contactableConfigs);
-            // synchronously return
-            event.returnValue = true;
-        });
-    });
-};
-exports.getContactablesFromFacilitator = getContactablesFromFacilitator;
 // websockets to remote
 var getContactablesFromRegistration = function (wsUrl, id, maxTime, maxParticipants, processDescription, eachNew // set default
 ) {

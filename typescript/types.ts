@@ -36,6 +36,24 @@ interface Template {
   parentTemplate?: string // references another template by its id
 }
 
+interface UpdateTemplateInput {
+  name: string
+  description: string
+  expectedInputs: ExpectedInput[]
+  templateId: string
+}
+
+interface TemplateSubmitInput {
+  inputs: FormInputs
+  templateId: string
+  template: Template
+}
+
+interface GetTemplateInput {
+  templateId: string
+  userDefined: boolean
+}
+
 type RegisterConfigSet = {
   [key: string]: RegisterConfig
 }
@@ -86,14 +104,25 @@ interface GraphConnection {
   data?: any
 }
 
+interface HandlerInput {
+  input: string
+}
+
+type Handler = (handlerInput: HandlerInput) => Promise<any>
+
 export {
   ContactableConfigSet,
   RegisterConfig,
   RegisterConfigSet,
   Template,
+  UpdateTemplateInput,
+  TemplateSubmitInput,
+  GetTemplateInput,
   FormInputs,
   ExpectedInput,
   Process,
   GraphConnection,
-  Graph
+  Graph,
+  Handler,
+  HandlerInput
 }

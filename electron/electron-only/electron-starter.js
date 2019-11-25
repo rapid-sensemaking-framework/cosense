@@ -1,12 +1,24 @@
 "use strict";
 exports.__esModule = true;
 var dotenv = require("dotenv");
+var fs = require("fs");
 var path = require("path");
 var url = require("url");
 var electron = require("electron");
 // import { log, transports } from 'electron-log'
 var fixPath = require("fix-path");
+var folders_1 = require("./folders");
+// weird environment variables / path fix that's needed
 fixPath();
+// we create these folders in the "appData" paths
+// so that we can actually write to them
+if (!fs.existsSync(folders_1.APP_DATA_PATH)) {
+    // main folder
+    fs.mkdirSync(folders_1.APP_DATA_PATH);
+    // subfolders
+    fs.mkdirSync(folders_1.USER_PROCESSES_PATH);
+    fs.mkdirSync(folders_1.USER_TEMPLATES_PATH);
+}
 // transports.file.findLogPath()
 var dotenvPath;
 if (process.env.ELECTRON_START_URL) {

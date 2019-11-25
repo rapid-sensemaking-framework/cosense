@@ -42,6 +42,7 @@ var constants_1 = require("../constants");
 var templates_1 = require("./templates");
 var processes_1 = require("./processes");
 var IPC = constants_1.EVENTS.IPC;
+// TODO handle failure cases
 var attachEventListeners = function () {
     ipc.on(IPC.UPDATE_TEMPLATE, function (event, data) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -54,30 +55,40 @@ var attachEventListeners = function () {
             }
         });
     }); });
-    ipc.on(IPC.CREATE_AND_RUN_PROCESS, function (event, data) { return __awaiter(void 0, void 0, void 0, function () {
+    ipc.on(IPC.CREATE_PROCESS, function (event, data) { return __awaiter(void 0, void 0, void 0, function () {
         var processId;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, templates_1.handleTemplateSubmit(data)];
+                case 0: return [4 /*yield*/, templates_1.createProcess(data)];
                 case 1:
                     processId = _a.sent();
-                    event.sender.send(IPC.PROCESS_CREATED_AND_RUN, processId);
+                    event.sender.send(IPC.PROCESS_CREATED, processId);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    ipc.on(IPC.RUN_PROCESS, function (event, processId) { return __awaiter(void 0, void 0, void 0, function () {
+        var runtimeAddress, runtimeSecret;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    runtimeAddress = process.env.RUNTIME_ADDRESS;
+                    runtimeSecret = process.env.RUNTIME_SECRET;
+                    return [4 /*yield*/, processes_1.runProcess(processId, runtimeAddress, runtimeSecret)];
+                case 1:
+                    _a.sent();
+                    event.sender.send(IPC.PROCESS_RUNNING);
                     return [2 /*return*/];
             }
         });
     }); });
     ipc.on(IPC.CLONE_PROCESS, function (event, processId) { return __awaiter(void 0, void 0, void 0, function () {
-        var newProcessId, runtimeAddress, runtimeSecret;
+        var newProcessId;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, processes_1.cloneProcess(processId)
-                    // kick it off, but don't wait on it, or depend on it for anything
-                ];
+                case 0: return [4 /*yield*/, processes_1.cloneProcess(processId)];
                 case 1:
                     newProcessId = _a.sent();
-                    runtimeAddress = process.env.RUNTIME_ADDRESS;
-                    runtimeSecret = process.env.RUNTIME_SECRET;
-                    processes_1.runProcess(newProcessId, runtimeAddress, runtimeSecret);
                     event.sender.send(IPC.PROCESS_CLONED, newProcessId);
                     return [2 /*return*/];
             }
@@ -119,26 +130,39 @@ var attachEventListeners = function () {
             }
         });
     }); });
-    ipc.on(IPC.GET_TEMPLATES, function (event) { return __awaiter(void 0, void 0, void 0, function () {
+    ipc.on(IPC.GET_SYSTEM_TEMPLATES, function (event) { return __awaiter(void 0, void 0, void 0, function () {
         var templates;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, templates_1.getTemplates()];
+                case 0: return [4 /*yield*/, templates_1.getTemplates(false)];
                 case 1:
                     templates = _a.sent();
-                    event.sender.send(IPC.RETURN_TEMPLATES, templates);
+                    event.sender.send(IPC.RETURN_SYSTEM_TEMPLATES, templates);
                     return [2 /*return*/];
             }
         });
     }); });
-    ipc.on(IPC.GET_TEMPLATE, function (event, templateId) { return __awaiter(void 0, void 0, void 0, function () {
-        var runtimeAddress, runtimeSecret, template;
+    ipc.on(IPC.GET_USER_TEMPLATES, function (event) { return __awaiter(void 0, void 0, void 0, function () {
+        var templates;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, templates_1.getTemplates(true)];
+                case 1:
+                    templates = _a.sent();
+                    event.sender.send(IPC.RETURN_USER_TEMPLATES, templates);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    ipc.on(IPC.GET_TEMPLATE, function (event, data) { return __awaiter(void 0, void 0, void 0, function () {
+        var templateId, userDefined, runtimeAddress, runtimeSecret, template;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    templateId = data.templateId, userDefined = data.userDefined;
                     runtimeAddress = process.env.RUNTIME_ADDRESS;
                     runtimeSecret = process.env.RUNTIME_SECRET;
-                    return [4 /*yield*/, templates_1.getTemplate(templateId, runtimeAddress, runtimeSecret)];
+                    return [4 /*yield*/, templates_1.getTemplate(templateId, userDefined, runtimeAddress, runtimeSecret)];
                 case 1:
                     template = _a.sent();
                     event.sender.send(IPC.RETURN_TEMPLATE, template);

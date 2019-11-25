@@ -1,9 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { CONTACTABLE_CONFIG_PORT_NAME } from '../ts-built/constants'
 import ContactableInput from './ContactableInput'
-import './ContactablesForm.css'
+import './TemplateContactables.css'
 
-export default function ContactablesForm({ onSubmit }) {
+export default function ContactablesForm({ template, onChange }) {
   const [els, setEls] = useState([{}])
+
+  const expectedContactables = template.expectedInputs
+    .filter((e) => e.port === CONTACTABLE_CONFIG_PORT_NAME)
+
+  useEffect(() => {
+    expectedContactables.forEach(expectedInput => {
+      const { process, port } = expectedInput
+      const ident = `${process}--${port}`
+      onChange(ident, JSON.stringify(els))
+    })
+  }, [els])
+
   const updateEl = (val, index) => {
     const newEls = els.slice(0) // clone
     newEls[index] = val
@@ -14,10 +27,6 @@ export default function ContactablesForm({ onSubmit }) {
     newEls.splice(index, 1)
     setEls(newEls)
   }
-  const innerOnSubmit = (e) => {
-    e.preventDefault()
-    onSubmit(els)
-  }
   const clickAddOne = (e) => {
     e.preventDefault()
     setEls(els.concat([{}]))
@@ -25,9 +34,10 @@ export default function ContactablesForm({ onSubmit }) {
   return <div className="contactables-form">
     <div className="input-label">Configure your participants</div>
     <div className="input-help-label">
-      Select participants and their communication platform for participation or select a pre-existing list.
+      List participants and their communication platform for participation.
     </div>
-    <button className="participant-list-button">Choose Participant List</button>
+    {/* Select participants and their communication platform for participation or select a pre-existing list. */}
+    {/* <button className="participant-list-button">Choose Participant List</button> */}
     {els.map((id, index) => {
       return <ContactableInput
         showRemove={els.length > 1}

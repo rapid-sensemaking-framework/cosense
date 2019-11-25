@@ -48,16 +48,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var electron = require("electron");
-var path = require("path");
 var fs = require("fs");
 var constants_1 = require("../constants");
 var utils_1 = require("../utils");
-var participant_register_1 = require("./participant_register");
+var folders_1 = require("./folders");
 var run_graph_1 = require("./run_graph");
 var BrowserWindow = electron.BrowserWindow;
-var PROCESSES_FOLDER = 'processes';
 var getProcessPath = function (processId) {
-    return path.join(electron.app.getAppPath(), PROCESSES_FOLDER + "/" + processId + ".json");
+    return folders_1.USER_PROCESSES_PATH + "/" + processId + ".json";
 };
 var getProcessAsObject = function (processId) {
     var processPath = getProcessPath(processId);
@@ -72,8 +70,7 @@ var writeProcess = function (processId, process) {
 var getProcesses = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2 /*return*/, new Promise(function (resolve, reject) {
-                var processesPath = path.join(electron.app.getAppPath(), PROCESSES_FOLDER);
-                fs.readdir(processesPath, function (err, files) {
+                fs.readdir(folders_1.USER_PROCESSES_PATH, function (err, files) {
                     if (err) {
                         reject(err);
                         return;
@@ -125,19 +122,60 @@ var newProcessDefaults = function () {
         error: null
     };
 };
+/*
+
+const { maxTime, maxParticipants, processContext, id, wsUrl } = registerConfig
+  return getContactablesFromRegistration(
+    wsUrl,
+    id,
+    maxTime,
+    maxParticipants,
+    processContext,
+    callback
+  )
+  updateParticipants(processId, process, finalInput, true)
+*/
+var getRegisterConfig = function (formInputs, process, id, wsUrl) {
+    return {
+        stage: process,
+        isFacilitator: formInputs[process + "-check-facil_register"] === 'facil_register',
+        processContext: formInputs[process + "-ParticipantRegister-process_context"] || process,
+        maxTime: (parseFloat(formInputs[process + "-ParticipantRegister-max_time"]) || 5) * 60,
+        maxParticipants: formInputs[process + "-ParticipantRegister-max_participants"] || '*',
+        id: id,
+        wsUrl: wsUrl
+    };
+};
+exports.getRegisterConfig = getRegisterConfig;
+var updateParticipants = function (processId, name, newParticipants, overwrite) { return __awaiter(void 0, void 0, void 0, function () {
+    var p, participants;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4 /*yield*/, getProcess(processId)];
+            case 1:
+                p = _b.sent();
+                participants = __assign(__assign({}, p.participants), (_a = {}, _a[name] = overwrite ? newParticipants : p.participants[name].concat(newParticipants), _a));
+                return [4 /*yield*/, setProcessProp(processId, 'participants', participants)];
+            case 2:
+                _b.sent();
+                return [2 /*return*/];
+        }
+    });
+}); };
 var newProcess = function (formInputs, templateId, template, graph, registerWsUrl) { return __awaiter(void 0, void 0, void 0, function () {
     var registerConfigs, participants, newProcess;
     return __generator(this, function (_a) {
         registerConfigs = {};
         participants = {};
-        template.expectedInputs.forEach(function (expectedInput) {
-            var process = expectedInput.process, port = expectedInput.port;
-            if (port === constants_1.CONTACTABLE_CONFIG_PORT_NAME) {
-                var id = utils_1.guidGenerator();
-                var registerConfig = getRegisterConfig(formInputs, process, id, registerWsUrl);
-                registerConfigs[process] = registerConfig;
-                participants[process] = []; // empty for now
-            }
+        template.expectedInputs
+            .filter(function (expectedInput) { return expectedInput.port === constants_1.CONTACTABLE_CONFIG_PORT_NAME; })
+            .forEach(function (expectedInput) {
+            var process = expectedInput.process;
+            var id = utils_1.guidGenerator();
+            var registerConfig = getRegisterConfig(formInputs, process, id, registerWsUrl);
+            registerConfigs[process] = registerConfig;
+            participants[process] = []; // empty for now
         });
         newProcess = __assign(__assign({}, newProcessDefaults()), { templateId: templateId,
             template: template,
@@ -166,6 +204,9 @@ var cloneProcess = function (processId) { return __awaiter(void 0, void 0, void 
     });
 }); };
 exports.cloneProcess = cloneProcess;
+/*
+  HANDLERS
+*/
 var handleText = function (_a) {
     var input = _a.input;
     return __awaiter(void 0, void 0, void 0, function () {
@@ -233,15 +274,6 @@ var handleStatementsData = function (_a) {
         });
     });
 };
-var handleRegisterConfig = function (_a) {
-    var participants = _a.participants, registerConfig = _a.registerConfig, callback = _a.callback;
-    if (participants.length > 0) {
-        return Promise.resolve(participants);
-    }
-    var isFacilitator = registerConfig.isFacilitator, maxTime = registerConfig.maxTime, maxParticipants = registerConfig.maxParticipants, processContext = registerConfig.processContext, id = registerConfig.id, wsUrl = registerConfig.wsUrl;
-    return isFacilitator ? participant_register_1.getContactablesFromFacilitator(id) : participant_register_1.getContactablesFromRegistration(wsUrl, id, maxTime, maxParticipants, processContext, callback);
-};
-exports.handleRegisterConfig = handleRegisterConfig;
 // noflo input types
 // all, string, number, int, object, array, boolean, color, date, bang, function, buffer, stream
 // map these to form inputs
@@ -257,7 +289,6 @@ var nofloTypeMap = {
     // TODO: the rest
 };
 var specialPorts = {
-    contactable_configs: handleRegisterConfig,
     statements: handleStatementsData,
     options: handleOptionsData,
     max_time: handleMaxTime
@@ -279,77 +310,49 @@ var convertToGraphConnection = function (process, port, data) {
     };
 };
 exports.convertToGraphConnection = convertToGraphConnection;
-var updateParticipants = function (processId, name, newParticipants, overwrite) { return __awaiter(void 0, void 0, void 0, function () {
-    var p, participants;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0: return [4 /*yield*/, getProcess(processId)];
-            case 1:
-                p = _b.sent();
-                participants = __assign(__assign({}, p.participants), (_a = {}, _a[name] = overwrite ? newParticipants : p.participants[name].concat(newParticipants), _a));
-                return [4 /*yield*/, setProcessProp(processId, 'participants', participants)];
-            case 2:
-                _b.sent();
-                return [2 /*return*/];
-        }
-    });
-}); };
-var getHandlerInput = function (processId, expectedInput, formInputs, registerConfig, participants) {
+var getHandlerInput = function (expectedInput, formInputs) {
     var process = expectedInput.process, port = expectedInput.port;
-    if (port === constants_1.CONTACTABLE_CONFIG_PORT_NAME) {
-        return {
-            participants: participants,
-            registerConfig: registerConfig,
-            callback: function (contactableConfig) {
-                updateParticipants(processId, process, [contactableConfig], false);
-            }
-        };
-    }
     return {
         input: formInputs[process + "--" + port]
     };
 };
-var resolveExpectedInput = function (expectedInput, processId, formInputs, registerConfig, participants) { return __awaiter(void 0, void 0, void 0, function () {
-    var process, port, handler, handlerInput, finalInput;
+var resolveExpectedInput = function (expectedInput, formInputs) { return __awaiter(void 0, void 0, void 0, function () {
+    var handler, handlerInput, finalInput;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                process = expectedInput.process, port = expectedInput.port;
                 handler = mapInputToHandler(expectedInput);
-                handlerInput = getHandlerInput(processId, expectedInput, formInputs, registerConfig, participants);
+                handlerInput = getHandlerInput(expectedInput, formInputs);
                 return [4 /*yield*/, handler(handlerInput)];
             case 1:
                 finalInput = _a.sent();
-                if (port === constants_1.CONTACTABLE_CONFIG_PORT_NAME) {
-                    updateParticipants(processId, process, finalInput, true);
-                }
                 return [2 /*return*/, finalInput];
         }
     });
 }); };
+var resolveAndConvert = function (expectedInput, formInputs) { return __awaiter(void 0, void 0, void 0, function () {
+    var process, port, finalInput;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                process = expectedInput.process, port = expectedInput.port;
+                return [4 /*yield*/, resolveExpectedInput(expectedInput, formInputs)];
+            case 1:
+                finalInput = _a.sent();
+                return [2 /*return*/, convertToGraphConnection(process, port, finalInput)];
+        }
+    });
+}); };
 var runProcess = function (processId, runtimeAddress, runtimeSecret) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, registerConfigs, formInputs, graph, template, participants, resolveAndConvert, promises, graphConnections, jsonGraph, dataWatcher;
+    var _a, formInputs, graph, template, graphConnections, jsonGraph, dataWatcher;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4 /*yield*/, getProcess(processId)];
             case 1:
-                _a = _b.sent(), registerConfigs = _a.registerConfigs, formInputs = _a.formInputs, graph = _a.graph, template = _a.template, participants = _a.participants;
-                resolveAndConvert = function (expectedInput) { return __awaiter(void 0, void 0, void 0, function () {
-                    var process, port, finalInput;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                process = expectedInput.process, port = expectedInput.port;
-                                return [4 /*yield*/, resolveExpectedInput(expectedInput, processId, formInputs, registerConfigs[process], participants[process])];
-                            case 1:
-                                finalInput = _a.sent();
-                                return [2 /*return*/, convertToGraphConnection(process, port, finalInput)];
-                        }
-                    });
-                }); };
-                promises = template.expectedInputs.map(resolveAndConvert);
-                return [4 /*yield*/, Promise.all(promises)
+                _a = _b.sent(), formInputs = _a.formInputs, graph = _a.graph, template = _a.template;
+                return [4 /*yield*/, Promise.all(template.expectedInputs.map(function (e) {
+                        return resolveAndConvert(e, formInputs);
+                    }))
                     // once they're all ready, now commence the process
                     // mark as running now
                 ];
@@ -405,16 +408,4 @@ var runProcess = function (processId, runtimeAddress, runtimeSecret) { return __
     });
 }); };
 exports.runProcess = runProcess;
-var getRegisterConfig = function (formInputs, process, id, wsUrl) {
-    return {
-        stage: process,
-        isFacilitator: formInputs[process + "-check-facil_register"] === 'facil_register',
-        processContext: formInputs[process + "-ParticipantRegister-process_context"] || process,
-        maxTime: (parseFloat(formInputs[process + "-ParticipantRegister-max_time"]) || 5) * 60,
-        maxParticipants: formInputs[process + "-ParticipantRegister-max_participants"] || '*',
-        id: id,
-        wsUrl: wsUrl
-    };
-};
-exports.getRegisterConfig = getRegisterConfig;
 //# sourceMappingURL=processes.js.map
