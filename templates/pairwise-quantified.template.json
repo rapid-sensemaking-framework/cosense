@@ -1,0 +1,38 @@
+{
+  "id": "pairwise-quantified",
+  "name": "Pairs (Numeric)",
+  "oneLiner": "Set a criteria for people to evaluate pairs",
+  "graphName": "pairwise-quantified.json",
+  "expectedInputs": [
+    {
+      "process": "rsf/PairwiseComparisonQuan_x4cv2",
+      "port": "statements",
+      "shortLabel": "Statements",
+      "label": "Provide a list of statements, one on each line, for participants to compare"
+    },
+    {
+      "process": "rsf/PairwiseComparisonQuan_x4cv2",
+      "port": "question",
+      "shortLabel": "Question",
+      "label": "Describe the criteria you'd like participants to use to evaluate the pairs",
+      "placeholder": "How related are these between 0 and 1?",
+      "inputTypeOverride": "Textarea"
+    },
+    {
+      "process": "rsf/PairwiseComparisonQuan_x4cv2",
+      "port": "max_time",
+      "shortLabel": "Time allowed for response submission",
+      "label": "Time you’d like to leave for participants to submit their responses",
+      "placeholder": "e.g. 20",
+      "inputTypeOverride": "TimePicker"
+    },
+    {
+      "process": "rsf/PairwiseComparisonQuan_x4cv2",
+      "port": "contactable_configs"
+    },
+    {
+      "process": "rsf/SendMessageToAll_7tqjt",
+      "port": "contactable_configs"
+    }
+  ]
+}

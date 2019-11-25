@@ -1,0 +1,39 @@
+{
+  "id": "pairwise-vote",
+  "name": "Pairs (Vote)",
+  "oneLiner": "Set a criteria for the participants to assess pairs",
+  "graphName": "pairwise-vote.json",
+  "resultConnection": "rsf/FormatPairwiseVotesList_yusc1() FORMATTED -> IN core/MakeFunction_sy01e()",
+  "expectedInputs": [
+    {
+      "process": "rsf/PairwiseComparison_x4cv2",
+      "port": "statements",
+      "shortLabel": "Statements",
+      "label": "Provide a list of statements, one on each line, for participants to compare"
+    },
+    {
+      "process": "rsf/PairwiseComparison_x4cv2",
+      "port": "choice",
+      "shortLabel": "Criteria",
+      "label": "Describe the criteria you'd like participants to use to make their choice",
+      "placeholder": "Which option do you like better?",
+      "inputTypeOverride": "Textarea"
+    },
+    {
+      "process": "rsf/PairwiseComparison_x4cv2",
+      "port": "max_time",
+      "shortLabel": "Time allowed for response submission",
+      "label": "Time you’d like to leave for participants to submit their responses",
+      "placeholder": "e.g. 20",
+      "inputTypeOverride": "TimePicker"
+    },
+    {
+      "process": "rsf/PairwiseComparison_x4cv2",
+      "port": "contactable_configs"
+    },
+    {
+      "process": "rsf/SendMessageToAll_7tqjt",
+      "port": "contactable_configs"
+    }
+  ]
+}

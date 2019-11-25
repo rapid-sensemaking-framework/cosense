@@ -1,0 +1,33 @@
+.processes-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.flow-grid-link {
+  text-decoration: none;
+  text-align: center;
+  width: 188px;
+  margin-right: 96px;
+  margin-top: 40px;
+  display: block;
+}
+
+.flow-grid-image {
+  width: 188px;
+  height: 188px;
+  background-color: #E3E3E3;
+}
+
+.flow-grid-name {
+  margin-top: 20px;
+  color: #4A4A4A;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.flow-grid-one-liner {
+  margin-top: 8px;
+  color: #B4B4B4;
+  font-size: 14px;
+}

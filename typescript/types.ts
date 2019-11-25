@@ -16,6 +16,7 @@ interface ExpectedInput {
   process: string
   port: string
   help?: string
+  shortLabel?: string
   label?: string
   type?: string
   component?: string
@@ -24,21 +25,32 @@ interface ExpectedInput {
   placeholder?: string,
 }
 
-interface Stage {
-  name: string
-  description: string
-  expectedInputs: ExpectedInput[]
-}
-
 interface Template {
   name: string
   graphName: string
   description: string
-  stages: Stage[],
-  resultConnection: string,
+  expectedInputs: ExpectedInput[]
   id: string
   path?: string
   parentTemplate?: string // references another template by its id
+}
+
+interface UpdateTemplateInput {
+  name: string
+  description: string
+  expectedInputs: ExpectedInput[]
+  templateId: string
+}
+
+interface TemplateSubmitInput {
+  inputs: FormInputs
+  templateId: string
+  template: Template
+}
+
+interface GetTemplateInput {
+  templateId: string
+  userDefined: boolean
 }
 
 type RegisterConfigSet = {
@@ -91,15 +103,46 @@ interface GraphConnection {
   data?: any
 }
 
+interface NofloSignalPayload {
+  id: string // like 'rsf/CollectResponses_ey8mk() STATEMENT -> IN core/Output()'
+  graph: string // like '9.383107155431603randomid'
+  src?: {
+    node: string
+    port: string
+  }
+  tgt: {
+    node: string
+    port: string
+  }
+  data: any
+}
+
+interface NofloSignal {
+  command: string
+  payload: NofloSignalPayload
+}
+
+interface HandlerInput {
+  input: string
+}
+
+type Handler = (handlerInput: HandlerInput) => Promise<any>
+
 export {
   ContactableConfigSet,
   RegisterConfig,
   RegisterConfigSet,
   Template,
-  Stage,
+  UpdateTemplateInput,
+  TemplateSubmitInput,
+  GetTemplateInput,
   FormInputs,
   ExpectedInput,
   Process,
   GraphConnection,
-  Graph
+  NofloSignal,
+  NofloSignalPayload,
+  Graph,
+  Handler,
+  HandlerInput
 }

@@ -25,8 +25,10 @@ const EVENTS = {
   },
   IPC: {
     PROCESS_UPDATE: (id: string) => `process_update_${id}`,
-    CREATE_AND_RUN_PROCESS: 'create_and_run_process', // run a process from template
-    PROCESS_CREATED_AND_RUN: 'process_created_and_run', // run a process from template
+    CREATE_PROCESS: 'create_process',
+    PROCESS_CREATED: 'process_created',
+    RUN_PROCESS: 'run_process',
+    PROCESS_RUNNING: 'process_running',
     UPDATE_TEMPLATE: 'update_template',
     TEMPLATE_UPDATED: 'template_updated',
     GET_PROCESS: 'get_process',
@@ -39,9 +41,10 @@ const EVENTS = {
     RETURN_PROCESSES: 'return_processes',
     GET_TEMPLATE: 'get_template',
     RETURN_TEMPLATE: 'return_template',
-    GET_TEMPLATES: 'get_templates',
-    RETURN_TEMPLATES: 'return_templates',
-    HANDLE_FACIL_CONTACTABLES_SUBMIT: (id: string) => `handle_facil_contactables_submit_${id}`
+    GET_SYSTEM_TEMPLATES: 'get_system_templates',
+    RETURN_SYSTEM_TEMPLATES: 'return_system_templates',
+    GET_USER_TEMPLATES: 'get_user_templates',
+    RETURN_USER_TEMPLATES: 'return_user_templates'
   }
 }
 

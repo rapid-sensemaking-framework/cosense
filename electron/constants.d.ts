@@ -20,8 +20,10 @@ declare const EVENTS: {
     };
     IPC: {
         PROCESS_UPDATE: (id: string) => string;
-        CREATE_AND_RUN_PROCESS: string;
-        PROCESS_CREATED_AND_RUN: string;
+        CREATE_PROCESS: string;
+        PROCESS_CREATED: string;
+        RUN_PROCESS: string;
+        PROCESS_RUNNING: string;
         UPDATE_TEMPLATE: string;
         TEMPLATE_UPDATED: string;
         GET_PROCESS: string;
@@ -34,9 +36,10 @@ declare const EVENTS: {
         RETURN_PROCESSES: string;
         GET_TEMPLATE: string;
         RETURN_TEMPLATE: string;
-        GET_TEMPLATES: string;
-        RETURN_TEMPLATES: string;
-        HANDLE_FACIL_CONTACTABLES_SUBMIT: (id: string) => string;
+        GET_SYSTEM_TEMPLATES: string;
+        RETURN_SYSTEM_TEMPLATES: string;
+        GET_USER_TEMPLATES: string;
+        RETURN_USER_TEMPLATES: string;
     };
 };
 export { CONTACTABLE_CONFIG_PORT_NAME, URLS, EVENTS };

@@ -12,6 +12,7 @@ interface ExpectedInput {
     process: string;
     port: string;
     help?: string;
+    shortLabel?: string;
     label?: string;
     type?: string;
     component?: string;
@@ -19,20 +20,29 @@ interface ExpectedInput {
     defaultValue?: any;
     placeholder?: string;
 }
-interface Stage {
-    name: string;
-    description: string;
-    expectedInputs: ExpectedInput[];
-}
 interface Template {
     name: string;
     graphName: string;
     description: string;
-    stages: Stage[];
-    resultConnection: string;
+    expectedInputs: ExpectedInput[];
     id: string;
     path?: string;
     parentTemplate?: string;
+}
+interface UpdateTemplateInput {
+    name: string;
+    description: string;
+    expectedInputs: ExpectedInput[];
+    templateId: string;
+}
+interface TemplateSubmitInput {
+    inputs: FormInputs;
+    templateId: string;
+    template: Template;
+}
+interface GetTemplateInput {
+    templateId: string;
+    userDefined: boolean;
 }
 declare type RegisterConfigSet = {
     [key: string]: RegisterConfig;
@@ -78,4 +88,25 @@ interface GraphConnection {
     };
     data?: any;
 }
-export { ContactableConfigSet, RegisterConfig, RegisterConfigSet, Template, Stage, FormInputs, ExpectedInput, Process, GraphConnection, Graph };
+interface NofloSignalPayload {
+    id: string;
+    graph: string;
+    src?: {
+        node: string;
+        port: string;
+    };
+    tgt: {
+        node: string;
+        port: string;
+    };
+    data: any;
+}
+interface NofloSignal {
+    command: string;
+    payload: NofloSignalPayload;
+}
+interface HandlerInput {
+    input: string;
+}
+declare type Handler = (handlerInput: HandlerInput) => Promise<any>;
+export { ContactableConfigSet, RegisterConfig, RegisterConfigSet, Template, UpdateTemplateInput, TemplateSubmitInput, GetTemplateInput, FormInputs, ExpectedInput, Process, GraphConnection, NofloSignal, NofloSignalPayload, Graph, Handler, HandlerInput };

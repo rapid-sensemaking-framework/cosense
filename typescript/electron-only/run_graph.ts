@@ -3,6 +3,7 @@ import * as fbpGraph from 'fbp-graph'
 import {
   GraphConnection,
   Graph,
+  NofloSignal,
 } from '../types'
 import {
   createFbpClient
@@ -31,7 +32,7 @@ const start = async (jsonGraph, runtimeAddress: string, runtimeSecret: string, d
         // ignore network:start timed out error, it still starts
       }
       // forward each network data signal for this specific graph
-      client.on('network', signal => {
+      client.on('network', (signal: NofloSignal) => {
         if (signal.command === 'data' && signal.payload.graph === graph.name) {
           // just forward the payload itself, as other meta is assumed
           dataWatcher(signal.payload)

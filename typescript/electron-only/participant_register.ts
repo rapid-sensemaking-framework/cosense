@@ -1,4 +1,3 @@
-import * as electron from 'electron'
 import * as socketClient from 'socket.io-client'
 import {
   ContactableConfig,
@@ -8,19 +7,6 @@ import {
 import {
   EVENTS
 } from '../constants'
-
-const ipc = electron.ipcMain
-
-// ipc local
-const getContactablesFromFacilitator = (id: string): Promise<ContactableConfig[]> => {
-  return new Promise((resolve) => {
-    ipc.once(EVENTS.IPC.HANDLE_FACIL_CONTACTABLES_SUBMIT(id), (event, contactableConfigs: ContactableConfig[]) => {
-      resolve(contactableConfigs)
-      // synchronously return
-      event.returnValue = true
-    })
-  })
-}
 
 // websockets to remote
 const getContactablesFromRegistration = (
@@ -54,10 +40,6 @@ const getContactablesFromRegistration = (
   })
 }
 
-
-
-
 export {
-  getContactablesFromFacilitator,
   getContactablesFromRegistration
 }

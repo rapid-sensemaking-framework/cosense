@@ -1,10 +1,28 @@
 import * as dotenv from 'dotenv'
+import * as fs from 'fs'
 import * as path from 'path'
 import * as url from 'url'
 import * as electron from 'electron'
 // import { log, transports } from 'electron-log'
 import * as fixPath from 'fix-path'
+import {
+  APP_DATA_PATH,
+  USER_PROCESSES_PATH,
+  USER_TEMPLATES_PATH
+} from './folders'
+
+// weird environment variables / path fix that's needed
 fixPath()
+
+// we create these folders in the "appData" paths
+// so that we can actually write to them
+if(!fs.existsSync(APP_DATA_PATH)) {
+  // main folder
+  fs.mkdirSync(APP_DATA_PATH)
+  // subfolders
+  fs.mkdirSync(USER_PROCESSES_PATH)
+  fs.mkdirSync(USER_TEMPLATES_PATH)
+}
 
 // transports.file.findLogPath()
 
@@ -33,7 +51,7 @@ let mainWindow: electron.BrowserWindow
 
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 800, height: 600, webPreferences: { nodeIntegration: true } })
+  mainWindow = new BrowserWindow({ width: 1200, height: 900, webPreferences: { nodeIntegration: true } })
 
   // and load the index.html of the app.
   const startUrl = process.env.ELECTRON_START_URL || url.format({

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 
 export default function FormText({ expectedInput, onChange }) {
-  const { process, port, placeholder, defaultValue, label } = expectedInput
+  const { process, port, placeholder, defaultValue, label, shortLabel } = expectedInput
   const ident = `${process}--${port}`
   const innerOnChange = (evt) => {
     onChange(ident, evt.target.value)
@@ -12,8 +12,9 @@ export default function FormText({ expectedInput, onChange }) {
     onChange(ident, defaultValue)
   }, []) // only occurs on initialize
 
-  return <div>
-    <label htmlFor={ident}>{label}</label>
+  return <div className="input-wrapper">
+    <label htmlFor={ident} className="input-label">{shortLabel}</label>
+    <div className="input-help-label">{label}</div>
     <input type="text"  id={ident} name={ident} placeholder={placeholder} defaultValue={defaultValue} onChange={innerOnChange} />
   </div>
 }

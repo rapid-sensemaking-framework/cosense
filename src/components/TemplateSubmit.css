@@ -1,0 +1,14 @@
+.template-submit {
+  text-align: center;
+}
+
+.template-submit-header {
+  color: #4A4A4A;
+  margin-bottom: 80px;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.template-submit .input-wrapper button {
+  margin-top: 40px;
+}

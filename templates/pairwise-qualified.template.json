@@ -1,0 +1,38 @@
+{
+  "id": "pairwise-qualified",
+  "name": "Pairs (Freeform)",
+  "oneLiner": "Set a question for people to respond freeform to pairs",
+  "graphName": "pairwise-qualified.json",
+  "expectedInputs": [
+    {
+      "process": "rsf/PairwiseComparisonQual_x4cv2",
+      "port": "statements",
+      "shortLabel": "Statements",
+      "label": "Provide a list of statements, one on each line, for participants to compare"
+    },
+    {
+      "process": "rsf/PairwiseComparisonQual_x4cv2",
+      "port": "question",
+      "shortLabel": "Question",
+      "label": "Describe the question you'd like participants to use to respond to the pairs",
+      "placeholder": "What do these two things have in common?",
+      "inputTypeOverride": "Textarea"
+    },
+    {
+      "process": "rsf/PairwiseComparisonQual_x4cv2",
+      "port": "max_time",
+      "shortLabel": "Time allowed for response submission",
+      "label": "Time you’d like to leave for participants to submit their responses",
+      "placeholder": "e.g. 20",
+      "inputTypeOverride": "TimePicker"
+    },
+    {
+      "process": "rsf/PairwiseComparisonQual_x4cv2",
+      "port": "contactable_configs"
+    },
+    {
+      "process": "rsf/SendMessageToAll_7tqjt",
+      "port": "contactable_configs"
+    }
+  ]
+}

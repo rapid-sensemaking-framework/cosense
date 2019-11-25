@@ -7,20 +7,27 @@ import {
 import {
   getTemplate,
   cloneTemplate,
-  createProcess
+  createProcess,
+  runProcess
 } from '../ipc'
-import {
-  mapInputToFormFieldType
-} from '../expected-input'
-import * as forms from '../components/forms'
+
+import GraphConfigure from '../components/GraphConfigure'
+import TemplateContactables from '../components/TemplateContactables'
+import TemplateResults from '../components/TemplateResults'
+import TemplatePreview from '../components/TemplatePreview'
+import TemplateSubmit from '../components/TemplateSubmit'
+import './Template.css'
 
 export default function Template() {
   const history = useHistory()
   const defaultTemplate = null
   const defaultFormData = {}
+  const defaultActiveStep = 1
+  const [activeStep, setActiveStep] = useState(defaultActiveStep)
   const [loading, setLoading] = useState(true)
   const [template, setTemplate] = useState(defaultTemplate)
   const [formData, setFormData] = useState(defaultFormData)
+  const [processId, setProcessId] = useState(null)
   const { templateId } = useParams()
 
   useEffect(() => {
@@ -38,12 +45,19 @@ export default function Template() {
     return <>404 not found</>
   }
 
-  const onSubmit = async (event) => {
-    event.preventDefault()
+  const submit = async () => {
     const inputs = { ...formData }
-    const processId = await createProcess(inputs, templateId, template)
+    const pId = await createProcess(inputs, templateId, template)
+    setProcessId(pId)
+    setActiveStep(5)
+  }
+  const startNow = async () => {
+    await runProcess(processId)
     // redirect to the newly initiated process
     history.push(`/process/${processId}`)
+  }
+  const startLater = async () => {
+    history.push(`/process`)
   }
 
   const onChange = (key, value) => {
@@ -65,40 +79,50 @@ export default function Template() {
 
   // TODO: live form validation
 
-  return <>
-    <button className="button button-clear">
-      <Link to="/">Home</Link>
-    </button>
-    <button onClick={clone} className="button button-clear float-right">
-      { template.parentTemplate ? 'Clone' : 'Clone and Edit Template' }
-    </button>
-    {template.parentTemplate && <>
+  const steps = [
+    ['Prompt', GraphConfigure],
+    ['Participants', TemplateContactables],
+    ['Results', TemplateResults],
+    ['Preview', TemplatePreview],
+    ['Submit', TemplateSubmit]
+  ]
+
+  // activeStep is 1 indexed, not 0 indexed
+  const WhichStep = steps[activeStep - 1][1]
+
+  return <div className="template">
+    {/* <button onClick={clone} className="button button-clear float-right">
+      {template.parentTemplate ? 'Clone' : 'Clone and Edit Template'}
+    </button> */}
+    {/* {template.parentTemplate && <>
       <button className="button button-clear float-right">
         <Link to={`/template/${templateId}/edit`}>Edit</Link>
       </button>
-    </>}
-    <form onSubmit={onSubmit}>
-      <hr />
-      <h1>Template :: {template.name}</h1>
-      {template.parentTemplate && <>Parent Template: <Link to={`/template/${template.parentTemplate}`}>{ template.parentTemplate }</Link></>}
-      <div dangerouslySetInnerHTML={{ __html: template.description }} />
-      <p>
-        As soon as you finish filling in this form and configuring participants, the rsf process will commence, meaning messages will immediately be sent to the participants.
-      </p>
-      {template.stages.map((stage, index) => (
-        <div key={index}>
-          <h2>{stage.name}</h2>
-          <p>{stage.description}</p>
-          {stage.expectedInputs.map((expectedInput, index) => {
-            // which component to use
-            const formName = mapInputToFormFieldType(expectedInput)
-            const C = forms[formName]
-            return <C key={index} expectedInput={expectedInput} onChange={onChange} />
-          })}
-          <hr />
+    </>} */}
+    <div className="template-labels">
+      <h1>{template.name}</h1>
+      <h2>{template.oneLiner}</h2>
+    </div>
+    <div className="template-steps">
+      {steps.map((step, index) => {
+        return <div key={`step-${index}`}>
+          {index > 0 && <div className="step-spacer" />}
+          <div className={`step-indicator ${index + 1 === activeStep ? 'active' : ''}`}>
+            <div className="step-circle">{index + 1}</div>
+            {step[0]}
+          </div>
         </div>
-      ))}
-      <button type="submit" onClick={onSubmit}>Move To Configure Participants</button>
-    </form>
-  </>
+      })}
+    </div>
+    {/* {template.parentTemplate && <>Parent Template: <Link to={`/template/${template.parentTemplate}`}>{template.parentTemplate}</Link></>} */}
+    <WhichStep template={template} onChange={onChange} startNow={startNow} startLater={startLater} />
+    {activeStep > 1 && activeStep < 5 && <button className="steps-button" onClick={() => setActiveStep(activeStep - 1)}>Back</button>}
+    {activeStep < 4 && <button className="steps-button" onClick={() => setActiveStep(activeStep + 1)}>
+      Next
+    </button>}
+    {activeStep === 4 &&
+      <button className="steps-button" onClick={submit}>
+        Submit
+      </button>}
+  </div>
 }

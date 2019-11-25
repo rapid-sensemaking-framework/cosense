@@ -1,26 +1,35 @@
 import React, { useState, useEffect } from 'react'
+import moment from 'moment'
 import {
   Link,
   useParams,
   useHistory
 } from 'react-router-dom'
 import {
+  runProcess,
   getProcess,
   cloneProcess,
-  onProcessUpdate,
-  sendContactableConfigs
+  onProcessUpdate
 } from '../ipc'
-import Stage from '../components/Stage'
+import {
+  CONTACTABLE_CONFIG_PORT_NAME
+} from '../ts-built/constants'
+import ExpectedInputs from '../components/ExpectedInputs'
+import Register from '../components/Register'
 
 export default function Process() {
   const history = useHistory()
   const { processId } = useParams()
   const defaultProcess = null
   const [process, setProcess] = useState(defaultProcess)
+  const [loading, setLoading] = useState(true)
 
   // do initial fetch, on initial load
   useEffect(() => {
-    getProcess(processId).then(setProcess) // could be null
+    setLoading(true)
+    getProcess(processId)
+      .then(setProcess) // could be null
+      .then(() => setLoading(false))
   }, [processId])
 
   // listen for live updates
@@ -33,48 +42,87 @@ export default function Process() {
     }
   }, [processId])
 
+  if (loading) {
+    return <>Loading...</>
+  }
+
   if (!process) {
     return <>404 not found (requested: {processId})</>
   }
 
-  const processResults = process.results ? process.results.trim().replace(/\n/g, "<br />") : ''
+  // For now, only display one
+  // register config, for the whole thing
+  const contactableInput = process.template.expectedInputs
+    .find(e => e.port === CONTACTABLE_CONFIG_PORT_NAME)
+  const ident = contactableInput.process + '--' + CONTACTABLE_CONFIG_PORT_NAME
+  const registerConfig = process.registerConfigs[contactableInput.process]
+  const participants = JSON.parse(process.formInputs[ident])
+  const { startTime } = process
 
-  const rerun = async (event) => {
+  const run = () => {
+    runProcess(processId)
+  }
+
+  const clone = async (event) => {
     event.preventDefault()
     const newProcessId = await cloneProcess(processId)
     // redirect to the newly initiated process
-    console.log('processId', newProcessId)
     history.push(`/process/${newProcessId}`)
   }
 
+  const dateString = moment(process.startTime).fromNow()
+
   return <>
-    <Link to="/">Home</Link>
-    <hr />
-    <h6>Process ID: {processId}</h6>
-    <h2>{process.configuring ? 'Configure Participants' : ' Process Dashboard'}</h2>
+    <h2>{process.configuring ? 'Configure Participants' : ' Flow Dashboard'}</h2>
+    {process.startTime && <p>
+      Started: {dateString}
+    </p>}
+    {process.configuring && <p>
+      The flow is ready to be started.
+      <br />
+      <br />
+      <button onClick={run}>
+        Run It
+      </button>
+    </p>}
     {process.running && <p>
-      The process is live and running now.
-      The results will be updated live here when it's complete.
+      The flow is live and running now.
+      The results will be updated live here.
       </p>}
     {process.complete && <p>
-      The process has completed.
-        <button onClick={rerun} className="button button-clear">
-        Clone And Rerun This Process
-        </button>
+      The flow has completed.
+      <br />
+      <br />
+      <button onClick={clone}>
+        Clone This Flow
+      </button>
     </p>}
-    {process.complete && !process.error && <>
+    {process.results && <>
       <h4>Results</h4>
-      <p dangerouslySetInnerHTML={{ __html: processResults }} />
+      {process.results.map((result) => {
+        const clone = { ...result }
+        const timestamp = clone.timestamp
+        const contact = clone.contact
+        delete clone.timestamp
+        delete clone.contact
+        return <>
+          {JSON.stringify(clone, null, 2)}<br />
+          {moment(timestamp).calendar()}<br />
+          {contact.id}
+          <br />
+          <br />
+        </>
+      })}
       <hr />
     </>}
     {process.error && <>
       <p>There was an error:</p>
-      <p>{process.error}</p>
+      <p>{typeof process.error === 'object' ? JSON.stringify(process.error) : process.error}</p>
       <hr />
     </>}
     {!process.configuring && <h4>Configuration</h4>}
-    {process.template.stages.map((stage, stageIndex) => {
-      return <Stage key={`stage-${stageIndex}`} {...{ stage, process, sendContactableConfigs }} />
-    })}
+    {/* display registered participants, or the info to register them */}
+    <Register {...{ registerConfig, participants, startTime }} />
+    <ExpectedInputs process={process} />
   </>
 }

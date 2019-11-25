@@ -3,57 +3,45 @@ import {
   Link
 } from 'react-router-dom'
 import {
-  getTemplates,
-  getProcesses
+  getSystemTemplates,
+  getUserTemplates
 } from '../ipc'
+import './Home.css'
+import {
+  URLS
+} from '../ts-built/constants'
 
 export default function Home() {
   const defaultTemplates = []
   const defaultProcesses = []
-  const [templates, setTemplates] = useState(defaultTemplates)
-  const [processes, setProcesses] = useState(defaultProcesses)
+  const [systemTemplates, setSystemTemplates] = useState(defaultTemplates)
+  const [userTemplates, setUserTemplates] = useState(defaultTemplates)
 
   useEffect(() => {
-    getTemplates()
-      .then(setTemplates)
+    getSystemTemplates()
+      .then(setSystemTemplates)
       .catch(err => {
         console.log(err)
       })
-    getProcesses()
-      .then(setProcesses)
+    getUserTemplates()
+      .then(setUserTemplates)
       .catch(err => {
         console.log(err)
       })
   }, []) // << super important array, prevents re-fetching
 
-  return <div>
-    <hr />
-    <h1>Design & Run <br /> Rapid Sensemaking</h1>
-    <p>
-      "Rapid sensemaking" in the context of the "rapid sensemaking framework" (rsf) means using digital tools
-      to quickly and easily reach many people across many mediums, from Telegram to text messaging and far
-      further, and to engage them in processes of ideation, decision making, voting, or other social
-      thinking/acting. You can read more about it <a target="_blank" href="https://github.com/rapid-sensemaking-framework/noflo-rsf">here</a>.
-      The following are available templates for running rapid sensemaking.
-    </p>
-    {templates.map((template, templateIndex) => {
-      const matchedProcesses = processes.filter(x => x.templateId === template.id)
-      return <div className="home-template" key={`template-${templateIndex}`}>
-        <Link to={template.path}><h4 className="home-template-name">{template.name}</h4></Link>
-        {matchedProcesses.length > 0 && <div className="home-template-processes">
-          Processes<br />
-          {matchedProcesses.map((mp, mpIndex) => {
-            return <div>
-              <Link key={`mp-${mpIndex}`} to={`/process/${mp.id}`}>
-                {mp.id.slice(0, 10)}...
-                {mp.complete && `✓`}
-                {mp.error && `❌`}
-              </Link>
-              <br />
-            </div>
-          })}
-        </div>}
-      </div>
-    })}
-  </div>
+  return <>
+    <h1>CoSense</h1>
+    <h2>collective intelligence design</h2>
+    <div className="templates-container">
+      {systemTemplates.map((template, templateIndex) => {
+        return <Link className="home-template-link" to={template.path} key={`template-${templateIndex}`}>
+          <div className="home-template-image" />
+          <div className="home-template-name">{template.name}</div>
+          <div className="home-template-one-liner">{template.oneLiner}</div>
+        </Link>
+      })}
+    </div>
+    <div className="divider" />
+  </>
 }
