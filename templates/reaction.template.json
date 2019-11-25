@@ -3,7 +3,6 @@
   "name": "Polling",
   "oneLiner": "Gather votes, reactions, or responses from participants",
   "graphName": "reaction.json",
-  "resultConnection": "rsf/FormatReactionsList_yusc1() FORMATTED -> IN core/MakeFunction_sy01e()",
   "expectedInputs": [
     {
       "process": "rsf/ResponseForEach_x4cv2",

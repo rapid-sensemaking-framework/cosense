@@ -1,16 +1,10 @@
-.templates-container {
+.processes-container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
 }
 
-.divider {
-  margin: 40px 0;
-  border-top: 1px solid #F2F2F2;
-  width: 100%;
-}
-
-.home-template-link {
+.flow-grid-link {
   text-decoration: none;
   text-align: center;
   width: 188px;
@@ -19,23 +13,21 @@
   display: block;
 }
 
-.home-template-image {
+.flow-grid-image {
   width: 188px;
   height: 188px;
   background-color: #E3E3E3;
 }
 
-.home-template-name {
+.flow-grid-name {
   margin-top: 20px;
   color: #4A4A4A;
   font-size: 18px;
   font-weight: 600;
 }
 
-.home-template-one-liner {
+.flow-grid-one-liner {
   margin-top: 8px;
   color: #B4B4B4;
   font-size: 14px;
 }
-
-

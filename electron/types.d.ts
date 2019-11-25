@@ -25,7 +25,6 @@ interface Template {
     graphName: string;
     description: string;
     expectedInputs: ExpectedInput[];
-    resultConnection: string;
     id: string;
     path?: string;
     parentTemplate?: string;
@@ -89,8 +88,25 @@ interface GraphConnection {
     };
     data?: any;
 }
+interface NofloSignalPayload {
+    id: string;
+    graph: string;
+    src?: {
+        node: string;
+        port: string;
+    };
+    tgt: {
+        node: string;
+        port: string;
+    };
+    data: any;
+}
+interface NofloSignal {
+    command: string;
+    payload: NofloSignalPayload;
+}
 interface HandlerInput {
     input: string;
 }
 declare type Handler = (handlerInput: HandlerInput) => Promise<any>;
-export { ContactableConfigSet, RegisterConfig, RegisterConfigSet, Template, UpdateTemplateInput, TemplateSubmitInput, GetTemplateInput, FormInputs, ExpectedInput, Process, GraphConnection, Graph, Handler, HandlerInput };
+export { ContactableConfigSet, RegisterConfig, RegisterConfigSet, Template, UpdateTemplateInput, TemplateSubmitInput, GetTemplateInput, FormInputs, ExpectedInput, Process, GraphConnection, NofloSignal, NofloSignalPayload, Graph, Handler, HandlerInput };

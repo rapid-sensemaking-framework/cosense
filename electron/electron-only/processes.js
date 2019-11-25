@@ -344,7 +344,7 @@ var resolveAndConvert = function (expectedInput, formInputs) { return __awaiter(
     });
 }); };
 var runProcess = function (processId, runtimeAddress, runtimeSecret) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, formInputs, graph, template, graphConnections, jsonGraph, dataWatcher;
+    var _a, formInputs, graph, template, graphConnections, jsonGraph, results, dataWatcher;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4 /*yield*/, getProcess(processId)];
@@ -369,28 +369,36 @@ var runProcess = function (processId, runtimeAddress, runtimeSecret) { return __
             case 4:
                 _b.sent();
                 jsonGraph = run_graph_1.overrideJsonGraph(graphConnections, graph);
+                results = [];
                 dataWatcher = function (signal) { return __awaiter(void 0, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
-                                if (!(signal.id === template.resultConnection)) return [3 /*break*/, 4];
+                                if (!(signal.tgt.node === 'core/Output')) return [3 /*break*/, 2];
                                 // save the results to the process
-                                return [4 /*yield*/, setProcessProp(processId, 'results', signal.data)];
+                                results.push(signal.data);
+                                return [4 /*yield*/, setProcessProp(processId, 'results', results)];
                             case 1:
-                                // save the results to the process
                                 _a.sent();
-                                return [4 /*yield*/, setProcessProp(processId, 'running', false)];
-                            case 2:
-                                _a.sent();
-                                return [4 /*yield*/, setProcessProp(processId, 'complete', true)];
-                            case 3:
-                                _a.sent();
-                                _a.label = 4;
-                            case 4: return [2 /*return*/];
+                                _a.label = 2;
+                            case 2: return [2 /*return*/];
                         }
                     });
                 }); };
-                run_graph_1.start(jsonGraph, runtimeAddress, runtimeSecret, dataWatcher)["catch"](function (e) { return __awaiter(void 0, void 0, void 0, function () {
+                run_graph_1.start(jsonGraph, runtimeAddress, runtimeSecret, dataWatcher)
+                    .then(function () { return __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, setProcessProp(processId, 'running', false)];
+                            case 1:
+                                _a.sent();
+                                return [4 /*yield*/, setProcessProp(processId, 'complete', true)];
+                            case 2:
+                                _a.sent();
+                                return [2 /*return*/];
+                        }
+                    });
+                }); })["catch"](function (e) { return __awaiter(void 0, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0: return [4 /*yield*/, setProcessProp(processId, 'running', false)];

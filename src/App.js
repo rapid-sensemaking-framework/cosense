@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {
-  Link,
+  NavLink,
   HashRouter as Router,
   Switch,
   Route,
@@ -9,6 +9,7 @@ import './App.css'
 import Template from './routes/Template'
 import EditTemplate from './routes/EditTemplate'
 import Process from './routes/Process'
+import Flows from './routes/Flows'
 import Home from './routes/Home'
 
 class App extends Component {
@@ -16,8 +17,8 @@ class App extends Component {
 
     const menuItems = [
       ['Home', '/'],
-      ['My Dashboard', '/'],
-      ['Participant Lists', '']
+      ['My Dashboard', '/process'],
+      // ['Participant Lists', '/']
     ]
     return (
       <Router>
@@ -25,11 +26,11 @@ class App extends Component {
           <div className="menu">
             <div className="logo" />
             <div className="nav">
-              {menuItems.map((i, index) => {
-                return <Link to={i[1]} key={index} className={index === 0 ? 'active' : ''}>
+              {menuItems.map(([label, path], index) => {
+                return <NavLink to={path} key={index} exact={path === '/'} activeClassName="active">
                   <div className="menuImage" />
-                  {i[0]}
-                </Link>
+                  {label}
+                </NavLink>
               })}
             </div>
           </div>
@@ -38,6 +39,7 @@ class App extends Component {
               <Route exact path="/template/:templateId" component={Template} />
               <Route path="/template/:templateId/edit" component={EditTemplate} />
               <Route path="/process/:processId" component={Process} />
+              <Route path="/process" component={Flows} />
               <Route path="/" component={Home} />
             </Switch>
           </div>

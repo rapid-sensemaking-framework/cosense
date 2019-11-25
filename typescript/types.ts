@@ -30,7 +30,6 @@ interface Template {
   graphName: string
   description: string
   expectedInputs: ExpectedInput[]
-  resultConnection: string,
   id: string
   path?: string
   parentTemplate?: string // references another template by its id
@@ -104,6 +103,25 @@ interface GraphConnection {
   data?: any
 }
 
+interface NofloSignalPayload {
+  id: string // like 'rsf/CollectResponses_ey8mk() STATEMENT -> IN core/Output()'
+  graph: string // like '9.383107155431603randomid'
+  src?: {
+    node: string
+    port: string
+  }
+  tgt: {
+    node: string
+    port: string
+  }
+  data: any
+}
+
+interface NofloSignal {
+  command: string
+  payload: NofloSignalPayload
+}
+
 interface HandlerInput {
   input: string
 }
@@ -122,6 +140,8 @@ export {
   ExpectedInput,
   Process,
   GraphConnection,
+  NofloSignal,
+  NofloSignalPayload,
   Graph,
   Handler,
   HandlerInput

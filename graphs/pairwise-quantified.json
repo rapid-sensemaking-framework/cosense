@@ -1,7 +1,7 @@
 {
     "caseSensitive": false,
     "properties": {
-        "name": "ReactionOnly",
+        "name": "PairwiseQuantified",
         "description": "",
         "icon": "info",
         "environment": {
@@ -42,8 +42,8 @@
             "height": 72
           }
         },
-        "rsf/ResponseForEach_x4cv2": {
-            "component": "rsf/ResponseForEach",
+        "rsf/PairwiseComparisonQuan_x4cv2": {
+            "component": "rsf/PairwiseComparisonQuan",
             "metadata": {
                 "label": "ResponseForEach",
                 "x": 540,
@@ -52,10 +52,10 @@
                 "height": 72
             }
         },
-        "rsf/FormatReactionsList_yusc1": {
-            "component": "rsf/FormatReactionsList",
+        "rsf/FormatPairwiseQuantifiedList_yusc1": {
+            "component": "rsf/FormatPairwiseQuantifiedList",
             "metadata": {
-                "label": "FormatReactionsList",
+                "label": "FormatPairwiseQuantifiedList",
                 "x": 720,
                 "y": 396,
                 "width": 72,
@@ -101,7 +101,7 @@
                 "port": "out"
             },
             "tgt": {
-                "process": "rsf/ResponseForEach_x4cv2",
+                "process": "rsf/PairwiseComparisonQuan_x4cv2",
                 "port": "bot_configs"
             },
             "metadata": {}
@@ -120,9 +120,20 @@
             }
         },
         {
+            "src": {
+                "process": "rsf/PairwiseComparisonQuan_x4cv2",
+                "port": "results"
+            },
+            "tgt": {
+                "process": "rsf/FormatPairwiseQuantifiedList_yusc1",
+                "port": "pairwise_quantifieds"
+            },
+            "metadata": {}
+        },
+        {
           "src": {
-            "process": "rsf/ResponseForEach_x4cv2",
-            "port": "reaction"
+            "process": "rsf/PairwiseComparisonQuan_x4cv2",
+            "port": "pairwise_quan"
           },
           "tgt": {
             "process": "core/Output",
@@ -132,18 +143,7 @@
         },
         {
             "src": {
-                "process": "rsf/ResponseForEach_x4cv2",
-                "port": "results"
-            },
-            "tgt": {
-                "process": "rsf/FormatReactionsList_yusc1",
-                "port": "reactions"
-            },
-            "metadata": {}
-        },
-        {
-            "src": {
-                "process": "rsf/FormatReactionsList_yusc1",
+                "process": "rsf/FormatPairwiseQuantifiedList_yusc1",
                 "port": "formatted"
             },
             "tgt": {
@@ -180,28 +180,28 @@
         {
             "data": [],
             "tgt": {
-                "process": "rsf/ResponseForEach_x4cv2",
-                "port": "options"
+                "process": "rsf/PairwiseComparisonQuan_x4cv2",
+                "port": "question"
             }
         },
         {
             "data": [],
             "tgt": {
-                "process": "rsf/ResponseForEach_x4cv2",
+                "process": "rsf/PairwiseComparisonQuan_x4cv2",
                 "port": "statements"
             }
         },
         {
             "data": 1,
             "tgt": {
-                "process": "rsf/ResponseForEach_x4cv2",
+                "process": "rsf/PairwiseComparisonQuan_x4cv2",
                 "port": "max_time"
             }
         },
         {
             "data": [],
             "tgt": {
-                "process": "rsf/ResponseForEach_x4cv2",
+                "process": "rsf/PairwiseComparisonQuan_x4cv2",
                 "port": "contactable_configs"
             }
         },

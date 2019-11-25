@@ -18,7 +18,7 @@ import {
 
 const getGraph = (graphName: string): Graph => {
   const graphPath = path.join(SYSTEM_GRAPHS_PATH, graphName)
-  return require(graphPath)
+  return JSON.parse(fs.readFileSync(graphPath, { encoding: "utf8" }))
 }
 
 const getTemplatePath = (templateId: string, userDefined: boolean = false): string => {

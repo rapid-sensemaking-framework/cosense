@@ -3,7 +3,6 @@
   "name": "Generate Ideas",
   "oneLiner": "Prompt participants to generate ideas",
   "graphName": "ideation.json",
-  "resultConnection": "rsf/FormatStatementList_m4rzd() FORMATTED -> IN core/MakeFunction_qbcnw()",
   "expectedInputs": [
     {
       "process": "rsf/CollectResponses_ey8mk",

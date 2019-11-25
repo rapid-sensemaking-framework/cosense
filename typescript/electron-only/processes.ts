@@ -14,7 +14,8 @@ import {
   GraphConnection,
   Graph,
   Handler,
-  HandlerInput
+  HandlerInput,
+  NofloSignalPayload
 } from '../types'
 import {
   CONTACTABLE_CONFIG_PORT_NAME,
@@ -296,16 +297,23 @@ const runProcess = async (processId: string, runtimeAddress: string, runtimeSecr
   await setProcessProp(processId, 'configuring', false)
   await setProcessProp(processId, 'running', true)
   const jsonGraph = overrideJsonGraph(graphConnections, graph)
-  const dataWatcher = async (signal) => {
-    if (signal.id === template.resultConnection) {
+  const results: Array<any> = []
+  const dataWatcher = async (signal: NofloSignalPayload) => {
+    // TODO: use the core/Output signal as
+    // an input for 'results'
+    // template.resultConnection
+    if (signal.tgt.node === 'core/Output') {
       // save the results to the process
-      await setProcessProp(processId, 'results', signal.data)
-      await setProcessProp(processId, 'running', false)
-      await setProcessProp(processId, 'complete', true)
+      results.push(signal.data)
+      await setProcessProp(processId, 'results', results)
     }
   }
 
   start(jsonGraph, runtimeAddress, runtimeSecret, dataWatcher)
+    .then(async () => {
+      await setProcessProp(processId, 'running', false)
+      await setProcessProp(processId, 'complete', true)
+    })
     .catch(async (e) => {
       await setProcessProp(processId, 'running', false)
       await setProcessProp(processId, 'error', e)

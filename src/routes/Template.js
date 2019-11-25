@@ -57,7 +57,7 @@ export default function Template() {
     history.push(`/process/${processId}`)
   }
   const startLater = async () => {
-    history.push(`/`)
+    history.push(`/process`)
   }
 
   const onChange = (key, value) => {
