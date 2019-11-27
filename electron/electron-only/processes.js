@@ -115,7 +115,9 @@ exports.setProcessProp = setProcessProp;
 var newProcessDefaults = function () {
     return {
         id: utils_1.guidGenerator(),
-        startTime: Date.now(),
+        createdTime: Date.now(),
+        startTime: null,
+        endTime: null,
         configuring: true,
         running: false,
         complete: false,
@@ -345,7 +347,7 @@ var resolveAndConvert = function (expectedInput, formInputs) { return __awaiter(
     });
 }); };
 var runProcess = function (processId, runtimeAddress, runtimeSecret) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, formInputs, graph, template, graphConnections, jsonGraph, results, dataWatcher;
+    var _a, formInputs, graph, template, graphConnections, jsonGraph, results, signalWatcher, e_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4 /*yield*/, getProcess(processId)];
@@ -369,9 +371,12 @@ var runProcess = function (processId, runtimeAddress, runtimeSecret) { return __
                 return [4 /*yield*/, setProcessProp(processId, 'running', true)];
             case 4:
                 _b.sent();
+                return [4 /*yield*/, setProcessProp(processId, 'startTime', Date.now())];
+            case 5:
+                _b.sent();
                 jsonGraph = run_graph_1.overrideJsonGraph(graphConnections, graph);
                 results = [];
-                dataWatcher = function (signal) { return __awaiter(void 0, void 0, void 0, function () {
+                signalWatcher = function (signal) { return __awaiter(void 0, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
@@ -386,32 +391,28 @@ var runProcess = function (processId, runtimeAddress, runtimeSecret) { return __
                         }
                     });
                 }); };
-                run_graph_1.start(jsonGraph, runtimeAddress, runtimeSecret, dataWatcher)
-                    .then(function () { return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, setProcessProp(processId, 'running', false)];
-                            case 1:
-                                _a.sent();
-                                return [4 /*yield*/, setProcessProp(processId, 'complete', true)];
-                            case 2:
-                                _a.sent();
-                                return [2 /*return*/];
-                        }
-                    });
-                }); })["catch"](function (e) { return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, setProcessProp(processId, 'running', false)];
-                            case 1:
-                                _a.sent();
-                                return [4 /*yield*/, setProcessProp(processId, 'error', e)];
-                            case 2:
-                                _a.sent();
-                                return [2 /*return*/];
-                        }
-                    });
-                }); }); // logs and save to memory
+                _b.label = 6;
+            case 6:
+                _b.trys.push([6, 8, , 10]);
+                return [4 /*yield*/, run_graph_1.start(jsonGraph, runtimeAddress, runtimeSecret, signalWatcher)];
+            case 7:
+                _b.sent();
+                return [3 /*break*/, 10];
+            case 8:
+                e_1 = _b.sent();
+                return [4 /*yield*/, setProcessProp(processId, 'error', e_1)];
+            case 9:
+                _b.sent();
+                return [3 /*break*/, 10];
+            case 10: return [4 /*yield*/, setProcessProp(processId, 'running', false)];
+            case 11:
+                _b.sent();
+                return [4 /*yield*/, setProcessProp(processId, 'complete', true)];
+            case 12:
+                _b.sent();
+                return [4 /*yield*/, setProcessProp(processId, 'endTime', Date.now())];
+            case 13:
+                _b.sent();
                 return [2 /*return*/];
         }
     });

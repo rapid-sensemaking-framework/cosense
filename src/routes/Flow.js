@@ -94,7 +94,6 @@ export default function Process() {
   const ident = contactableInput.process + '--' + CONTACTABLE_CONFIG_PORT_NAME
   const registerConfig = process.registerConfigs[contactableInput.process]
   const participants = JSON.parse(process.formInputs[ident])
-  const { startTime } = process
 
   const run = () => {
     runProcess(processId)
@@ -107,7 +106,9 @@ export default function Process() {
     history.push(`/process/${newProcessId}`)
   }
 
-  const dateString = moment(process.startTime).calendar()
+  const createdTimeString = moment(process.createdTime).calendar()
+  const startTimeString = process.startTime && moment(process.startTime).calendar()
+  const endTimeString = process.endTime && moment(process.endTime).calendar()
 
   const sortByTimestamps = (r1, r2) => r1.timestamp < r2.timestamp ? 1 : -1
 
@@ -117,9 +118,16 @@ export default function Process() {
         My Template1
       </div>
       {process.running && <div className="flow-live">Live</div>}
-      {process.startTime && <div className="flow-date">
-        Started {dateString}
-      </div>}
+      <div className="flow-date">
+        {process.configuring
+          ? <>
+            Created {createdTimeString}
+          </>
+          : <>
+            Started {startTimeString}
+            {process.complete ? `, Ended ${endTimeString}` : ''}
+          </>}
+      </div>
     </div>
     <div className="flow-template">
       {process.template.name}

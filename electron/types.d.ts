@@ -62,7 +62,9 @@ interface Process {
     complete: boolean;
     results?: any;
     error?: any;
+    createdTime: number;
     startTime: number;
+    endTime: number;
     formInputs: FormInputs;
     registerConfigs: RegisterConfigSet;
     participants: ContactableConfigSet;

@@ -92,7 +92,9 @@ const setProcessProp = async (id: string, key: string, value: any): Promise<bool
 const newProcessDefaults = () => {
   return {
     id: guidGenerator(),
-    startTime: Date.now(),
+    createdTime: Date.now(),
+    startTime: null,
+    endTime: null,
     configuring: true,
     running: false,
     complete: false,
@@ -297,12 +299,11 @@ const runProcess = async (processId: string, runtimeAddress: string, runtimeSecr
   // mark as running now
   await setProcessProp(processId, 'configuring', false)
   await setProcessProp(processId, 'running', true)
+  await setProcessProp(processId, 'startTime', Date.now())
+
   const jsonGraph = overrideJsonGraph(graphConnections, graph)
   const results: Array<any> = []
-  const dataWatcher = async (signal: NofloSignalPayload) => {
-    // TODO: use the core/Output signal as
-    // an input for 'results'
-    // template.resultConnection
+  const signalWatcher = async (signal: NofloSignalPayload) => {
     if (signal.tgt.node === 'core/Output') {
       // save the results to the process
       results.push(signal.data)
@@ -310,15 +311,14 @@ const runProcess = async (processId: string, runtimeAddress: string, runtimeSecr
     }
   }
 
-  start(jsonGraph, runtimeAddress, runtimeSecret, dataWatcher)
-    .then(async () => {
-      await setProcessProp(processId, 'running', false)
-      await setProcessProp(processId, 'complete', true)
-    })
-    .catch(async (e) => {
-      await setProcessProp(processId, 'running', false)
-      await setProcessProp(processId, 'error', e)
-    }) // logs and save to memory
+  try {
+    await start(jsonGraph, runtimeAddress, runtimeSecret, signalWatcher)
+  } catch (e) {
+    await setProcessProp(processId, 'error', e)
+  }
+  await setProcessProp(processId, 'running', false)
+  await setProcessProp(processId, 'complete', true)
+  await setProcessProp(processId, 'endTime', Date.now())
 }
 
 export {
