@@ -18,6 +18,42 @@ import ExpectedInputs from '../components/ExpectedInputs'
 import Register from '../components/Register'
 import './Flow.css'
 
+const formatByResultType = (r, type) => {
+  switch (type) {
+    case 'Statement':
+      return r.text
+    case 'Reaction':
+      return <>
+        Statement: {r.statement.text}<br />
+        Reaction type: {r.response}<br />
+        Reaction text: {r.responseTrigger}
+      </>
+    case 'PairwiseVote':
+      return <>
+        0) {r.choices[0].text}<br />
+        1) {r.choices[1].text}<br />
+        choice: {r.choice}
+      </>
+    case 'PairwiseQuantified':
+      return <>
+        0) {r.choices[0].text}<br />
+        1) {r.choices[1].text}<br />
+        response: {r.quantity}
+      </>
+    case 'PairwiseQualified':
+      return <>
+        0) {r.choices[0].text}<br />
+        1) {r.choices[1].text}<br />
+        response: {r.quality}
+      </>
+    default:
+      return <>
+        no template for result type: {type}
+        raw: {JSON.stringify(r, null, 2)}
+      </>
+  }
+}
+
 export default function Process() {
   const history = useHistory()
   const { processId } = useParams()
@@ -73,6 +109,8 @@ export default function Process() {
 
   const dateString = moment(process.startTime).calendar()
 
+  const sortByTimestamps = (r1, r2) => r1.timestamp < r2.timestamp ? 1 : -1
+
   return <>
     <div className="flow-intro">
       <div className="flow-name">
@@ -115,22 +153,17 @@ export default function Process() {
     <div className="flow-label flow-responses-feed-label">Responses Feed</div>
     {/* Download (placeholder) */}
     <div className="flow-responses-feed">
-      {process.results && process.results.map((result) => {
-        const clone = { ...result }
-        const timestamp = clone.timestamp
-        const contact = clone.contact
-        delete clone.timestamp
-        delete clone.contact
+      {process.results && process.results.sort(sortByTimestamps).map((result) => {
         return <div className="flow-responses-feed-item">
           <div className="flow-responses-feed-item-value">
-            {JSON.stringify(clone, null, 2)}
+            {formatByResultType(result, process.template.resultType)}
           </div>
           <div className="flow-responses-feed-item-meta">
             <div className="flow-responses-feed-item-actor">
-              {contact.id}
+              {result.contact.id}
             </div>
             <div className="flow-responses-feed-item-time">
-              {moment(timestamp).calendar()}
+              {moment(result.timestamp).calendar()}
             </div>
           </div>
         </div>

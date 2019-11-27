@@ -244,7 +244,7 @@ var handleMaxTime = function (_a) {
     var input = _a.input;
     return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_b) {
-            return [2 /*return*/, parseFloat(input) * 60]; // minutes, converted to seconds
+            return [2 /*return*/, parseFloat(input)];
         });
     });
 };

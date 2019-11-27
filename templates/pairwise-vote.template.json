@@ -3,7 +3,7 @@
   "name": "Pairs (Vote)",
   "oneLiner": "Set a criteria for the participants to assess pairs",
   "graphName": "pairwise-vote.json",
-  "resultConnection": "rsf/FormatPairwiseVotesList_yusc1() FORMATTED -> IN core/MakeFunction_sy01e()",
+  "resultType": "PairwiseVote",
   "expectedInputs": [
     {
       "process": "rsf/PairwiseComparison_x4cv2",

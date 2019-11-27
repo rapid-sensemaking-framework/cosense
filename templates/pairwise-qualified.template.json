@@ -3,6 +3,7 @@
   "name": "Pairs (Freeform)",
   "oneLiner": "Set a question for people to respond freeform to pairs",
   "graphName": "pairwise-qualified.json",
+  "resultType": "PairwiseQualified",
   "expectedInputs": [
     {
       "process": "rsf/PairwiseComparisonQual_x4cv2",

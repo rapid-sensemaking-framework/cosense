@@ -3,6 +3,7 @@
   "name": "Pairs (Numeric)",
   "oneLiner": "Set a criteria for people to evaluate pairs",
   "graphName": "pairwise-quantified.json",
+  "resultType": "PairwiseQuantified",
   "expectedInputs": [
     {
       "process": "rsf/PairwiseComparisonQuan_x4cv2",

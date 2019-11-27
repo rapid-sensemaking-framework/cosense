@@ -24,6 +24,7 @@ interface Template {
     name: string;
     graphName: string;
     description: string;
+    resultType: string;
     expectedInputs: ExpectedInput[];
     id: string;
     path?: string;

@@ -197,7 +197,7 @@ const handleObject: Handler = async ({ input }): Promise<object> => {
   return JSON.parse(input)
 }
 const handleMaxTime: Handler = async ({ input }): Promise<number> => {
-  return parseFloat(input) * 60 // minutes, converted to seconds
+  return parseFloat(input)
 }
 const handleOptionsData: Handler = async ({ input }): Promise<Option[]> => {
   // e.g. a+A=Agree, b+B=Block
