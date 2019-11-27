@@ -75,7 +75,8 @@ var getProcesses = function () { return __awaiter(void 0, void 0, void 0, functi
                         reject(err);
                         return;
                     }
-                    var templates = files.map(function (filename) {
+                    // filter out .DS_Store and any other weird files
+                    var templates = files.filter(function (f) { return f.includes('.json'); }).map(function (filename) {
                         return getProcessAsObject(filename.replace('.json', ''));
                     });
                     resolve(templates);

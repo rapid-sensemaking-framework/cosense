@@ -129,7 +129,8 @@ var getTemplates = function (userDefined) {
                             reject(err);
                             return;
                         }
-                        var templates = files.map(function (filename) {
+                        // filter out .DS_Store and any other weird files
+                        var templates = files.filter(function (f) { return f.includes('.template.json'); }).map(function (filename) {
                             var templatePath = templatesPath + "/" + filename;
                             var templateString = fs.readFileSync(templatePath, { encoding: 'utf8' });
                             var template = JSON.parse(templateString);

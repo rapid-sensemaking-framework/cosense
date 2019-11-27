@@ -8,7 +8,7 @@ import {
 import './App.css'
 import Template from './routes/Template'
 import EditTemplate from './routes/EditTemplate'
-import Process from './routes/Process'
+import Flow from './routes/Flow'
 import Flows from './routes/Flows'
 import Home from './routes/Home'
 
@@ -38,7 +38,6 @@ class App extends Component {
             <Switch>
               <Route exact path="/template/:templateId" component={Template} />
               <Route path="/template/:templateId/edit" component={EditTemplate} />
-              <Route path="/process/:processId" component={Process} />
               <Route path="/process" component={Flows} />
               <Route path="/" component={Home} />
             </Switch>

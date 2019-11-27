@@ -1,4 +1,8 @@
-.processes-container {
+.flows-wrapper {
+  margin-top: 68px;
+}
+
+.flows-container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;

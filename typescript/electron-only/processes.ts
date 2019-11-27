@@ -61,7 +61,8 @@ const getProcesses = async (): Promise<Process[]> => {
         reject(err)
         return
       }
-      const templates = files.map(filename => {
+      // filter out .DS_Store and any other weird files
+      const templates = files.filter(f => f.includes('.json')).map(filename => {
         return getProcessAsObject(filename.replace('.json', ''))
       })
       resolve(templates)

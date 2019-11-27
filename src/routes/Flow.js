@@ -16,6 +16,7 @@ import {
 } from '../ts-built/constants'
 import ExpectedInputs from '../components/ExpectedInputs'
 import Register from '../components/Register'
+import './Flow.css'
 
 export default function Process() {
   const history = useHistory()
@@ -70,13 +71,33 @@ export default function Process() {
     history.push(`/process/${newProcessId}`)
   }
 
-  const dateString = moment(process.startTime).fromNow()
+  const dateString = moment(process.startTime).calendar()
 
   return <>
-    <h2>{process.configuring ? 'Configure Participants' : ' Flow Dashboard'}</h2>
-    {process.startTime && <p>
-      Started: {dateString}
-    </p>}
+    <div className="flow-intro">
+      <div className="flow-name">
+        My Template1
+      </div>
+      {process.running && <div className="flow-live">Live</div>}
+      {process.startTime && <div className="flow-date">
+        Started {dateString}
+      </div>}
+    </div>
+    <div className="flow-template">
+      {process.template.name}
+    </div>
+    <div className="flow-label">
+      Participants
+      </div>
+    <div className="flow-config-value">
+      {participants.length}
+    </div>
+    <div className="flow-label">
+      Responses
+    </div>
+    <div className="flow-config-value">
+      {process.results ? process.results.length : 0}
+    </div>
     {process.configuring && <p>
       The flow is ready to be started.
       <br />
@@ -85,44 +106,39 @@ export default function Process() {
         Run It
       </button>
     </p>}
-    {process.running && <p>
-      The flow is live and running now.
-      The results will be updated live here.
-      </p>}
-    {process.complete && <p>
-      The flow has completed.
-      <br />
-      <br />
-      <button onClick={clone}>
-        Clone This Flow
-      </button>
-    </p>}
-    {process.results && <>
-      <h4>Results</h4>
-      {process.results.map((result) => {
+    {/* {process.complete && <button onClick={clone}>
+      Clone This Flow
+    </button>} */}
+    {/* <ExpectedInputs process={process} /> */}
+    {/* display registered participants, or the info to register them */}
+    {/* <Register {...{ registerConfig, participants, startTime }} /> */}
+    <div className="flow-label flow-responses-feed-label">Responses Feed</div>
+    {/* Download (placeholder) */}
+    <div className="flow-responses-feed">
+      {process.results && process.results.map((result) => {
         const clone = { ...result }
         const timestamp = clone.timestamp
         const contact = clone.contact
         delete clone.timestamp
         delete clone.contact
-        return <>
-          {JSON.stringify(clone, null, 2)}<br />
-          {moment(timestamp).calendar()}<br />
-          {contact.id}
-          <br />
-          <br />
-        </>
+        return <div className="flow-responses-feed-item">
+          <div className="flow-responses-feed-item-value">
+            {JSON.stringify(clone, null, 2)}
+          </div>
+          <div className="flow-responses-feed-item-meta">
+            <div className="flow-responses-feed-item-actor">
+              {contact.id}
+            </div>
+            <div className="flow-responses-feed-item-time">
+              {moment(timestamp).calendar()}
+            </div>
+          </div>
+        </div>
       })}
-      <hr />
-    </>}
+    </div>
     {process.error && <>
       <p>There was an error:</p>
       <p>{typeof process.error === 'object' ? JSON.stringify(process.error) : process.error}</p>
-      <hr />
     </>}
-    {!process.configuring && <h4>Configuration</h4>}
-    {/* display registered participants, or the info to register them */}
-    <Register {...{ registerConfig, participants, startTime }} />
-    <ExpectedInputs process={process} />
   </>
 }

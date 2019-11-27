@@ -91,7 +91,8 @@ const getTemplates = async (userDefined: boolean = false): Promise<Template[]> =
         reject(err)
         return
       }
-      const templates = files.map(filename => {
+      // filter out .DS_Store and any other weird files
+      const templates = files.filter(f => f.includes('.template.json')).map(filename => {
         const templatePath = `${templatesPath}/${filename}`
         const templateString = fs.readFileSync(templatePath, { encoding: 'utf8' })
         const template: Template = JSON.parse(templateString)

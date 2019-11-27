@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import moment from 'moment'
 import {
-  Link
+  Link,
+  useRouteMatch,
+  Route,
+  Switch
 } from 'react-router-dom'
 import {
   getProcesses
@@ -10,11 +13,11 @@ import './Flows.css'
 import {
   URLS
 } from '../ts-built/constants'
+import Flow from './Flow'
 
-export default function Home() {
+function FlowsContainer() {
   const defaultFlows = []
   const [flows, setFlows] = useState(defaultFlows)
-
   useEffect(() => {
     getProcesses()
       .then(setFlows)
@@ -23,9 +26,8 @@ export default function Home() {
       })
   }, []) // << super important array, prevents re-fetching
 
-  return <>
-    <div className="processes-container">
-      {flows
+  return <div className="flows-container">
+    {flows
       .sort((a, b) => a.startTime > b.startTime ? -1 : 1)
       .map((flow, flowIndex) => {
         const status = flow.complete
@@ -46,6 +48,18 @@ export default function Home() {
           <div className="flow-grid-one-liner">Started: {dateString}</div>
         </Link>
       })}
+  </div>
+}
+
+export default function Home() {
+  const { url } = useRouteMatch()
+  return <>
+    <h1>My Dashboard</h1>
+    <div className="flows-wrapper">
+      <Switch>
+        <Route path={`${url}/:processId`} component={Flow} />
+        <Route path={url} component={FlowsContainer} />
+      </Switch>
     </div>
   </>
 }

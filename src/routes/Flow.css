@@ -1,0 +1,88 @@
+.flow-intro {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.flow-name {
+  font-size: 24px;
+  color: #4A4A4A;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.flow-live {
+  text-align: center;
+  border: 1px solid #707070;
+  color: #707070;
+  line-height: 25px;
+  padding: 0 14px;
+  border-radius: 13.5px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.flow-date {
+  color: #4A4A4A;
+  font-size: 12px;
+}
+
+.flow-template {
+  margin-top: 6px;
+  color: #B4B4B4;
+  font-size: 16px;
+}
+
+.flow-label {
+  margin-top: 32px;
+  color: #4A4A4A;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.flow-config-value {
+  color: #4A4A4A;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.flow-responses-feed-label {
+  margin-top: 30px;
+}
+
+.flow-responses-feed {
+  margin-top: 30px;
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
+.flow-responses-feed-item {
+  display: flex;
+  flex-direction: row;
+  margin: 6px 0;
+}
+
+.flow-responses-feed-item-value {
+  padding: 9px 16px;
+  border: 1px solid #D1D1D1;
+  color: #000000;
+  border-radius: 20px;
+  width: 70%;
+  flex: none;
+  box-sizing: border-box;
+}
+
+.flow-responses-feed-item-meta {
+  padding: 0 12px;
+  box-sizing: border-box;
+  width: 30%;
+}
+
+.flow-responses-feed-item-actor {
+  margin-bottom: 6px;
+}
+
+.flow-responses-feed-item-time {
+  color: #A3A3A3;
+  font-size: 12px;
+}
