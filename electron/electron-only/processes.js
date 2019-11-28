@@ -115,6 +115,7 @@ exports.setProcessProp = setProcessProp;
 var newProcessDefaults = function () {
     return {
         id: utils_1.guidGenerator(),
+        name: 'Temporary Name',
         createdTime: Date.now(),
         startTime: null,
         endTime: null,

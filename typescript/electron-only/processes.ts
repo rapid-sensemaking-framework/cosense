@@ -92,6 +92,7 @@ const setProcessProp = async (id: string, key: string, value: any): Promise<bool
 const newProcessDefaults = () => {
   return {
     id: guidGenerator(),
+    name: 'Temporary Name',
     createdTime: Date.now(),
     startTime: null,
     endTime: null,

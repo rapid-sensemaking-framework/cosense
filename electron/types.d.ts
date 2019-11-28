@@ -54,6 +54,7 @@ declare type ContactableConfigSet = {
 declare type FormInputs = object;
 interface Process {
     id: string;
+    name: string;
     templateId: string;
     template: Template;
     graph: Graph;
