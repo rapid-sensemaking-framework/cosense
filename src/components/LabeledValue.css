@@ -1,0 +1,30 @@
+.labeled-value {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: row;
+}
+
+.labeled-value-circle {
+  background-color: #FFF;
+  border: 1px solid #707070;
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border-radius: 9px;
+}
+
+.labeled-value-label-value {
+  margin-left: 7px;
+}
+
+.labeled-value-label {
+  color: #4A4A4A;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.labeled-value-value {
+  color: #4A4A4A;
+  font-size: 20px;
+  font-weight: bold;
+}

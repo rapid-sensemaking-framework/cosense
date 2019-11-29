@@ -2,16 +2,17 @@ import React from 'react'
 import {
   CONTACTABLE_CONFIG_PORT_NAME
 } from '../ts-built/constants'
+import LabeledValue from './LabeledValue'
 
 export default function ExpectedInputs({ process }) {
   return <>
     {/* display configured fields */}
     {process.template.expectedInputs
       .filter(e => e.port !== CONTACTABLE_CONFIG_PORT_NAME)
-      .map((e, index) => {
-        // const key = 
-        const input = process.formInputs[`${e.process}--${e.port}`]
-        return <h5 key={`expectedInput-${index}`}>{e.port}: {input}</h5>
+      .map((e) => {
+        const ident = `${e.process}--${e.port}`
+        const input = process.formInputs[ident]
+        return <LabeledValue key={`expectedInput-${ident}`} label={e.shortLabel} value={input} />
       })
     }
   </>

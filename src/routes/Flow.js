@@ -16,6 +16,7 @@ import {
 } from '../ts-built/constants'
 import ExpectedInputs from '../components/ExpectedInputs'
 import Register from '../components/Register'
+import LabeledValue from '../components/LabeledValue'
 import './Flow.css'
 
 const formatByResultType = (r, type) => {
@@ -132,30 +133,20 @@ export default function Process() {
     <div className="flow-template">
       {process.template.name}
     </div>
-    <div className="flow-label">
-      Participants
-      </div>
-    <div className="flow-config-value">
-      {participants.length}
-    </div>
-    <div className="flow-label">
-      Responses
-    </div>
-    <div className="flow-config-value">
-      {process.results ? process.results.length : 0}
-    </div>
+    {process.complete && <button className="button" onClick={clone}>
+      Clone This Flow
+    </button>}
     {process.configuring && <p>
       The flow is ready to be started.
       <br />
       <br />
-      <button onClick={run}>
+      <button className="button" onClick={run}>
         Run It
       </button>
     </p>}
-    {/* {process.complete && <button onClick={clone}>
-      Clone This Flow
-    </button>} */}
-    {/* <ExpectedInputs process={process} /> */}
+    <LabeledValue label={"Participants"} value={participants.length} />
+    <LabeledValue label={"Responses"} value={process.results ? process.results.length : 0} />
+    <ExpectedInputs process={process} />
     {/* display registered participants, or the info to register them */}
     {/* <Register {...{ registerConfig, participants, startTime }} /> */}
     <div className="flow-label flow-responses-feed-label">Responses Feed</div>

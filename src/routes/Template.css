@@ -63,24 +63,6 @@
   appearance: none;
 }
 
-.template button {
-  background-color: #4A4A4A;
-  color: #FFFFFF;
-  outline: none;
-  border: 1px solid #B4B4B4;
-  border-radius: 4px;
-  font-family: Helvetica, sans-serif;
-  font-size: 16px;
-  padding: 10px 20px;
-  cursor: pointer;
-  margin-right: 16px;
-  margin-top: 16px;
-}
-.template .button-inactive {
-  background-color: #FFFFFF;
-  color: #B1B1B1;
-}
-
 .template .time-picker input {
   margin-right: 16px;
 }

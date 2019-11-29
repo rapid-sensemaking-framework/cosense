@@ -13,10 +13,10 @@ export default function TemplateSubmit({ startNow, startLater }) {
       <div className="input-help-label">
         Prompts will be sent to participants right away and the time countdown for submitting responses will start.
       </div>
-      <button className="button-inactive" onClick={startLater}>
+      <button className="button button-white" onClick={startLater}>
         No, I want to start later
       </button>
-      <button onClick={startNow}>
+      <button className="button" onClick={startNow}>
         Yes, start now
       </button>
     </div>

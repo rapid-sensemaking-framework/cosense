@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import moment from 'moment'
 import {
   Link,
   useRouteMatch,
@@ -11,9 +10,44 @@ import {
 } from '../ipc'
 import './Flows.css'
 import {
-  URLS
+  URLS,
+  CONTACTABLE_CONFIG_PORT_NAME
 } from '../ts-built/constants'
+import LabeledValue from '../components/LabeledValue'
 import Flow from './Flow'
+
+function FlowGridElement({ flow }) {
+  const contactableInput = flow.template.expectedInputs
+    .find(e => e.port === CONTACTABLE_CONFIG_PORT_NAME)
+  const ident = contactableInput.process + '--' + CONTACTABLE_CONFIG_PORT_NAME
+  const participants = JSON.parse(flow.formInputs[ident])
+  return <Link className="flow-grid-link" to={URLS.PROCESS.replace(':processId', flow.id)} key={`flow-${flow.id}`}>
+    {flow.running && <div className="flow-is-live" />}
+    <div className="flow-grid-bg">
+      <LabeledValue label={"Participants"} value={participants.length} />
+      <LabeledValue label={"Responses"} value={flow.results ? flow.results.length : 0} />
+      <div className="flow-grid-bg-button-wrapper">
+        <button className="button">See Details</button>
+      </div>
+    </div>
+    <div className="flow-grid-name">My Flow 1</div>
+    <div className="flow-grid-one-liner">{flow.template.name}</div>
+  </Link>
+}
+
+function FlowSubsection({ flows, label }) {
+  return <>
+    <div className="flows-section-label">
+      {label}
+    </div>
+    <div className="flows-container">
+      {/* sort by most recently started */}
+      {flows
+        .sort((a, b) => a.startTime > b.startTime ? -1 : 1)
+        .map((flow) => <FlowGridElement flow={flow} />)}
+    </div>
+  </>
+}
 
 function FlowsContainer() {
   const defaultFlows = []
@@ -26,29 +60,14 @@ function FlowsContainer() {
       })
   }, []) // << super important array, prevents re-fetching
 
-  return <div className="flows-container">
-    {flows
-      .sort((a, b) => a.startTime > b.startTime ? -1 : 1)
-      .map((flow, flowIndex) => {
-        const status = flow.complete
-          ? 'Complete'
-          : flow.error
-            ? 'Error'
-            : flow.configuring
-              ? 'Configuring'
-              : flow.running
-                ? 'Running'
-                : 'Unknown Status'
+  const runningFlows = flows.filter(f => f.running)
+  const completedFlows = flows.filter(f => f.complete)
 
-        const dateString = moment(flow.startTime).fromNow()
-        return <Link className="flow-grid-link" to={URLS.PROCESS.replace(':processId', flow.id)} key={`flow-${flowIndex}`}>
-          <div className="flow-grid-image" />
-          <div className="flow-grid-name">{flow.template.name}</div>
-          <div className="flow-grid-one-liner">{status}</div>
-          <div className="flow-grid-one-liner">Started: {dateString}</div>
-        </Link>
-      })}
-  </div>
+  return <>
+    <FlowSubsection flows={runningFlows} label="Live flows" />
+    <div className="divider" />
+    <FlowSubsection flows={completedFlows} label="Previously run flows" />
+  </>
 }
 
 export default function Home() {

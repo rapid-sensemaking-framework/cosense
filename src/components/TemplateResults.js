@@ -6,7 +6,7 @@ export default function TemplateSubmit() {
     <div className="input-help-label">
       The results will be automatically sent to your device on CoSense app.
     </div>
-    <button>Yes, send</button>
-    <button className="button-inactive">No, don't send</button>
+    <button className="button">Yes, send</button>
+    <button className="button button-white">No, don't send</button>
   </div>
 }

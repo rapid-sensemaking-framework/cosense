@@ -4,12 +4,6 @@
   flex-wrap: wrap;
 }
 
-.divider {
-  margin: 40px 0;
-  border-top: 1px solid #F2F2F2;
-  width: 100%;
-}
-
 .home-template-link {
   text-decoration: none;
   text-align: center;

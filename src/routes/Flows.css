@@ -8,19 +8,42 @@
   flex-wrap: wrap;
 }
 
+.flows-section-label {
+  color: #707070;
+  font-size: 18px;
+  font-weight: bold;
+}
+
 .flow-grid-link {
   text-decoration: none;
-  text-align: center;
   width: 188px;
   margin-right: 96px;
   margin-top: 40px;
   display: block;
+  position: relative;
 }
 
-.flow-grid-image {
-  width: 188px;
-  height: 188px;
+.flow-is-live {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: #FD5E41;
+  position: absolute;
+  top: -12px;
+  right: -12px;
+}
+
+.flow-grid-bg {
+  width: 148px;
+  padding: 1px 20px 20px 20px;
   background-color: #E3E3E3;
+}
+
+.flow-grid-bg-button-wrapper {
+  text-align: center;
+}
+.flow-grid-bg-button-wrapper .button {
+  margin-right: 0;
 }
 
 .flow-grid-name {

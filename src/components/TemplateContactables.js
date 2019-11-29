@@ -45,6 +45,6 @@ export default function ContactablesForm({ template, onChange }) {
         onChange={(val) => updateEl(val, index)}
         onRemove={() => removeEl(index)} />
     })}
-    <button className="add-more-button" onClick={clickAddOne}>Add More</button>
+    <button className="button add-more-button" onClick={clickAddOne}>Add More</button>
   </div>
 }
