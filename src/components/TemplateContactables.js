@@ -1,35 +1,34 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { CONTACTABLE_CONFIG_PORT_NAME } from '../ts-built/constants'
 import ContactableInput from './ContactableInput'
 import './TemplateContactables.css'
 
-export default function ContactablesForm({ template, onChange }) {
-  const [els, setEls] = useState([{}])
+export default function ContactablesForm({ template, formData, onChange }) {
 
   const expectedContactables = template.expectedInputs
-    .filter((e) => e.port === CONTACTABLE_CONFIG_PORT_NAME)
+    .find((e) => e.port === CONTACTABLE_CONFIG_PORT_NAME && !e.process.includes("SendMessageToAll"))
+  const ident = `${expectedContactables.process}--${expectedContactables.port}`
+  const els = formData[ident]
 
+  // set defaults
   useEffect(() => {
-    expectedContactables.forEach(expectedInput => {
-      const { process, port } = expectedInput
-      const ident = `${process}--${port}`
-      onChange(ident, JSON.stringify(els))
-    })
-  }, [els])
+    const defaults = [{}]
+    onChange(ident, defaults)
+  }, []) // only on mount
 
   const updateEl = (val, index) => {
     const newEls = els.slice(0) // clone
     newEls[index] = val
-    setEls(newEls)
+    onChange(ident, newEls)
   }
   const removeEl = (index) => {
     const newEls = els.slice(0) // clone
     newEls.splice(index, 1)
-    setEls(newEls)
+    onChange(ident, newEls)
   }
   const clickAddOne = (e) => {
     e.preventDefault()
-    setEls(els.concat([{}]))
+    onChange(ident, els.concat([{}]))
   }
   return <div className="contactables-form">
     <div className="input-label">Configure your participants</div>
@@ -38,10 +37,10 @@ export default function ContactablesForm({ template, onChange }) {
     </div>
     {/* Select participants and their communication platform for participation or select a pre-existing list. */}
     {/* <button className="participant-list-button">Choose Participant List</button> */}
-    {els.map((id, index) => {
+    {els && els.map((el, index) => {
       return <ContactableInput
+        contactable={el}
         showRemove={els.length > 1}
-        key={index}
         onChange={(val) => updateEl(val, index)}
         onRemove={() => removeEl(index)} />
     })}

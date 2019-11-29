@@ -7,7 +7,7 @@ var url = require("url");
 var electron = require("electron");
 // import { log, transports } from 'electron-log'
 var fixPath = require("fix-path");
-var folders_1 = require("./folders");
+var folders_1 = require("../folders");
 // weird environment variables / path fix that's needed
 fixPath();
 // we create these folders in the "appData" paths

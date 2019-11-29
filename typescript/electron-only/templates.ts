@@ -14,7 +14,7 @@ import {
   USER_TEMPLATES_PATH, // user defined
   SYSTEM_TEMPLATES_PATH,
   SYSTEM_GRAPHS_PATH
-} from './folders'
+} from '../folders'
 
 const getGraph = (graphName: string): Graph => {
   const graphPath = path.join(SYSTEM_GRAPHS_PATH, graphName)
@@ -37,7 +37,7 @@ const writeTemplate = (templateId: string, template: Template): boolean => {
   // can only write to user defined templates
   const userDefined = true
   const templatePath = getTemplatePath(templateId, userDefined)
-  fs.writeFileSync(templatePath, JSON.stringify(template))
+  fs.writeFileSync(templatePath, JSON.stringify(template, null, 2))
   return true
 }
 

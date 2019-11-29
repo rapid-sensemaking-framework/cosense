@@ -1,0 +1,20 @@
+.template-preview {
+  margin-bottom: 65px;
+}
+
+.template-preview-element {
+  margin-top: 37px;
+}
+
+.template-preview-label {
+  color: #4A4A4A;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.template-preview-value {
+  color: #4A4A4A;
+  font-size: 16px;
+  margin-left: 13px;
+  margin-top: 11px;
+}

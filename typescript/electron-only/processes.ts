@@ -26,7 +26,7 @@ import {
 } from '../utils'
 import {
   USER_PROCESSES_PATH
-} from './folders'
+} from '../folders'
 
 import {
   getContactablesFromRegistration,
@@ -51,7 +51,7 @@ const getProcessAsObject = (processId: string) => {
 
 const writeProcess = (processId: string, process: Process) => {
   const processPath = getProcessPath(processId)
-  fs.writeFileSync(processPath, JSON.stringify(process))
+  fs.writeFileSync(processPath, JSON.stringify(process, null, 2))
 }
 
 const getProcesses = async (): Promise<Process[]> => {
@@ -234,6 +234,7 @@ const nofloTypeMap = {
   // TODO: the rest
 }
 const specialPorts = {
+  contactable_configs: handleText, // HACK
   statements: handleStatementsData,
   options: handleOptionsData,
   max_time: handleMaxTime

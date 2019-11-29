@@ -17,6 +17,7 @@ import {
 import ExpectedInputs from '../components/ExpectedInputs'
 import Register from '../components/Register'
 import LabeledValue from '../components/LabeledValue'
+import ParticipantList from '../components/ParticipantList'
 import './Flow.css'
 
 const formatByResultType = (r, type) => {
@@ -61,6 +62,7 @@ export default function Process() {
   const defaultProcess = null
   const [process, setProcess] = useState(defaultProcess)
   const [loading, setLoading] = useState(true)
+  const [showContactables, setShowContactables] = useState(false)
 
   // do initial fetch, on initial load
   useEffect(() => {
@@ -94,7 +96,7 @@ export default function Process() {
     .find(e => e.port === CONTACTABLE_CONFIG_PORT_NAME)
   const ident = contactableInput.process + '--' + CONTACTABLE_CONFIG_PORT_NAME
   const registerConfig = process.registerConfigs[contactableInput.process]
-  const participants = JSON.parse(process.formInputs[ident])
+  const participants = process.formInputs[ident]
 
   const run = () => {
     runProcess(processId)
@@ -113,7 +115,7 @@ export default function Process() {
 
   const sortByTimestamps = (r1, r2) => r1.timestamp < r2.timestamp ? 1 : -1
 
-  return <>
+  return <div className="flow">
     <div className="flow-intro">
       <div className="flow-name">
         My Template1
@@ -145,6 +147,10 @@ export default function Process() {
       </button>
     </p>}
     <LabeledValue label={"Participants"} value={participants.length} />
+    <button className="button" onClick={() => setShowContactables(!showContactables)}>
+      {showContactables ? 'Hide List' : 'See List'}
+    </button>
+    {showContactables && <ParticipantList contactables={participants} />}
     <LabeledValue label={"Responses"} value={process.results ? process.results.length : 0} />
     <ExpectedInputs process={process} />
     {/* display registered participants, or the info to register them */}
@@ -172,5 +178,5 @@ export default function Process() {
       <p>There was an error:</p>
       <p>{typeof process.error === 'object' ? JSON.stringify(process.error) : process.error}</p>
     </>}
-  </>
+  </div>
 }

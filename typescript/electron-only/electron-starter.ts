@@ -9,7 +9,7 @@ import {
   APP_DATA_PATH,
   USER_PROCESSES_PATH,
   USER_TEMPLATES_PATH
-} from './folders'
+} from '../folders'
 
 // weird environment variables / path fix that's needed
 fixPath()

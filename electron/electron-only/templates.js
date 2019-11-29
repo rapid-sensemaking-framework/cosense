@@ -52,7 +52,7 @@ var fs = require("fs");
 var processes_1 = require("./processes");
 var utils_1 = require("../utils");
 var fbp_1 = require("./fbp");
-var folders_1 = require("./folders");
+var folders_1 = require("../folders");
 var getGraph = function (graphName) {
     var graphPath = path.join(folders_1.SYSTEM_GRAPHS_PATH, graphName);
     return JSON.parse(fs.readFileSync(graphPath, { encoding: "utf8" }));
@@ -73,7 +73,7 @@ var writeTemplate = function (templateId, template) {
     // can only write to user defined templates
     var userDefined = true;
     var templatePath = getTemplatePath(templateId, userDefined);
-    fs.writeFileSync(templatePath, JSON.stringify(template));
+    fs.writeFileSync(templatePath, JSON.stringify(template, null, 2));
     return true;
 };
 var updateTemplate = function (_a) {

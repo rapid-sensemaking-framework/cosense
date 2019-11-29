@@ -5,12 +5,12 @@ import { TYPE_KEY as MATTERMOST_TYPE_KEY } from 'rsf-mattermostable'
 
 import './ContactableInput.css'
 
-export default function ContactableInput({ onChange, showRemove, onRemove }) {
-  const [type, setType] = useState('telegram')
-  const [name, setName] = useState('')
-  const [telegram, setTelegram] = useState('')
-  const [mattermost, setMattermost] = useState('@') // looks like 'username@https://chatserver.org'
-  const [sms, setSms] = useState('')
+export default function ContactableInput({ contactable, onChange, showRemove, onRemove }) {
+  const [type, setType] = useState(contactable.type || 'telegram')
+  const [name, setName] = useState(contactable.name || '')
+  const [telegram, setTelegram] = useState(contactable.type === TELEGRAM_TYPE_KEY ? contactable.id : '')
+  const [mattermost, setMattermost] = useState(contactable.type === MATTERMOST_TYPE_KEY ? contactable.id : '@') // looks like 'username@https://chatserver.org'
+  const [sms, setSms] = useState(contactable.type === SMS_TYPE_KEY ? contactable.id : '')
 
   useEffect(() => {
     const id = type === TELEGRAM_TYPE_KEY
@@ -66,6 +66,6 @@ export default function ContactableInput({ onChange, showRemove, onRemove }) {
         placeholder="https://chat.server.org" value={mattermost.split('@')[1]} onChange={updateMattermostChatServer} />
     </>}
     {type === TELEGRAM_TYPE_KEY && <input type="text" name="telegram-username" value={telegram} onChange={updateTelegram}  placeholder="username" />}
-    {showRemove && <button onClick={clickRemove}>Remove</button>}
+    {showRemove && <button className="button" onClick={clickRemove}>Remove</button>}
   </div>
 }

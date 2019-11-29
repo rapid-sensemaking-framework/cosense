@@ -13,14 +13,21 @@ import {
   URLS,
   CONTACTABLE_CONFIG_PORT_NAME
 } from '../ts-built/constants'
+import {
+  USER_PROCESSES_PATH
+} from '../ts-built/folders'
 import LabeledValue from '../components/LabeledValue'
 import Flow from './Flow'
+import {
+  getElectron
+} from '../electron-require'
+const { shell } = getElectron()
 
 function FlowGridElement({ flow }) {
   const contactableInput = flow.template.expectedInputs
     .find(e => e.port === CONTACTABLE_CONFIG_PORT_NAME)
   const ident = contactableInput.process + '--' + CONTACTABLE_CONFIG_PORT_NAME
-  const participants = JSON.parse(flow.formInputs[ident])
+  const participants = flow.formInputs[ident]
   return <Link className="flow-grid-link" to={URLS.PROCESS.replace(':processId', flow.id)} key={`flow-${flow.id}`}>
     {flow.running && <div className="flow-is-live" />}
     <div className="flow-grid-bg">
@@ -62,11 +69,21 @@ function FlowsContainer() {
 
   const runningFlows = flows.filter(f => f.running)
   const completedFlows = flows.filter(f => f.complete)
+  const configuringFlows = flows.filter(f => f.configuring)
+
+  const openFlowsFolder = (e) => {
+    e.preventDefault()
+    shell.openItem(USER_PROCESSES_PATH)
+  }
 
   return <>
     <FlowSubsection flows={runningFlows} label="Live flows" />
     <div className="divider" />
+    <FlowSubsection flows={configuringFlows} label="Configured unrun flows" />
+    <div className="divider" />
     <FlowSubsection flows={completedFlows} label="Previously run flows" />
+    <div className="divider" />
+    <a href="#" onClick={openFlowsFolder}>Open Folder With Flows</a>
   </>
 }
 

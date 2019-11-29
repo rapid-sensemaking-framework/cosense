@@ -1,3 +1,7 @@
+.flow .participant-list {
+  margin-top: 40px;
+}
+
 .flow-intro {
   display: flex;
   flex-direction: row;

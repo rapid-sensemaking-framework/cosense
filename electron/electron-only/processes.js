@@ -51,7 +51,7 @@ var electron = require("electron");
 var fs = require("fs");
 var constants_1 = require("../constants");
 var utils_1 = require("../utils");
-var folders_1 = require("./folders");
+var folders_1 = require("../folders");
 var run_graph_1 = require("./run_graph");
 var BrowserWindow = electron.BrowserWindow;
 var getProcessPath = function (processId) {
@@ -65,7 +65,7 @@ var getProcessAsObject = function (processId) {
 };
 var writeProcess = function (processId, process) {
     var processPath = getProcessPath(processId);
-    fs.writeFileSync(processPath, JSON.stringify(process));
+    fs.writeFileSync(processPath, JSON.stringify(process, null, 2));
 };
 var getProcesses = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
@@ -293,6 +293,7 @@ var nofloTypeMap = {
     // TODO: the rest
 };
 var specialPorts = {
+    contactable_configs: handleText,
     statements: handleStatementsData,
     options: handleOptionsData,
     max_time: handleMaxTime

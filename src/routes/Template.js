@@ -115,7 +115,9 @@ export default function Template() {
       })}
     </div>
     {/* {template.parentTemplate && <>Parent Template: <Link to={`/template/${template.parentTemplate}`}>{template.parentTemplate}</Link></>} */}
-    <WhichStep template={template} onChange={onChange} startNow={startNow} startLater={startLater} />
+    <div className="template-step-wrapper">
+      <WhichStep template={template} formData={formData} onChange={onChange} startNow={startNow} startLater={startLater} />
+    </div>
     {activeStep > 1 && activeStep < 5 && <button className="steps-button" onClick={() => setActiveStep(activeStep - 1)}>Back</button>}
     {activeStep < 4 && <button className="steps-button" onClick={() => setActiveStep(activeStep + 1)}>
       Next
