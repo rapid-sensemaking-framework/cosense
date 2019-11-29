@@ -70,16 +70,12 @@ var attachEventListeners = function () {
     ipc.on(IPC.RUN_PROCESS, function (event, processId) { return __awaiter(void 0, void 0, void 0, function () {
         var runtimeAddress, runtimeSecret;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    runtimeAddress = process.env.RUNTIME_ADDRESS;
-                    runtimeSecret = process.env.RUNTIME_SECRET;
-                    return [4 /*yield*/, processes_1.runProcess(processId, runtimeAddress, runtimeSecret)];
-                case 1:
-                    _a.sent();
-                    event.sender.send(IPC.PROCESS_RUNNING);
-                    return [2 /*return*/];
-            }
+            runtimeAddress = process.env.RUNTIME_ADDRESS;
+            runtimeSecret = process.env.RUNTIME_SECRET;
+            // start process, but don't wait for it before returning
+            processes_1.runProcess(processId, runtimeAddress, runtimeSecret);
+            event.sender.send(IPC.PROCESS_RUNNING);
+            return [2 /*return*/];
         });
     }); });
     ipc.on(IPC.CLONE_PROCESS, function (event, processId) { return __awaiter(void 0, void 0, void 0, function () {

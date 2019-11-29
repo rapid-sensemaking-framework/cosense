@@ -40,7 +40,8 @@ const attachEventListeners = () => {
   ipc.on(IPC.RUN_PROCESS, async (event: electron.IpcMessageEvent, processId: string) => {
     const runtimeAddress = process.env.RUNTIME_ADDRESS
     const runtimeSecret = process.env.RUNTIME_SECRET
-    await runProcess(processId, runtimeAddress, runtimeSecret)
+    // start process, but don't wait for it before returning
+    runProcess(processId, runtimeAddress, runtimeSecret)
     event.sender.send(IPC.PROCESS_RUNNING)
   })
 
