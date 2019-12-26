@@ -1,83 +1,84 @@
-import {
-  EVENTS
-} from './ts-built/constants'
+import { EVENTS } from './ts-built/constants'
 import { getElectron } from './electron-require'
 const ipc = getElectron().ipcRenderer
 const { IPC } = EVENTS
 
-// TODO: DRY up
-
-const getSystemTemplates = async () => {
-  ipc.send(IPC.GET_SYSTEM_TEMPLATES)
-  return new Promise((resolve) => {
-    ipc.once(IPC.RETURN_SYSTEM_TEMPLATES, (event, templates) => resolve(templates))
+const promisifyEvents = (sendEvent, sendInputs, receiveEvent) => {
+  ipc.send(sendEvent, sendInputs)
+  return new Promise(resolve => {
+    ipc.once(receiveEvent, (event, result) => resolve(result))
   })
 }
 
-const getUserTemplates = async () => {
-  ipc.send(IPC.GET_USER_TEMPLATES)
-  return new Promise((resolve) => {
-    ipc.once(IPC.RETURN_USER_TEMPLATES, (event, templates) => resolve(templates))
-  })
+/*
+  TEMPLATES
+*/
+
+const getSystemTemplates = () => {
+  return promisifyEvents(
+    IPC.GET_SYSTEM_TEMPLATES,
+    null,
+    IPC.RETURN_SYSTEM_TEMPLATES
+  )
 }
 
-const getTemplate = async (templateId, userDefined) => {
-  ipc.send(IPC.GET_TEMPLATE, {
-    templateId,
-    userDefined
-  })
-  return new Promise((resolve) => {
-    ipc.once(IPC.RETURN_TEMPLATE, (event, template) => resolve(template))
-  })
+const getUserTemplates = () => {
+  return promisifyEvents(
+    IPC.GET_USER_TEMPLATES,
+    null,
+    IPC.RETURN_USER_TEMPLATES
+  )
 }
 
-const updateTemplate = async (data) => {
-  ipc.send(IPC.UPDATE_TEMPLATE, data)
-  await new Promise((resolve) => {
-    ipc.once(IPC.TEMPLATE_UPDATED, () => resolve())
-  })
+const getTemplate = (templateId, userDefined) => {
+  return promisifyEvents(
+    IPC.GET_TEMPLATE,
+    {
+      templateId,
+      userDefined
+    },
+    IPC.RETURN_TEMPLATE
+  )
 }
 
-const cloneTemplate = async (templateId) => {
-  ipc.send(IPC.CLONE_TEMPLATE, templateId)
-  return new Promise((resolve) => {
-    ipc.once(IPC.TEMPLATE_CLONED, (event, newTemplateId) => resolve(newTemplateId))
-  })
+const updateTemplate = updatedTemplate => {
+  return promisifyEvents(
+    IPC.UPDATE_TEMPLATE,
+    updatedTemplate,
+    IPC.TEMPLATE_UPDATED
+  )
 }
 
-const getProcesses = async () => {
-  ipc.send(IPC.GET_PROCESSES)
-  return new Promise((resolve) => {
-    ipc.once(IPC.RETURN_PROCESSES, (event, processes) => resolve(processes))
-  })
+const cloneTemplate = templateId => {
+  return promisifyEvents(IPC.CLONE_TEMPLATE, templateId, IPC.TEMPLATE_CLONED)
 }
 
-const getProcess = async (processId) => {
-  ipc.send(IPC.GET_PROCESS, processId)
-  return new Promise((resolve) => {
-    ipc.once(IPC.RETURN_PROCESS, (event, process) => resolve(process))
-  })
+/* 
+  PROCESSES
+*/
+
+const getProcesses = () => {
+  return promisifyEvents(IPC.GET_PROCESSES, null, IPC.RETURN_PROCESSES)
 }
 
-const createProcess = async (inputs, templateId, template) => {
-  ipc.send(IPC.CREATE_PROCESS, { inputs, templateId, template })
-  return new Promise((resolve) => {
-    ipc.once(IPC.PROCESS_CREATED, (event, processId) => resolve(processId))
-  })
+const getProcess = processId => {
+  return promisifyEvents(IPC.GET_PROCESS, processId, IPC.RETURN_PROCESS)
 }
 
-const runProcess = async (processId) => {
-  ipc.send(IPC.RUN_PROCESS, processId)
-  return new Promise((resolve) => {
-    ipc.once(IPC.PROCESS_RUNNING, () => resolve())
-  })
+const createProcess = (inputs, templateId, template) => {
+  return promisifyEvents(
+    IPC.CREATE_PROCESS,
+    { inputs, templateId, template },
+    IPC.PROCESS_CREATED
+  )
 }
 
-const cloneProcess = async (processId) => {
-  ipc.send(IPC.CLONE_PROCESS, processId)
-  return new Promise((resolve) => {
-    ipc.once(IPC.PROCESS_CLONED, (event, newProcessId) => resolve(newProcessId))
-  })
+const runProcess = processId => {
+  return promisifyEvents(IPC.RUN_PROCESS, processId, IPC.PROCESS_RUNNING)
+}
+
+const cloneProcess = processId => {
+  return promisifyEvents(IPC.CLONE_PROCESS, processId, IPC.PROCESS_CLONED)
 }
 
 const onProcessUpdate = (processId, cb) => {
@@ -95,12 +96,55 @@ const sendContactableConfigs = (id, contactableConfigs) => {
   return ipc.send(IPC.HANDLE_FACIL_CONTACTABLES_SUBMIT(id), contactableConfigs)
 }
 
+/*
+  PARTICIPANT LISTS
+*/
+
+const getParticipantLists = () => {
+  return promisifyEvents(
+    IPC.GET_PARTICIPANT_LISTS,
+    null,
+    IPC.RETURN_PARTICIPANT_LISTS
+  )
+}
+
+const getParticipantList = slug => {
+  return promisifyEvents(
+    IPC.GET_PARTICIPANT_LIST,
+    slug,
+    IPC.RETURN_PARTICIPANT_LIST
+  )
+}
+
+const createParticipantList = participantList => {
+  return promisifyEvents(
+    IPC.CREATE_PARTICIPANT_LIST,
+    participantList,
+    IPC.PARTICIPANT_LIST_CREATED
+  )
+}
+
+const updateParticipantList = participantList => {
+  return promisifyEvents(
+    IPC.UPDATE_PARTICIPANT_LIST,
+    participantList,
+    IPC.PARTICIPANT_LIST_UPDATED
+  )
+}
+
 export {
+  // participant lists
+  createParticipantList,
+  updateParticipantList,
+  getParticipantList,
+  getParticipantLists,
+  // templates
   getSystemTemplates,
   getUserTemplates,
   getTemplate,
   cloneTemplate,
   updateTemplate,
+  // processes
   createProcess,
   runProcess,
   getProcesses,

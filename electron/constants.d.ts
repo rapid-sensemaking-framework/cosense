@@ -40,6 +40,14 @@ declare const EVENTS: {
         RETURN_SYSTEM_TEMPLATES: string;
         GET_USER_TEMPLATES: string;
         RETURN_USER_TEMPLATES: string;
+        CREATE_PARTICIPANT_LIST: string;
+        PARTICIPANT_LIST_CREATED: string;
+        UPDATE_PARTICIPANT_LIST: string;
+        PARTICIPANT_LIST_UPDATED: string;
+        GET_PARTICIPANT_LISTS: string;
+        RETURN_PARTICIPANT_LISTS: string;
+        GET_PARTICIPANT_LIST: string;
+        RETURN_PARTICIPANT_LIST: string;
     };
 };
 export { CONTACTABLE_CONFIG_PORT_NAME, URLS, EVENTS };
