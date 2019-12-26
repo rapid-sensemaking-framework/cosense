@@ -1,4 +1,8 @@
 import { ContactableConfig } from 'rsf-types';
+interface ParticipantList {
+    name: string;
+    participants: ContactableConfig[];
+}
 interface RegisterConfig {
     stage: string;
     isFacilitator: boolean;
@@ -113,4 +117,4 @@ interface HandlerInput {
     input: string;
 }
 declare type Handler = (handlerInput: HandlerInput) => Promise<any>;
-export { ContactableConfigSet, RegisterConfig, RegisterConfigSet, Template, UpdateTemplateInput, TemplateSubmitInput, GetTemplateInput, FormInputs, ExpectedInput, Process, GraphConnection, NofloSignal, NofloSignalPayload, Graph, Handler, HandlerInput };
+export { ParticipantList, ContactableConfigSet, RegisterConfig, RegisterConfigSet, Template, UpdateTemplateInput, TemplateSubmitInput, GetTemplateInput, FormInputs, ExpectedInput, Process, GraphConnection, NofloSignal, NofloSignalPayload, Graph, Handler, HandlerInput };

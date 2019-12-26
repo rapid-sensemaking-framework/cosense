@@ -1,13 +1,16 @@
-import {
-  ContactableConfig
-} from 'rsf-types'
+import { ContactableConfig } from 'rsf-types'
+
+interface ParticipantList {
+  name: string
+  participants: ContactableConfig[]
+}
 
 interface RegisterConfig {
   stage: string
   isFacilitator: boolean
   processContext: string
   maxTime: number
-  maxParticipants: number | string,
+  maxParticipants: number | string
   id: string
   wsUrl: string // websocket to connect to, if not isFacilitator
 }
@@ -22,7 +25,7 @@ interface ExpectedInput {
   component?: string
   inputTypeOverride?: string
   defaultValue?: any
-  placeholder?: string,
+  placeholder?: string
 }
 
 interface Template {
@@ -95,7 +98,8 @@ interface Graph {
 }
 
 interface GraphConnection {
-  tgt: { // target
+  tgt: {
+    // target
     process: string
     port: string
   }
@@ -133,6 +137,7 @@ interface HandlerInput {
 type Handler = (handlerInput: HandlerInput) => Promise<any>
 
 export {
+  ParticipantList,
   ContactableConfigSet,
   RegisterConfig,
   RegisterConfigSet,
