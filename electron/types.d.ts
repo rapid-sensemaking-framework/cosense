@@ -1,6 +1,7 @@
 import { ContactableConfig } from 'rsf-types';
 interface ParticipantList {
     name: string;
+    slug: string;
     participants: ContactableConfig[];
 }
 interface RegisterConfig {
