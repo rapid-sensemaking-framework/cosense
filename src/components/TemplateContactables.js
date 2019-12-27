@@ -4,54 +4,45 @@ import './TemplateContactables.css'
 import ParticipantListForm from './ParticipantListForm'
 import PublicLinkForm from './PublicLinkForm'
 
-export default function TemplateContactables({ template, formData, onChange }) {
-  const [selectMethod, setSelectMethod] = useState(true)
+function MethodRadio({ configChoice, ident, label, setConfigChoice }) {
+  return (
+    <div>
+      <input
+        type='radio'
+        id={ident}
+        checked={configChoice === ident}
+        onChange={() => setConfigChoice(ident)}
+      />
+      <label className='label-inline' htmlFor={ident}>
+        {label}
+      </label>
+    </div>
+  )
+}
 
+export default function TemplateContactables({ template, formData, onChange }) {
   const fromNewList = 'from_new_list'
+  const newListLabel = 'Configure participant list myself'
+
   const fromExistingList = 'from_existing_list'
-  const publicLinkString = 'public_choice'
+  const fromExistingLabel = 'Select an existing participant list'
+
+  const publicLink = 'public_link'
+  const publicLinkLabel = 'Create a public link'
 
   const [configChoice, setConfigChoice] = useState()
 
-  const newListIdent = `new-list-ident`
-  const existlingListIdent = `existing-list-ident`
-  const publicLinkIdent = `public-link-ident`
-
-  const pickFromNewList = () => {
-    setConfigChoice(fromNewList)
-    onChange(newListIdent, fromNewList)
-    onChange(existlingListIdent, '')
-    onChange(publicLinkIdent, '')
-    setSelectMethod(false)
-  }
-  const pickFromExistingList = () => {
-    setConfigChoice(fromExistingList)
-    onChange(existlingListIdent, fromExistingList)
-    onChange(newListIdent, '')
-    onChange(publicLinkIdent, '')
-    setSelectMethod(false)
-  }
-  const pickPublicLink = () => {
-    setConfigChoice(publicLinkString)
-    onChange(publicLinkIdent, publicLinkString)
-    onChange(newListIdent, '')
-    onChange(existlingListIdent, '')
-    setSelectMethod(false)
-  }
+  const REGISTER_METHOD_IDENT = 'register-method-ident'
 
   const reset = () => {
-    setSelectMethod(true)
     setConfigChoice('')
   }
 
   useEffect(() => {
-    // set default for parent
-    onChange(newListIdent, fromNewList)
-  }, []) // only occurs on initialize
+    onChange(REGISTER_METHOD_IDENT, configChoice)
+  }, [configChoice])
 
-  const fromExistingLabel = 'Select an existing participant list'
-  const publicLinkLabel = 'Create a public link'
-  const newListLabel = 'Configure participant list myself'
+  const selectMethod = !configChoice
 
   return (
     <div className='template-contactables'>
@@ -61,7 +52,7 @@ export default function TemplateContactables({ template, formData, onChange }) {
           <div className='contactables-selected-method-selected'>
             {configChoice === fromExistingList && fromExistingLabel}
             {configChoice === fromNewList && newListLabel}
-            {configChoice === publicLinkString && publicLinkLabel}
+            {configChoice === publicLink && publicLinkLabel}
           </div>
           <div className='contactables-selected-method-change' onClick={reset}>
             change
@@ -70,53 +61,29 @@ export default function TemplateContactables({ template, formData, onChange }) {
       )}
       {selectMethod && (
         <div className='input-help-label'>
-          First, choose how you would like to share the prompts with the
-          participants
+          First, choose the method you'll use to enroll participants
         </div>
       )}
       {selectMethod && (
         <div className='contactables-select-method'>
-          <div>
-            <input
-              type='radio'
-              value={fromExistingList}
-              id={fromExistingList}
-              name={fromExistingList}
-              checked={configChoice === fromExistingList}
-              onChange={pickFromExistingList}
-            />
-            <label className='label-inline' htmlFor={fromExistingList}>
-              {fromExistingLabel}
-            </label>
-          </div>
-
-          <div>
-            <input
-              type='radio'
-              value={publicLinkString}
-              id={publicLinkIdent}
-              name={publicLinkIdent}
-              checked={configChoice === publicLinkString}
-              onChange={pickPublicLink}
-            />
-            <label className='label-inline' htmlFor={publicLinkIdent}>
-              {publicLinkLabel}
-            </label>
-          </div>
-
-          <div>
-            <input
-              type='radio'
-              value={fromNewList}
-              id={newListIdent}
-              name={newListIdent}
-              checked={configChoice === fromNewList}
-              onChange={pickFromNewList}
-            />
-            <label className='label-inline' htmlFor={newListIdent}>
-              {newListLabel}
-            </label>
-          </div>
+          <MethodRadio
+            configChoice={configChoice}
+            ident={fromExistingList}
+            label={fromExistingLabel}
+            setConfigChoice={setConfigChoice}
+          />
+          <MethodRadio
+            configChoice={configChoice}
+            ident={publicLink}
+            label={publicLinkLabel}
+            setConfigChoice={setConfigChoice}
+          />
+          <MethodRadio
+            configChoice={configChoice}
+            ident={fromNewList}
+            label={newListLabel}
+            setConfigChoice={setConfigChoice}
+          />
         </div>
       )}
 
@@ -127,7 +94,7 @@ export default function TemplateContactables({ template, formData, onChange }) {
           onChange={onChange}
         />
       )}
-      {configChoice === publicLinkString && (
+      {configChoice === publicLink && (
         <PublicLinkForm
           template={template}
           formData={formData}

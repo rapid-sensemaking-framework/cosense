@@ -54,7 +54,7 @@ export default function FormRegisterConfig({ template, formData, onChange }) {
       <button className='button add-more-button' onClick={clickAddOne}>
         Add More
       </button>
-      <button className='button' onClick={clickSaveList}>
+      <button className='button button-white' onClick={clickSaveList}>
         Save List
       </button>
     </div>

@@ -5,8 +5,8 @@
   border: none;
   width: 214px;
   height: 53px;
-  color: #FFFFFF;
-  background-color: #8B8B8B;
+  color: #ffffff;
+  background-color: #8b8b8b;
   margin-right: 20px;
   cursor: pointer;
 }
@@ -23,7 +23,7 @@
   font-family: Helvetica, sans-serif;
   font-size: 18px;
   line-height: 20px;
-  color: #4A4A4A;
+  color: #4a4a4a;
   font-weight: 600;
   margin-bottom: 10px;
   display: block;
@@ -34,22 +34,25 @@
   font-size: 14px;
 }
 
-.template input[type="text"], .template textarea, .template select {
-  border: 1px solid #B1B1B1;
+.template input[type='text'],
+.template textarea,
+.template select {
+  border: 1px solid #b1b1b1;
   padding: 10px;
   font-size: 14px;
   line-height: 17px;
   outline: none;
   border-radius: 4px;
   font-family: Helvetica, sans-serif;
-  color: #4D4F5C;
+  color: #4d4f5c;
   display: inline-block;
   margin-top: 16px;
-  background: #FFFFFF;
+  background: #ffffff;
 }
 
-.template input[type="text"]::placeholder, .template textarea::placeholder {
-  color: #B1B1B1;
+.template input[type='text']::placeholder,
+.template textarea::placeholder {
+  color: #b1b1b1;
 }
 
 .template textarea {
@@ -77,7 +80,7 @@
   margin-bottom: 42px;
 }
 
-.template-steps>div {
+.template-steps > div {
   display: flex;
   flex-direction: row;
 }
@@ -86,7 +89,7 @@
   margin-top: 19px;
   width: 146px;
   height: 2px;
-  background-color: #E3E3E3;
+  background-color: #e3e3e3;
 }
 
 .step-indicator {
@@ -107,21 +110,30 @@
   width: 38px;
   height: 38px;
   border-radius: 19px;
-  border: 1px solid #E3E3E3;
+  border: 1px solid #e3e3e3;
 }
 
 .step-indicator.active .step-circle {
-  background-color: #4A4A4A;
-  color: #FFFFFF;
-  border: 1px solid #4A4A4A;
+  background-color: #4a4a4a;
+  color: #ffffff;
+  border: 1px solid #4a4a4a;
 }
 
 .step-indicator.active {
-  color: #4D4F5C;
+  color: #4d4f5c;
 }
 
 .template-step-wrapper {
   height: 600px;
   max-height: 600px;
   overflow-y: scroll;
+}
+
+.input-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.input-row .input-wrapper {
+  flex: 1;
 }
