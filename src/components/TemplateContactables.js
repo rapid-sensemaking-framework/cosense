@@ -1,49 +1,139 @@
-import React, { useEffect } from 'react'
-import { CONTACTABLE_CONFIG_PORT_NAME } from '../ts-built/constants'
-import ContactableInput from './ContactableInput'
+import React, { useState, useEffect } from 'react'
 import './TemplateContactables.css'
 
-export default function ContactablesForm({ template, formData, onChange }) {
+import ParticipantListForm from './ParticipantListForm'
+import PublicLinkForm from './PublicLinkForm'
 
-  const expectedContactables = template.expectedInputs
-    .find((e) => e.port === CONTACTABLE_CONFIG_PORT_NAME && !e.process.includes("SendMessageToAll"))
-  const ident = `${expectedContactables.process}--${expectedContactables.port}`
-  const els = formData[ident]
+export default function TemplateContactables({ template, formData, onChange }) {
+  const [selectMethod, setSelectMethod] = useState(true)
 
-  // set defaults
+  const fromNewList = 'from_new_list'
+  const fromExistingList = 'from_existing_list'
+  const publicLinkString = 'public_choice'
+
+  const [configChoice, setConfigChoice] = useState()
+
+  const newListIdent = `new-list-ident`
+  const existlingListIdent = `existing-list-ident`
+  const publicLinkIdent = `public-link-ident`
+
+  const pickFromNewList = () => {
+    setConfigChoice(fromNewList)
+    onChange(newListIdent, fromNewList)
+    onChange(existlingListIdent, '')
+    onChange(publicLinkIdent, '')
+    setSelectMethod(false)
+  }
+  const pickFromExistingList = () => {
+    setConfigChoice(fromExistingList)
+    onChange(existlingListIdent, fromExistingList)
+    onChange(newListIdent, '')
+    onChange(publicLinkIdent, '')
+    setSelectMethod(false)
+  }
+  const pickPublicLink = () => {
+    setConfigChoice(publicLinkString)
+    onChange(publicLinkIdent, publicLinkString)
+    onChange(newListIdent, '')
+    onChange(existlingListIdent, '')
+    setSelectMethod(false)
+  }
+
+  const reset = () => {
+    setSelectMethod(true)
+    setConfigChoice('')
+  }
+
   useEffect(() => {
-    const defaults = [{}]
-    onChange(ident, defaults)
-  }, []) // only on mount
+    // set default for parent
+    onChange(newListIdent, fromNewList)
+  }, []) // only occurs on initialize
 
-  const updateEl = (val, index) => {
-    const newEls = els.slice(0) // clone
-    newEls[index] = val
-    onChange(ident, newEls)
-  }
-  const removeEl = (index) => {
-    const newEls = els.slice(0) // clone
-    newEls.splice(index, 1)
-    onChange(ident, newEls)
-  }
-  const clickAddOne = (e) => {
-    e.preventDefault()
-    onChange(ident, els.concat([{}]))
-  }
-  return <div className="contactables-form">
-    <div className="input-label">Configure your participants</div>
-    <div className="input-help-label">
-      List participants and their communication platform for participation.
+  const fromExistingLabel = 'Select an existing participant list'
+  const publicLinkLabel = 'Create a public link'
+  const newListLabel = 'Configure participant list myself'
+
+  return (
+    <div className='template-contactables'>
+      <div className='input-label'>Configure your participants</div>
+      {!selectMethod && (
+        <div className='contactables-selected-method'>
+          <div className='contactables-selected-method-selected'>
+            {configChoice === fromExistingList && fromExistingLabel}
+            {configChoice === fromNewList && newListLabel}
+            {configChoice === publicLinkString && publicLinkLabel}
+          </div>
+          <div className='contactables-selected-method-change' onClick={reset}>
+            change
+          </div>
+        </div>
+      )}
+      {selectMethod && (
+        <div className='input-help-label'>
+          First, choose how you would like to share the prompts with the
+          participants
+        </div>
+      )}
+      {selectMethod && (
+        <div className='contactables-select-method'>
+          <div>
+            <input
+              type='radio'
+              value={fromExistingList}
+              id={fromExistingList}
+              name={fromExistingList}
+              checked={configChoice === fromExistingList}
+              onChange={pickFromExistingList}
+            />
+            <label className='label-inline' htmlFor={fromExistingList}>
+              {fromExistingLabel}
+            </label>
+          </div>
+
+          <div>
+            <input
+              type='radio'
+              value={publicLinkString}
+              id={publicLinkIdent}
+              name={publicLinkIdent}
+              checked={configChoice === publicLinkString}
+              onChange={pickPublicLink}
+            />
+            <label className='label-inline' htmlFor={publicLinkIdent}>
+              {publicLinkLabel}
+            </label>
+          </div>
+
+          <div>
+            <input
+              type='radio'
+              value={fromNewList}
+              id={newListIdent}
+              name={newListIdent}
+              checked={configChoice === fromNewList}
+              onChange={pickFromNewList}
+            />
+            <label className='label-inline' htmlFor={newListIdent}>
+              {newListLabel}
+            </label>
+          </div>
+        </div>
+      )}
+
+      {configChoice === fromNewList && (
+        <ParticipantListForm
+          template={template}
+          formData={formData}
+          onChange={onChange}
+        />
+      )}
+      {configChoice === publicLinkString && (
+        <PublicLinkForm
+          template={template}
+          formData={formData}
+          onChange={onChange}
+        />
+      )}
     </div>
-    {/* Select participants and their communication platform for participation or select a pre-existing list. */}
-    {/* <button className="participant-list-button">Choose Participant List</button> */}
-    {els && els.map((el, index) => {
-      return <ContactableInput
-        contactable={el}
-        showRemove={els.length > 1}
-        onChange={(val) => updateEl(val, index)}
-        onRemove={() => removeEl(index)} />
-    })}
-    <button className="button add-more-button" onClick={clickAddOne}>Add More</button>
-  </div>
+  )
 }
