@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './TemplateContactables.css'
 
+import ParticipantListPicker from './ParticipantListPicker'
 import ParticipantListForm from './ParticipantListForm'
 import PublicLinkForm from './PublicLinkForm'
 
@@ -86,7 +87,14 @@ export default function TemplateContactables({ template, formData, onChange }) {
           />
         </div>
       )}
-
+      {configChoice === fromExistingList && (
+        <ParticipantListPicker
+          template={template}
+          formData={formData}
+          onChange={onChange}
+          cancel={reset}
+        />
+      )}
       {configChoice === fromNewList && (
         <ParticipantListForm
           template={template}

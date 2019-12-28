@@ -3,6 +3,7 @@ import { ContactableConfig } from 'rsf-types'
 interface ParticipantList {
   name: string
   slug: string
+  createdAt: number
   participants: ContactableConfig[]
 }
 

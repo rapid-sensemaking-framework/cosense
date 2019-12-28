@@ -1,0 +1,51 @@
+.participant-list-picker-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.participant-list-picker-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -350px;
+  margin-left: -312px;
+  width: 625px;
+  height: 700px;
+  overflow-y: scroll;
+  background: #ffffff;
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+}
+
+.participant-list-picker-cancel {
+  position: absolute;
+  top: 8px;
+  right: 15px;
+  cursor: pointer;
+  font-size: 30px;
+  line-height: 30px;
+  color: #454f63;
+}
+.participant-list-picker-list {
+  margin-top: 30px;
+  overflow: scroll;
+  flex: 1;
+}
+
+.participant-list {
+  border-bottom: 1px solid #ebebeb;
+  padding: 30px 0;
+}
+
+.participant-list-name {
+}
+
+.participant-list-created-at {
+}
