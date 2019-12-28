@@ -53,6 +53,7 @@ export default function ParticipantListPicker({
   template,
   formData,
   onChange,
+  participantLists,
   cancel
 }) {
   const [selectedList, setSelectedList] = useState(null)

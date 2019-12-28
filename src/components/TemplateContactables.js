@@ -5,6 +5,8 @@ import ParticipantListPicker from './ParticipantListPicker'
 import ParticipantListForm from './ParticipantListForm'
 import PublicLinkForm from './PublicLinkForm'
 
+import { getParticipantLists } from '../ipc'
+
 function MethodRadio({ configChoice, ident, label, setConfigChoice }) {
   return (
     <div>
@@ -31,17 +33,20 @@ export default function TemplateContactables({ template, formData, onChange }) {
   const publicLink = 'public_link'
   const publicLinkLabel = 'Create a public link'
 
-  const [configChoice, setConfigChoice] = useState()
-
   const REGISTER_METHOD_IDENT = 'register-method-ident'
+  const configChoice = formData[REGISTER_METHOD_IDENT]
+  const setConfigChoice = choice => {
+    onChange(REGISTER_METHOD_IDENT, choice)
+  }
+  const [participantLists, setParticipantLists] = useState([])
 
   const reset = () => {
     setConfigChoice('')
   }
 
   useEffect(() => {
-    onChange(REGISTER_METHOD_IDENT, configChoice)
-  }, [configChoice])
+    getParticipantLists().then(setParticipantLists)
+  }, [])
 
   const selectMethod = !configChoice
 
@@ -92,6 +97,7 @@ export default function TemplateContactables({ template, formData, onChange }) {
           template={template}
           formData={formData}
           onChange={onChange}
+          participantLists={participantLists}
           cancel={reset}
         />
       )}
