@@ -45,7 +45,9 @@ export default function TemplateContactables({ template, formData, onChange }) {
   }
 
   useEffect(() => {
-    getParticipantLists().then(setParticipantLists)
+    getParticipantLists().then(lists => {
+      setParticipantLists(lists)
+    })
   }, [])
 
   const selectMethod = !configChoice

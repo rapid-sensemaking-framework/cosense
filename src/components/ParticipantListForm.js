@@ -1,7 +1,52 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { CONTACTABLE_CONFIG_PORT_NAME } from '../ts-built/constants'
 import ContactableInput from './ContactableInput'
 import './ParticipantListForm.css'
+
+import Modal from './Modal'
+import { guidGenerator } from '../ts-built/utils'
+import { createParticipantList } from '../ipc'
+
+function ListSaverModal({ cancel, save }) {
+  const [name, setName] = useState('')
+  const [saved, setSaved] = useState(false)
+  const saveList = () => {
+    save(name)
+    setSaved(true)
+    setTimeout(() => {
+      setSaved(false)
+      cancel()
+    }, 3000)
+  }
+
+  const inputId = 'participant-list-name-input'
+
+  return (
+    <Modal cancel={cancel}>
+      <div className='participant-list-saver'>
+        <div className='input-label'>Save Participant List</div>
+        <div className='input-help-label'>
+          You will be able to use the list for future forms
+        </div>
+
+        <label className='participant-list-name-label' htmlFor={inputId}>
+          participant list name
+        </label>
+        <input
+          id={inputId}
+          type='text'
+          value={name}
+          onChange={e => setName(e.target.value)}
+        />
+        <div className='participant-list-buttons'>
+          <button className='participant-list-save-button' onClick={saveList}>
+            Save{saved && 'd'}
+          </button>
+        </div>
+      </div>
+    </Modal>
+  )
+}
 
 export default function FormRegisterConfig({ template, formData, onChange }) {
   const expectedContactables = template.expectedInputs.find(
@@ -11,6 +56,8 @@ export default function FormRegisterConfig({ template, formData, onChange }) {
   )
   const ident = `${expectedContactables.process}--${expectedContactables.port}`
   const els = formData[ident]
+
+  const [saveList, setSaveList] = useState(false)
 
   // set defaults
   useEffect(() => {
@@ -33,13 +80,18 @@ export default function FormRegisterConfig({ template, formData, onChange }) {
     onChange(ident, els.concat([{}]))
   }
 
-  const clickSaveList = () => {
-    console.log('save list')
+  const save = async name => {
+    const list = {
+      name,
+      slug: guidGenerator(),
+      createdAt: Date.now(),
+      participants: els.slice(0)
+    }
+    await createParticipantList(list)
   }
+
   return (
     <div className='contactables-form'>
-      {/* Select participants and their communication platform for participation or select a pre-existing list. */}
-      {/* <button className="participant-list-button">Choose Participant List</button> */}
       {els &&
         els.map((el, index) => {
           return (
@@ -54,9 +106,12 @@ export default function FormRegisterConfig({ template, formData, onChange }) {
       <button className='button add-more-button' onClick={clickAddOne}>
         Add More
       </button>
-      <button className='button button-white' onClick={clickSaveList}>
+      <button className='button button-white' onClick={() => setSaveList(true)}>
         Save List
       </button>
+      {saveList && (
+        <ListSaverModal cancel={() => setSaveList(false)} save={save} />
+      )}
     </div>
   )
 }

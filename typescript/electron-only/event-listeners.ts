@@ -121,13 +121,13 @@ const attachEventListeners = () => {
     PARTICIPANT LISTS
   */
 
- ipc.on(
-  IPC.CREATE_PARTICIPANT_LIST,
-  async (event: electron.IpcMessageEvent, data: ParticipantList) => {
-    const slug = await createParticipantList(data)
-    event.sender.send(IPC.PARTICIPANT_LIST_CREATED, slug)
-  }
-)
+  ipc.on(
+    IPC.CREATE_PARTICIPANT_LIST,
+    async (event: electron.IpcMessageEvent, data: ParticipantList) => {
+      await createParticipantList(data)
+      event.sender.send(IPC.PARTICIPANT_LIST_CREATED)
+    }
+  )
 
   ipc.on(
     IPC.UPDATE_PARTICIPANT_LIST,

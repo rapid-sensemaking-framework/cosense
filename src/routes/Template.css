@@ -7,7 +7,6 @@
 .template .steps-button {
   font-family: Helvetica, sans-serif;
   font-size: 15px;
-  outline: none;
   border: none;
   width: 214px;
   height: 53px;
@@ -47,7 +46,6 @@
   padding: 10px;
   font-size: 14px;
   line-height: 17px;
-  outline: none;
   border-radius: 4px;
   font-family: Helvetica, sans-serif;
   color: #4d4f5c;

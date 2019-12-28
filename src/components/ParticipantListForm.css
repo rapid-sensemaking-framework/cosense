@@ -6,3 +6,33 @@
 .contactables-form .participant-list-button {
   margin: 25px 0;
 }
+
+.participant-list-saver {
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+}
+
+.participant-list-name-label {
+  font-size: 14px;
+  line-height: 16px;
+  color: #4a4a4a;
+  margin-top: 30px;
+}
+
+#participant-list-name-input {
+  margin-top: 6px;
+  margin-bottom: 48px;
+}
+
+.participant-list-save-button {
+  float: right;
+  font-family: Helvetica, sans-serif;
+  font-size: 15px;
+  border: none;
+  width: 214px;
+  height: 53px;
+  color: #ffffff;
+  background-color: #372888;
+  cursor: pointer;
+}

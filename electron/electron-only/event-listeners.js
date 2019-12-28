@@ -177,13 +177,12 @@ var attachEventListeners = function () {
       PARTICIPANT LISTS
     */
     ipc.on(IPC.CREATE_PARTICIPANT_LIST, function (event, data) { return __awaiter(void 0, void 0, void 0, function () {
-        var slug;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, participant_lists_1.createParticipantList(data)];
                 case 1:
-                    slug = _a.sent();
-                    event.sender.send(IPC.PARTICIPANT_LIST_CREATED, slug);
+                    _a.sent();
+                    event.sender.send(IPC.PARTICIPANT_LIST_CREATED);
                     return [2 /*return*/];
             }
         });
