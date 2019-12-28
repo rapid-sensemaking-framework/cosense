@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { CONTACTABLE_CONFIG_PORT_NAME } from '../ts-built/constants'
 import ContactableInput from './ContactableInput'
 import './ParticipantListForm.css'
 
@@ -48,36 +47,31 @@ function ListSaverModal({ cancel, save }) {
   )
 }
 
-export default function FormRegisterConfig({ template, formData, onChange }) {
-  const expectedContactables = template.expectedInputs.find(
-    e =>
-      e.port === CONTACTABLE_CONFIG_PORT_NAME &&
-      !e.process.includes('SendMessageToAll')
-  )
-  const ident = `${expectedContactables.process}--${expectedContactables.port}`
-  const els = formData[ident]
-
+export default function ParticipantListForm({
+  contactableConfigs,
+  updateContactableConfigs
+}) {
   const [saveList, setSaveList] = useState(false)
 
   // set defaults
   useEffect(() => {
     const defaults = [{}]
-    onChange(ident, defaults)
+    updateContactableConfigs(defaults)
   }, []) // only on mount
 
   const updateEl = (val, index) => {
-    const newEls = els.slice(0) // clone
+    const newEls = contactableConfigs.slice(0) // clone
     newEls[index] = val
-    onChange(ident, newEls)
+    updateContactableConfigs(newEls)
   }
   const removeEl = index => {
-    const newEls = els.slice(0) // clone
+    const newEls = contactableConfigs.slice(0) // clone
     newEls.splice(index, 1)
-    onChange(ident, newEls)
+    updateContactableConfigs(newEls)
   }
   const clickAddOne = e => {
     e.preventDefault()
-    onChange(ident, els.concat([{}]))
+    updateContactableConfigs(contactableConfigs.concat([{}]))
   }
 
   const save = async name => {
@@ -85,19 +79,19 @@ export default function FormRegisterConfig({ template, formData, onChange }) {
       name,
       slug: guidGenerator(),
       createdAt: Date.now(),
-      participants: els.slice(0)
+      participants: contactableConfigs.slice(0)
     }
     await createParticipantList(list)
   }
 
   return (
     <div className='contactables-form'>
-      {els &&
-        els.map((el, index) => {
+      {contactableConfigs &&
+        contactableConfigs.map((el, index) => {
           return (
             <ContactableInput
               contactable={el}
-              showRemove={els.length > 1}
+              showRemove={contactableConfigs.length > 1}
               onChange={val => updateEl(val, index)}
               onRemove={() => removeEl(index)}
             />

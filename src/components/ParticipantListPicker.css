@@ -2,6 +2,22 @@
   margin-top: 75px;
 }
 
+.participant-list-picker-selected div.input-label,
+.participant-list-picker-change {
+  display: inline-block;
+  align-items: center;
+}
+
+.participant-list-picker-change {
+  color: #969696;
+  font-size: 16px;
+  line-height: 18px;
+  margin-left: 28px;
+  cursor: pointer;
+}
+
+/* ListPickerModal */
+
 .participant-list-picker-header {
   padding: 60px 60px 0 60px;
 }
