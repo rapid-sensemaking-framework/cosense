@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import {
-  Link,
-  useParams,
-  useHistory
-} from 'react-router-dom'
-import {
-  getTemplate,
-  cloneTemplate,
-  createProcess,
-  runProcess
-} from '../ipc'
+import { Link, useParams, useHistory } from 'react-router-dom'
+import { getTemplate, cloneTemplate, createProcess, runProcess } from '../ipc'
 
 import GraphConfigure from '../components/GraphConfigure'
 import TemplateContactables from '../components/TemplateContactables'
@@ -31,7 +22,7 @@ export default function Template() {
   const { templateId } = useParams()
 
   useEffect(() => {
-    getTemplate(templateId).then((template) => {
+    getTemplate(templateId).then(template => {
       setTemplate(template)
       setLoading(false)
     })
@@ -90,41 +81,67 @@ export default function Template() {
   // activeStep is 1 indexed, not 0 indexed
   const WhichStep = steps[activeStep - 1][1]
 
-  return <div className="template">
-    {/* <button onClick={clone} className="button button-clear float-right">
+  return (
+    <div className='template'>
+      {/* <button onClick={clone} className="button button-clear float-right">
       {template.parentTemplate ? 'Clone' : 'Clone and Edit Template'}
     </button> */}
-    {/* {template.parentTemplate && <>
+      {/* {template.parentTemplate && <>
       <button className="button button-clear float-right">
         <Link to={`/template/${templateId}/edit`}>Edit</Link>
       </button>
     </>} */}
-    <div className="template-labels">
-      <h1>{template.name}</h1>
-      <h2>{template.oneLiner}</h2>
+      <div className='template-labels'>
+        <h1>{template.name}</h1>
+        <h2>{template.oneLiner}</h2>
+      </div>
+      <div className='template-steps'>
+        {steps.map((step, index) => {
+          return (
+            <div key={`step-${index}`}>
+              {index > 0 && <div className='step-spacer' />}
+              <div
+                className={`step-indicator ${
+                  index + 1 === activeStep ? 'active' : ''
+                }`}>
+                <div className='step-circle'>{index + 1}</div>
+                {step[0]}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+      {/* {template.parentTemplate && <>Parent Template: <Link to={`/template/${template.parentTemplate}`}>{template.parentTemplate}</Link></>} */}
+      <div className='template-step-wrapper'>
+        <WhichStep
+          template={template}
+          formData={formData}
+          onChange={onChange}
+          startNow={startNow}
+          startLater={startLater}
+        />
+      </div>
+      <div>
+        {activeStep > 1 && activeStep < 5 && (
+          <button
+            className='steps-button'
+            onClick={() => setActiveStep(activeStep - 1)}>
+            Back
+          </button>
+        )}
+        {activeStep < 4 && (
+          <button
+            className='steps-button'
+            onClick={() => setActiveStep(activeStep + 1)}>
+            Next
+          </button>
+        )}
+        {activeStep === 4 && (
+          <button className='steps-button' onClick={submit}>
+            Submit
+          </button>
+        )}
+      </div>
     </div>
-    <div className="template-steps">
-      {steps.map((step, index) => {
-        return <div key={`step-${index}`}>
-          {index > 0 && <div className="step-spacer" />}
-          <div className={`step-indicator ${index + 1 === activeStep ? 'active' : ''}`}>
-            <div className="step-circle">{index + 1}</div>
-            {step[0]}
-          </div>
-        </div>
-      })}
-    </div>
-    {/* {template.parentTemplate && <>Parent Template: <Link to={`/template/${template.parentTemplate}`}>{template.parentTemplate}</Link></>} */}
-    <div className="template-step-wrapper">
-      <WhichStep template={template} formData={formData} onChange={onChange} startNow={startNow} startLater={startLater} />
-    </div>
-    {activeStep > 1 && activeStep < 5 && <button className="steps-button" onClick={() => setActiveStep(activeStep - 1)}>Back</button>}
-    {activeStep < 4 && <button className="steps-button" onClick={() => setActiveStep(activeStep + 1)}>
-      Next
-    </button>}
-    {activeStep === 4 &&
-      <button className="steps-button" onClick={submit}>
-        Submit
-      </button>}
-  </div>
+  )
 }

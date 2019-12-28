@@ -18,6 +18,7 @@ if (!fs.existsSync(folders_1.APP_DATA_PATH)) {
     // subfolders
     fs.mkdirSync(folders_1.USER_PROCESSES_PATH);
     fs.mkdirSync(folders_1.USER_TEMPLATES_PATH);
+    fs.mkdirSync(folders_1.PARTICIPANT_LISTS_PATH);
 }
 // transports.file.findLogPath()
 var dotenvPath;
@@ -42,13 +43,18 @@ var BrowserWindow = electron.BrowserWindow;
 var mainWindow;
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({ width: 1200, height: 900, webPreferences: { nodeIntegration: true } });
-    // and load the index.html of the app.
-    var startUrl = process.env.ELECTRON_START_URL || url.format({
-        pathname: path.join(__dirname, '/../../build/index.html'),
-        protocol: 'file:',
-        slashes: true
+    mainWindow = new BrowserWindow({
+        width: 1200,
+        height: 900,
+        webPreferences: { nodeIntegration: true }
     });
+    // and load the index.html of the app.
+    var startUrl = process.env.ELECTRON_START_URL ||
+        url.format({
+            pathname: path.join(__dirname, '/../../build/index.html'),
+            protocol: 'file:',
+            slashes: true
+        });
     mainWindow.loadURL(startUrl);
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()

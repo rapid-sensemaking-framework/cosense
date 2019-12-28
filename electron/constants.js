@@ -45,7 +45,15 @@ var EVENTS = {
         GET_SYSTEM_TEMPLATES: 'get_system_templates',
         RETURN_SYSTEM_TEMPLATES: 'return_system_templates',
         GET_USER_TEMPLATES: 'get_user_templates',
-        RETURN_USER_TEMPLATES: 'return_user_templates'
+        RETURN_USER_TEMPLATES: 'return_user_templates',
+        CREATE_PARTICIPANT_LIST: 'create_participant_list',
+        PARTICIPANT_LIST_CREATED: 'participant_list_created',
+        UPDATE_PARTICIPANT_LIST: 'update_participant_list',
+        PARTICIPANT_LIST_UPDATED: 'participant_list_updated',
+        GET_PARTICIPANT_LISTS: 'get_participant_lists',
+        RETURN_PARTICIPANT_LISTS: 'return_participant_lists',
+        GET_PARTICIPANT_LIST: 'get_participant_list',
+        RETURN_PARTICIPANT_LIST: 'return_participant_list'
     }
 };
 exports.EVENTS = EVENTS;

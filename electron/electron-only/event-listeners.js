@@ -39,22 +39,15 @@ exports.__esModule = true;
 var electron = require("electron");
 var ipc = electron.ipcMain;
 var constants_1 = require("../constants");
+var participant_lists_1 = require("./participant-lists");
 var templates_1 = require("./templates");
 var processes_1 = require("./processes");
 var IPC = constants_1.EVENTS.IPC;
 // TODO handle failure cases
 var attachEventListeners = function () {
-    ipc.on(IPC.UPDATE_TEMPLATE, function (event, data) { return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, templates_1.updateTemplate(data)];
-                case 1:
-                    _a.sent();
-                    event.sender.send(IPC.TEMPLATE_UPDATED);
-                    return [2 /*return*/];
-            }
-        });
-    }); });
+    /*
+      PROCESSES
+    */
     ipc.on(IPC.CREATE_PROCESS, function (event, data) { return __awaiter(void 0, void 0, void 0, function () {
         var processId;
         return __generator(this, function (_a) {
@@ -90,18 +83,6 @@ var attachEventListeners = function () {
             }
         });
     }); });
-    ipc.on(IPC.CLONE_TEMPLATE, function (event, templateId) { return __awaiter(void 0, void 0, void 0, function () {
-        var newTemplateId;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, templates_1.cloneTemplate(templateId)];
-                case 1:
-                    newTemplateId = _a.sent();
-                    event.sender.send(IPC.TEMPLATE_CLONED, newTemplateId);
-                    return [2 /*return*/];
-            }
-        });
-    }); });
     ipc.on(IPC.GET_PROCESS, function (event, processId) { return __awaiter(void 0, void 0, void 0, function () {
         var process;
         return __generator(this, function (_a) {
@@ -122,6 +103,32 @@ var attachEventListeners = function () {
                 case 1:
                     processes = _a.sent();
                     event.sender.send(IPC.RETURN_PROCESSES, processes);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    /*
+      TEMPLATES
+    */
+    ipc.on(IPC.UPDATE_TEMPLATE, function (event, data) { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, templates_1.updateTemplate(data)];
+                case 1:
+                    _a.sent();
+                    event.sender.send(IPC.TEMPLATE_UPDATED);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    ipc.on(IPC.CLONE_TEMPLATE, function (event, templateId) { return __awaiter(void 0, void 0, void 0, function () {
+        var newTemplateId;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, templates_1.cloneTemplate(templateId)];
+                case 1:
+                    newTemplateId = _a.sent();
+                    event.sender.send(IPC.TEMPLATE_CLONED, newTemplateId);
                     return [2 /*return*/];
             }
         });
@@ -162,6 +169,55 @@ var attachEventListeners = function () {
                 case 1:
                     template = _a.sent();
                     event.sender.send(IPC.RETURN_TEMPLATE, template);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    /*
+      PARTICIPANT LISTS
+    */
+    ipc.on(IPC.CREATE_PARTICIPANT_LIST, function (event, data) { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, participant_lists_1.createParticipantList(data)];
+                case 1:
+                    _a.sent();
+                    event.sender.send(IPC.PARTICIPANT_LIST_CREATED);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    ipc.on(IPC.UPDATE_PARTICIPANT_LIST, function (event, data) { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, participant_lists_1.updateParticipantList(data)];
+                case 1:
+                    _a.sent();
+                    event.sender.send(IPC.PARTICIPANT_LIST_UPDATED);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    ipc.on(IPC.GET_PARTICIPANT_LIST, function (event, slug) { return __awaiter(void 0, void 0, void 0, function () {
+        var partipantList;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, participant_lists_1.getParticipantList(slug)];
+                case 1:
+                    partipantList = _a.sent();
+                    event.sender.send(IPC.RETURN_PARTICIPANT_LIST, partipantList);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    ipc.on(IPC.GET_PARTICIPANT_LISTS, function (event) { return __awaiter(void 0, void 0, void 0, function () {
+        var participantLists;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, participant_lists_1.getParticipantLists()];
+                case 1:
+                    participantLists = _a.sent();
+                    event.sender.send(IPC.RETURN_PARTICIPANT_LISTS, participantLists);
                     return [2 /*return*/];
             }
         });

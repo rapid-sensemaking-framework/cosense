@@ -1,6 +1,6 @@
 .menu {
   padding: 60px 20px 60px 40px;
-  border-right: 1px solid #E3E3E3;
+  border-right: 1px solid #e3e3e3;
   position: fixed;
   box-sizing: border-box;
   height: 100%;
@@ -10,7 +10,7 @@
   width: 77px;
   height: 77px;
   border-radius: 38px;
-  background-color: #DEDEDE;
+  background-color: #dedede;
   margin-bottom: 50px;
 }
 
@@ -27,12 +27,13 @@
   cursor: pointer;
   text-decoration: none;
 }
-.nav > a:hover, .nav > a.active {
-  background-color: #F2F2F2;
+.nav > a:hover,
+.nav > a.active {
+  background-color: #f2f2f2;
 }
 
 .nav .menuImage {
-  background-color: #DEDEDE;
+  background-color: #dedede;
   border-radius: 18px;
   width: 36px;
   min-width: 36px;
@@ -41,8 +42,10 @@
 }
 
 .main {
-  padding: 60px 60px;
+  padding: 60px 0 60px 60px;
   margin-left: 267px; /* left menu */
+  box-sizing: border-box;
+  height: 100vh;
 }
 
 .main h1 {
@@ -55,7 +58,7 @@
 
 h1 {
   font-size: 40px;
-  color: #4A4A4A;
+  color: #4a4a4a;
   font-weight: normal;
 }
 
@@ -66,10 +69,9 @@ h2 {
 }
 
 .button {
-  background-color: #4A4A4A;
-  color: #FFFFFF;
-  outline: none;
-  border: 1px solid #B4B4B4;
+  background-color: #4a4a4a;
+  color: #ffffff;
+  border: 1px solid #b4b4b4;
   border-radius: 4px;
   font-family: Helvetica, sans-serif;
   font-size: 16px;
@@ -83,16 +85,15 @@ h2 {
 }
 
 .button.button-white {
-  background-color: #FFFFFF;
-  color: #B1B1B1;
+  background-color: #ffffff;
+  color: #b1b1b1;
 }
 .button.button-white:hover {
-  background-color: #DDDDDD;
+  background-color: #dddddd;
 }
 
 .divider {
   margin: 40px 0;
-  border-top: 1px solid #F2F2F2;
+  border-top: 1px solid #f2f2f2;
   width: 100%;
 }
-
