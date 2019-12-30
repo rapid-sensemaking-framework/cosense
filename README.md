@@ -1,4 +1,4 @@
-## Rapid Sensemaking Framework UI
+## CoSense (working name) App
 
 Design and run rapid sensemaking processes!
 
