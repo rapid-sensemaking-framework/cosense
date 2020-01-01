@@ -3,6 +3,7 @@ RSF-darwin-x64
 electron
 processes/**
 templates/*-*-**.template.json
+src/ts-built
 
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
