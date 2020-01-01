@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useParams, useHistory } from 'react-router-dom'
-import { getTemplate, cloneTemplate, createProcess, runProcess } from '../ipc'
+import { useParams, useHistory } from 'react-router-dom'
+import {
+  getTemplate,
+  cloneTemplate,
+  createProcess,
+  runProcess
+} from '../../ipc'
 
-import GraphConfigure from '../components/GraphConfigure'
-import TemplateContactables from '../components/TemplateContactables'
-import TemplateResults from '../components/TemplateResults'
-import TemplatePreview from '../components/TemplatePreview'
-import TemplateSubmit from '../components/TemplateSubmit'
+import GraphConfigure from '../../components/GraphConfigure'
+import TemplateContactables from '../../components/TemplateContactables'
+import TemplateResults from '../../components/TemplateResults'
+import TemplatePreview from '../../components/TemplatePreview'
+import TemplateSubmit from '../../components/TemplateSubmit'
 import './Template.css'
 
 export default function Template() {
