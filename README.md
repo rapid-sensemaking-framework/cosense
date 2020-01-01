@@ -32,7 +32,12 @@ RUNTIME_SECRET=1lkj3134jn
 
 ## For development:
 
-run `npm start`
+run
+```
+npm run tsbuild-electron
+npm run tsbuild-react
+npm start
+```
 
 While developing, if you make changes anywhere in `typescript`, you will need to kill and restart the `npm start` command, it does not auto-restart the electron server.
 
