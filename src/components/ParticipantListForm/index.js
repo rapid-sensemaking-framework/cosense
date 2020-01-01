@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import ContactableInput from './ContactableInput'
+import ContactableInput from '../ContactableInput'
 import './ParticipantListForm.css'
 
-import Modal from './Modal'
-import { guidGenerator } from '../ts-built/utils'
-import { createParticipantList } from '../ipc'
+import Modal from '../Modal'
+import { guidGenerator } from '../../ts-built/utils'
+import { createParticipantList } from '../../ipc'
 
 function ListSaverModal({ cancel, save }) {
   const [name, setName] = useState('')

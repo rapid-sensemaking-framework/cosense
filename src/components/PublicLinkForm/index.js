@@ -1,8 +1,8 @@
 import React from 'react'
 import './PublicLinkForm.css'
 
-import FormLimitPicker from './forms/FormLimitPicker'
-import FormTimePicker from './forms/FormTimePicker'
+import FormLimitPicker from '../forms/FormLimitPicker'
+import FormTimePicker from '../forms/FormTimePicker'
 
 export default function PublicLinkForm({ template, formData, onChange }) {
   const PROCESS_DESCRIPTION_IDENT = 'public-link--process-description'
