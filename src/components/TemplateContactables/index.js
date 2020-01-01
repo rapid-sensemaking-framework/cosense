@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import './TemplateContactables.css'
-import { CONTACTABLE_CONFIG_PORT_NAME } from '../ts-built/constants'
-import ParticipantListPicker from './ParticipantListPicker'
-import ParticipantListForm from './ParticipantListForm'
-import PublicLinkForm from './PublicLinkForm'
+import { CONTACTABLE_CONFIG_PORT_NAME } from '../../ts-built/constants'
+import ParticipantListPicker from '../ParticipantListPicker'
+import ParticipantListForm from '../ParticipantListForm'
+import PublicLinkForm from '../PublicLinkForm'
 
-import { getParticipantLists } from '../ipc'
+import { getParticipantLists } from '../../ipc'
 
 function MethodRadio({ configChoice, ident, label, setConfigChoice }) {
   return (

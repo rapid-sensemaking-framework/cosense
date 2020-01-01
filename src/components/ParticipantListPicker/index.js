@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import moment from 'moment'
 import './ParticipantListPicker.css'
-import Modal from './Modal'
-import ParticipantList from './ParticipantList'
+import Modal from '../Modal'
+import ParticipantList from '../ParticipantList'
 
 function ParticipantListItem({ list, onClick }) {
   const [expanded, setExpanded] = useState(false)
