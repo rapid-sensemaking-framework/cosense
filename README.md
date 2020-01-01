@@ -4,7 +4,7 @@ Design and run rapid sensemaking processes!
 
 Check out [noflo-rsf](https://github.com/rapid-sensemaking-framework/noflo-rsf/blob/master/README.md) for screenshots of this app, and to understand the concept.
 
-Connects to a 'noflo runtime' in order to execute a configured flow-based programming graph.
+Connects to a [rsf specific noflo runtime](https://github.com/rapid-sensemaking-framework/noflo-rapid-sensemaking-server) in order to execute a configured flow-based programming graph.
 
 This repo can be extended to allow different noflo graphs representing various rsf type flows.
 
