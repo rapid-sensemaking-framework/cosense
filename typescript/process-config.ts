@@ -1,4 +1,5 @@
 import { ProcessConfig } from './types'
+import { guidGenerator } from './utils'
 
 const FROM_EXISTING_LIST = 'from_existing_list'
 const FROM_CUSTOM_LIST = 'from_custom_list'
@@ -14,6 +15,7 @@ function defaultProcessConfig(): ProcessConfig {
       participants: [],
       participantList: null,
       publicLink: {
+        id: guidGenerator(),
         description: '',
         maxTime: 5 * 60, // 5 minutes, in seconds
         maxParticipants: '*' // Unlimited

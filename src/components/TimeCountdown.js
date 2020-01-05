@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import moment from 'moment'
 
 export default function SecondCountdown({ seconds, over }) {
   const [liveSeconds, updateLiveSeconds] = useState(seconds)
@@ -17,5 +18,5 @@ export default function SecondCountdown({ seconds, over }) {
     // clearInterval at teardown
     return () => clearInterval(id)
   }, [])
-  return <span>{ liveSeconds }</span>
+  return <span>{moment.duration(liveSeconds, 'seconds').humanize()}</span>
 }

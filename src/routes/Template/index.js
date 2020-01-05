@@ -43,8 +43,7 @@ export default function Template() {
   }
 
   const submit = async () => {
-    const inputs = { ...processConfig }
-    const pId = await createProcess(inputs, templateId, template)
+    const pId = await createProcess(processConfig, templateId, template)
     setProcessId(pId)
     setActiveStep(5)
   }

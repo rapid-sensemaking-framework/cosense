@@ -23,7 +23,7 @@
     "rsf-mattermostable": "1.0.15",
     "rsf-smsable": "1.0.21",
     "rsf-telegramable": "1.0.82",
-    "rsf-types": "0.0.27",
+    "rsf-types": "0.0.35",
     "socket.io-client": "^2.3.0",
     "typescript": "^3.7.2"
   },

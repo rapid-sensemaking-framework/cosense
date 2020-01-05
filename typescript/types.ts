@@ -1,20 +1,10 @@
-import { ContactableConfig } from 'rsf-types'
+import { ContactableConfig, ParticipantRegisterConfig } from 'rsf-types'
 
 interface ParticipantList {
   name: string
   slug: string
   createdAt: number
   participants: ContactableConfig[]
-}
-
-interface RegisterConfig {
-  stage: string
-  isFacilitator: boolean
-  processContext: string
-  maxTime: number
-  maxParticipants: number | string
-  id: string
-  wsUrl: string // websocket to connect to, if not isFacilitator
 }
 
 interface ExpectedInput {
@@ -49,7 +39,7 @@ interface UpdateTemplateInput {
 }
 
 interface TemplateSubmitInput {
-  inputs: FormInputs
+  processConfig: ProcessConfig
   templateId: string
   template: Template
 }
@@ -57,22 +47,6 @@ interface TemplateSubmitInput {
 interface GetTemplateInput {
   templateId: string
   userDefined: boolean
-}
-
-type RegisterConfigSet = {
-  [key: string]: RegisterConfig
-}
-
-type ContactableConfigSet = {
-  [key: string]: ContactableConfig[]
-}
-
-type FormInputs = object
-
-interface PublicLinkConfig {
-  description: string
-  maxTime: number
-  maxParticipants: number | string
 }
 
 interface ProcessConfig {
@@ -83,7 +57,7 @@ interface ProcessConfig {
     method: string
     participants: ContactableConfig[]
     participantList: ParticipantList
-    publicLink: PublicLinkConfig
+    publicLink: ParticipantRegisterConfig
   }
   // step 3
   sendToAll: boolean
@@ -103,9 +77,7 @@ interface Process {
   createdTime: number
   startTime: number
   endTime: number
-  formInputs: FormInputs
-  registerConfigs: RegisterConfigSet
-  participants: ContactableConfigSet
+  processConfig: ProcessConfig
 }
 
 interface Graph {
@@ -152,22 +124,14 @@ interface NofloSignal {
   payload: NofloSignalPayload
 }
 
-interface HandlerInput {
-  input: string
-}
-
-type Handler = (handlerInput: HandlerInput) => Promise<any>
+type Handler = (handlerInput: any) => Promise<any>
 
 export {
   ParticipantList,
-  ContactableConfigSet,
-  RegisterConfig,
-  RegisterConfigSet,
   Template,
   UpdateTemplateInput,
   TemplateSubmitInput,
   GetTemplateInput,
-  FormInputs,
   ProcessConfig,
   ExpectedInput,
   Process,
@@ -175,6 +139,5 @@ export {
   NofloSignal,
   NofloSignalPayload,
   Graph,
-  Handler,
-  HandlerInput
+  Handler
 }

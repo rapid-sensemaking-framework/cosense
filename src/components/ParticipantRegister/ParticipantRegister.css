@@ -1,0 +1,9 @@
+.public-link-details {
+  display: flex;
+  flex-direction: row;
+}
+
+.public-link-details input {
+  flex: 1;
+  margin-right: 16px;
+}

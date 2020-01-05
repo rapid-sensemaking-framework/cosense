@@ -10,11 +10,7 @@ import { getElectron } from '../../electron-require'
 const { shell } = getElectron()
 
 function FlowGridElement({ flow }) {
-  const contactableInput = flow.template.expectedInputs.find(
-    e => e.port === CONTACTABLE_CONFIG_PORT_NAME
-  )
-  const ident = contactableInput.process + '--' + CONTACTABLE_CONFIG_PORT_NAME
-  const participants = flow.formInputs[ident] ? flow.formInputs[ident] : []
+  const { participants } = flow.processConfig.participantsConfig
   return (
     <Link
       className='flow-grid-link'

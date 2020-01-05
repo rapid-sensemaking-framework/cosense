@@ -65,10 +65,10 @@ const getProcess = processId => {
   return promisifyEvents(IPC.GET_PROCESS, processId, IPC.RETURN_PROCESS)
 }
 
-const createProcess = (inputs, templateId, template) => {
+const createProcess = (processConfig, templateId, template) => {
   return promisifyEvents(
     IPC.CREATE_PROCESS,
-    { inputs, templateId, template },
+    { processConfig, templateId, template },
     IPC.PROCESS_CREATED
   )
 }

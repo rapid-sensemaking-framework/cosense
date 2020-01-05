@@ -97,3 +97,53 @@ h2 {
   border-top: 1px solid #f2f2f2;
   width: 100%;
 }
+
+.input-wrapper {
+  margin-bottom: 36px;
+}
+
+.input-label {
+  font-family: Helvetica, sans-serif;
+  font-size: 18px;
+  line-height: 20px;
+  color: #4a4a4a;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.input-help-label {
+  color: #969696;
+  font-size: 14px;
+}
+
+input[type='text'],
+textarea,
+select {
+  border: 1px solid #b1b1b1;
+  padding: 10px;
+  font-size: 14px;
+  line-height: 17px;
+  border-radius: 4px;
+  font-family: Helvetica, sans-serif;
+  color: #4d4f5c;
+  display: inline-block;
+  margin-top: 16px;
+  background: #ffffff;
+}
+
+input[type='text']::placeholder,
+textarea::placeholder {
+  color: #b1b1b1;
+}
+
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
