@@ -1,20 +1,28 @@
 import React, { useEffect } from 'react'
 
-export default function FormText({ expectedInput, onChange }) {
-  const { process, port, placeholder, defaultValue, label, shortLabel } = expectedInput
-  const ident = `${process}--${port}`
-  const innerOnChange = (evt) => {
-    onChange(ident, evt.target.value)
+export default function FormText({ expectedInput, value, onChange }) {
+  const { placeholder, defaultValue, label, shortLabel } = expectedInput
+  const innerOnChange = evt => {
+    onChange(evt.target.value)
   }
+
+  const val = value || defaultValue
 
   useEffect(() => {
     // set default for parent
-    onChange(ident, defaultValue)
+    onChange(val)
   }, []) // only occurs on initialize
 
-  return <div className="input-wrapper">
-    <label htmlFor={ident} className="input-label">{shortLabel}</label>
-    <div className="input-help-label">{label}</div>
-    <input type="text"  id={ident} name={ident} placeholder={placeholder} defaultValue={defaultValue} onChange={innerOnChange} />
-  </div>
+  return (
+    <div className='input-wrapper'>
+      <label className='input-label'>{shortLabel}</label>
+      <div className='input-help-label'>{label}</div>
+      <input
+        type='text'
+        placeholder={placeholder}
+        value={val}
+        onChange={innerOnChange}
+      />
+    </div>
+  )
 }

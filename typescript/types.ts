@@ -69,6 +69,26 @@ type ContactableConfigSet = {
 
 type FormInputs = object
 
+interface PublicLinkConfig {
+  description: string
+  maxTime: number
+  maxParticipants: number | string
+}
+
+interface ProcessConfig {
+  // step 1
+  templateSpecific: object
+  // step 2
+  participantsConfig: {
+    method: string
+    participants: ContactableConfig[]
+    participantList: ParticipantList
+    publicLink: PublicLinkConfig
+  }
+  // step 3
+  sendToAll: boolean
+}
+
 interface Process {
   id: string
   name: string
@@ -148,6 +168,7 @@ export {
   TemplateSubmitInput,
   GetTemplateInput,
   FormInputs,
+  ProcessConfig,
   ExpectedInput,
   Process,
   GraphConnection,

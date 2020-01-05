@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import './TemplateContactables.css'
-import { CONTACTABLE_CONFIG_PORT_NAME } from '../../ts-built/constants'
+import {
+  FROM_EXISTING_LIST,
+  FROM_PUBLIC_LINK,
+  FROM_CUSTOM_LIST
+} from '../../ts-built/process-config'
 import ParticipantListPicker from '../ParticipantListPicker'
 import ParticipantListForm from '../ParticipantListForm'
 import PublicLinkForm from '../PublicLinkForm'
@@ -23,42 +27,37 @@ function MethodRadio({ configChoice, ident, label, setConfigChoice }) {
   )
 }
 
-export default function TemplateContactables({ template, formData, onChange }) {
-  const expectedContactables = template.expectedInputs.find(
-    e =>
-      e.port === CONTACTABLE_CONFIG_PORT_NAME &&
-      !e.process.includes('SendMessageToAll')
-  )
-  const REGISTER_METHOD_IDENT = 'register-method-ident'
-  const EXISTING_LIST_IDENT = 'existing-list-ident'
-  const CONTACTABLE_CONFIGS_IDENT = `${expectedContactables.process}--${expectedContactables.port}`
-
-  const contactableConfigs = formData[CONTACTABLE_CONFIGS_IDENT]
-  const configChoice = formData[REGISTER_METHOD_IDENT]
-  const selectedList = formData[EXISTING_LIST_IDENT]
+export default function TemplateContactables({
+  processConfig: { participantsConfig },
+  updateParticipantsConfig,
+  template
+}) {
+  const METHOD_KEY = 'method'
+  const PARTICIPANTS_KEY = 'participants'
+  const PARTICIPANT_LIST_KEY = 'participantList'
+  const PUBLIC_LINK_KEY = 'publicLink'
+  const configChoice = participantsConfig[METHOD_KEY]
+  const contactableConfigs = participantsConfig[PARTICIPANTS_KEY]
+  const selectedList = participantsConfig[PARTICIPANT_LIST_KEY]
+  const publicLink = participantsConfig[PUBLIC_LINK_KEY]
 
   const updateContactableConfigs = newContactableConfigs => {
-    onChange(CONTACTABLE_CONFIGS_IDENT, newContactableConfigs)
+    updateParticipantsConfig(PARTICIPANTS_KEY, newContactableConfigs)
   }
   // when you switch methods, reset things
   const setConfigChoice = choice => {
-    onChange(REGISTER_METHOD_IDENT, choice)
-    onChange(EXISTING_LIST_IDENT, null)
+    updateParticipantsConfig(METHOD_KEY, choice)
+    updateParticipantsConfig(PARTICIPANT_LIST_KEY, null)
     updateContactableConfigs([])
   }
   const updateSelectedList = list => {
-    onChange(EXISTING_LIST_IDENT, list)
+    updateParticipantsConfig(PARTICIPANT_LIST_KEY, list)
     updateContactableConfigs(list ? list.participants : [])
   }
 
-  const FROM_NEW_LIST = 'from_new_list'
-  const NEW_LIST_LABEL = 'Configure participant list myself'
-
-  const FROM_EXISTING_LIST = 'from_existing_list'
-  const FROM_EXISTING_LABEL = 'Select an existing participant list'
-
-  const PUBLIC_LINK = 'public_link'
-  const PUBLIC_LINK_LABEL = 'Create a public link'
+  const FROM_CUSTOM_LIST_LABEL = 'Configure participant list myself'
+  const FROM_EXISTING_LIST_LABEL = 'Select an existing participant list'
+  const FROM_PUBLIC_LINK_LABEL = 'Create a public link'
 
   const [participantLists, setParticipantLists] = useState([])
 
@@ -69,6 +68,13 @@ export default function TemplateContactables({ template, formData, onChange }) {
   const updateParticipantLists = () => {
     getParticipantLists().then(lists => {
       setParticipantLists(lists)
+    })
+  }
+
+  const updatePublicLink = (key, value) => {
+    updateParticipantsConfig(PUBLIC_LINK_KEY, {
+      ...publicLink,
+      [key]: value
     })
   }
 
@@ -89,9 +95,9 @@ export default function TemplateContactables({ template, formData, onChange }) {
       {!selectMethod && (
         <div className='contactables-selected-method'>
           <div className='contactables-selected-method-selected'>
-            {configChoice === FROM_EXISTING_LIST && FROM_EXISTING_LABEL}
-            {configChoice === FROM_NEW_LIST && NEW_LIST_LABEL}
-            {configChoice === PUBLIC_LINK && PUBLIC_LINK_LABEL}
+            {configChoice === FROM_EXISTING_LIST && FROM_EXISTING_LIST_LABEL}
+            {configChoice === FROM_CUSTOM_LIST && FROM_CUSTOM_LIST_LABEL}
+            {configChoice === FROM_PUBLIC_LINK && FROM_PUBLIC_LINK_LABEL}
           </div>
           <div className='contactables-selected-method-change' onClick={reset}>
             change
@@ -108,19 +114,19 @@ export default function TemplateContactables({ template, formData, onChange }) {
           <MethodRadio
             configChoice={configChoice}
             ident={FROM_EXISTING_LIST}
-            label={FROM_EXISTING_LABEL}
+            label={FROM_EXISTING_LIST_LABEL}
             setConfigChoice={setConfigChoice}
           />
           <MethodRadio
             configChoice={configChoice}
-            ident={PUBLIC_LINK}
-            label={PUBLIC_LINK_LABEL}
+            ident={FROM_PUBLIC_LINK}
+            label={FROM_PUBLIC_LINK_LABEL}
             setConfigChoice={setConfigChoice}
           />
           <MethodRadio
             configChoice={configChoice}
-            ident={FROM_NEW_LIST}
-            label={NEW_LIST_LABEL}
+            ident={FROM_CUSTOM_LIST}
+            label={FROM_CUSTOM_LIST_LABEL}
             setConfigChoice={setConfigChoice}
           />
         </div>
@@ -134,17 +140,17 @@ export default function TemplateContactables({ template, formData, onChange }) {
           cancel={reset}
         />
       )}
-      {configChoice === FROM_NEW_LIST && (
+      {configChoice === FROM_CUSTOM_LIST && (
         <ParticipantListForm
           contactableConfigs={contactableConfigs}
           updateContactableConfigs={updateContactableConfigs}
         />
       )}
-      {configChoice === PUBLIC_LINK && (
+      {configChoice === FROM_PUBLIC_LINK && (
         <PublicLinkForm
           template={template}
-          formData={formData}
-          onChange={onChange}
+          publicLink={publicLink}
+          updatePublicLink={updatePublicLink}
         />
       )}
     </div>

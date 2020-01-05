@@ -14,7 +14,7 @@ function FlowGridElement({ flow }) {
     e => e.port === CONTACTABLE_CONFIG_PORT_NAME
   )
   const ident = contactableInput.process + '--' + CONTACTABLE_CONFIG_PORT_NAME
-  const participants = flow.formInputs[ident]
+  const participants = flow.formInputs[ident] ? flow.formInputs[ident] : []
   return (
     <Link
       className='flow-grid-link'

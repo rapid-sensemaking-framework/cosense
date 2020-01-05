@@ -7,6 +7,8 @@ import {
   runProcess
 } from '../../ipc'
 
+import { defaultProcessConfig } from '../../ts-built/process-config'
+
 import GraphConfigure from '../../components/GraphConfigure'
 import TemplateContactables from '../../components/TemplateContactables'
 import TemplateResults from '../../components/TemplateResults'
@@ -17,12 +19,11 @@ import './Template.css'
 export default function Template() {
   const history = useHistory()
   const defaultTemplate = null
-  const defaultFormData = {}
   const defaultActiveStep = 1
   const [activeStep, setActiveStep] = useState(defaultActiveStep)
   const [loading, setLoading] = useState(true)
   const [template, setTemplate] = useState(defaultTemplate)
-  const [formData, setFormData] = useState(defaultFormData)
+  const [processConfig, setProcessConfig] = useState(defaultProcessConfig())
   const [processId, setProcessId] = useState(null)
   const { templateId } = useParams()
 
@@ -42,7 +43,7 @@ export default function Template() {
   }
 
   const submit = async () => {
-    const inputs = { ...formData }
+    const inputs = { ...processConfig }
     const pId = await createProcess(inputs, templateId, template)
     setProcessId(pId)
     setActiveStep(5)
@@ -56,14 +57,30 @@ export default function Template() {
     history.push(`/process`)
   }
 
-  const onChange = (key, value) => {
-    console.log('setting:', key, value)
-    // if state depends on previous state,
-    // you have to be sure to use callback style
-    // of state update functions
-    setFormData(formData => ({
-      ...formData,
-      [key]: value
+  const templateSpecificOnChange = (key, value) => {
+    setProcessConfig(processConfig => ({
+      ...processConfig,
+      templateSpecific: {
+        ...processConfig.templateSpecific,
+        [key]: value
+      }
+    }))
+  }
+
+  const participantsConfigOnChange = (key, value) => {
+    setProcessConfig(processConfig => ({
+      ...processConfig,
+      participantsConfig: {
+        ...processConfig.participantsConfig,
+        [key]: value
+      }
+    }))
+  }
+
+  const sendToAllOnChange = value => {
+    setProcessConfig(processConfig => ({
+      ...processConfig,
+      sendToAll: value
     }))
   }
 
@@ -76,7 +93,7 @@ export default function Template() {
   // TODO: live form validation
 
   const steps = [
-    ['Prompt', GraphConfigure],
+    ['Configure', GraphConfigure],
     ['Participants', TemplateContactables],
     ['Results', TemplateResults],
     ['Preview', TemplatePreview],
@@ -119,9 +136,11 @@ export default function Template() {
       {/* {template.parentTemplate && <>Parent Template: <Link to={`/template/${template.parentTemplate}`}>{template.parentTemplate}</Link></>} */}
       <div className='template-step-wrapper'>
         <WhichStep
+          updateTemplateSpecific={templateSpecificOnChange}
+          updateParticipantsConfig={participantsConfigOnChange}
+          updateSendToAll={sendToAllOnChange}
+          processConfig={processConfig}
           template={template}
-          formData={formData}
-          onChange={onChange}
           startNow={startNow}
           startLater={startLater}
         />
