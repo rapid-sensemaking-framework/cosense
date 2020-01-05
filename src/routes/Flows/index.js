@@ -73,7 +73,7 @@ function FlowsContainer() {
     <>
       <FlowSubsection flows={runningFlows} label='Live flows' />
       <div className='divider' />
-      <FlowSubsection flows={configuringFlows} label='Configured unrun flows' />
+      <FlowSubsection flows={configuringFlows} label='Ready to run' />
       <div className='divider' />
       <FlowSubsection flows={completedFlows} label='Previously run flows' />
       <div className='divider' />

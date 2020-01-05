@@ -97,15 +97,6 @@ const newProcessDefaults = () => {
   }
 }
 
-/*
-
-  return getContactablesFromRegistration(
-    publicLink.id,
-    callback
-  )
-  updateParticipants(processId, finalInput, true)
-*/
-
 const updateParticipants = async (
   processId: string,
   newParticipants: ContactableConfig[],
@@ -157,7 +148,22 @@ const cloneProcess = async (processId: string): Promise<string> => {
   const orig = await getProcess(processId)
   const newProcess = {
     ...orig,
+    processConfig: {
+      ...orig.processConfig,
+      participantsConfig: {
+        ...orig.processConfig.participantsConfig,
+        participants: [],
+        publicLink: {
+          ...orig.processConfig.participantsConfig.publicLink,
+          id: guidGenerator() // create a new id for the public link
+        }
+      }
+    },
     ...newProcessDefaults()
+  }
+  const { method, publicLink } = newProcess.processConfig.participantsConfig
+  if (method === FROM_PUBLIC_LINK) {
+    await createParticipantRegister(publicLink)
   }
   writeProcess(newProcess.id, newProcess)
   console.log('created a new process configuration by cloning', newProcess.id)

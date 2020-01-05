@@ -9,6 +9,7 @@ const { shell, remote, clipboard } = getElectron()
 
 export default function ParticipantRegister({
   participantRegisterConfig,
+  reachedParticipantLimit,
   startTime
 }) {
   const { maxTime, id } = participantRegisterConfig
@@ -20,7 +21,7 @@ export default function ParticipantRegister({
 
   const timeLeft =
     startTime && maxTime ? remainingTime(maxTime, startTime) : null
-  const [over, setOver] = useState(timeLeft === 0)
+  const [timeOver, setTimeOver] = useState(timeLeft === 0)
   const inputEl = useRef(null)
 
   const onClickPreview = e => {
@@ -36,14 +37,21 @@ export default function ParticipantRegister({
 
   return (
     <>
-      {startTime && maxTime && !over && (
+      <div className='input-label'>Here is your public link to share</div>
+      {startTime && maxTime && !reachedParticipantLimit && !timeOver && (
         <p>
           Registration will remain open for{' '}
-          <TimeCountdown seconds={timeLeft} over={() => setOver(true)} />.
+          <TimeCountdown seconds={timeLeft} over={() => setTimeOver(true)} />.
         </p>
       )}
-      {over && <p>Registration is now closed.</p>}
-      <div className='input-label'>Here is your public link to share</div>
+      {timeOver && !reachedParticipantLimit && (
+        <p>Registration is now closed.</p>
+      )}
+      {reachedParticipantLimit && (
+        <p>
+          Registration has closed because the participant limit was reached.
+        </p>
+      )}
       <div className='public-link-details'>
         <input
           ref={inputEl}

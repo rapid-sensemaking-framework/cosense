@@ -103,7 +103,9 @@ export default function Process() {
   }
 
   const { participantsConfig } = process.processConfig
-  const { method, participants } = participantsConfig
+  const { method, participants, publicLink } = participantsConfig
+  const reachedParticipantLimit =
+    participants.length === publicLink.maxParticipants
 
   const run = () => {
     runProcess(processId)
@@ -158,7 +160,8 @@ export default function Process() {
       {method === FROM_PUBLIC_LINK && (
         <div className='participant-register-wrapper'>
           <ParticipantRegister
-            participantRegisterConfig={participantsConfig.publicLink}
+            reachedParticipantLimit={reachedParticipantLimit}
+            participantRegisterConfig={publicLink}
             startTime={process.startTime}
           />
         </div>
