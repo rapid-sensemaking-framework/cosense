@@ -2,7 +2,7 @@
 
 Design and run rapid sensemaking processes!
 
-Check out [noflo-rsf](https://github.com/rapid-sensemaking-framework/noflo-rsf/blob/master/README.md) for screenshots of this app, and to understand the concept.
+Check out [noflo-rsf](https://github.com/rapid-sensemaking-framework/noflo-rsf/blob/master/README.md#using-the-rsf-app) for screenshots of this app, and to understand the concept.
 
 ## Registration Page Server
 
