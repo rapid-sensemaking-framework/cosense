@@ -2,6 +2,10 @@ import React from 'react'
 import './TemplatePreview.css'
 import { CONTACTABLE_CONFIG_PORT_NAME } from '../../ts-built/constants'
 import ParticipantList from '../ParticipantList'
+import { FROM_PUBLIC_LINK } from '../../ts-built/process-config'
+import RenderMaxTime from '../RenderMaxTime'
+import RenderLimit from '../RenderLimit'
+import RenderExpectedInputValue from '../RenderExpectedInputValue'
 
 function TemplatePreviewElement({ label, children }) {
   return (
@@ -12,42 +16,54 @@ function TemplatePreviewElement({ label, children }) {
   )
 }
 
-export default function TemplatePreview({ template, formData }) {
-  const mainInput = template.expectedInputs.find(
-    e =>
-      e.port === CONTACTABLE_CONFIG_PORT_NAME &&
-      !e.process.includes('SendMessageToAll')
-  )
-  const mainIdent = `${mainInput.process}--${mainInput.port}`
-  const mainContactables = formData[mainIdent]
-  const sendMessageInput = template.expectedInputs.find(
-    e =>
-      e.port === CONTACTABLE_CONFIG_PORT_NAME &&
-      e.process.includes('SendMessageToAll')
-  )
-  const sendMessageIdent = `${sendMessageInput.process}--${sendMessageInput.port}`
-  const sendMessageContactables = formData[sendMessageIdent]
-  const nonContactablesInputs = template.expectedInputs.filter(
-    e => e.port !== CONTACTABLE_CONFIG_PORT_NAME
-  )
-
+export default function TemplatePreview({
+  template,
+  processConfig: { templateSpecific, participantsConfig, sendToAll }
+}) {
+  const { method, publicLink } = participantsConfig
   return (
     <div className='template-preview'>
-      {nonContactablesInputs.map(expectedInput => {
-        const ident = `${expectedInput.process}--${expectedInput.port}`
-        const input = formData[ident]
-        return (
-          <TemplatePreviewElement key={ident} label={expectedInput.shortLabel}>
-            {input}
+      {/* Step 1 */}
+      {template.expectedInputs
+        .filter(e => e.port !== CONTACTABLE_CONFIG_PORT_NAME)
+        .map(expectedInput => {
+          const ident = `${expectedInput.process}--${expectedInput.port}`
+          const input = templateSpecific[ident]
+          return (
+            <TemplatePreviewElement
+              key={ident}
+              label={expectedInput.shortLabel}>
+              <RenderExpectedInputValue
+                expectedInput={expectedInput}
+                input={input}
+              />
+            </TemplatePreviewElement>
+          )
+        })}
+      {/* Step 2 */}
+      {method === FROM_PUBLIC_LINK && (
+        <>
+          <TemplatePreviewElement label={'Public Link Description'}>
+            {publicLink.description}
           </TemplatePreviewElement>
-        )
-      })}
-      <TemplatePreviewElement
-        label={`Your participants (${mainContactables.length})`}>
-        <ParticipantList contactables={mainContactables} />
-      </TemplatePreviewElement>
+          <TemplatePreviewElement label={'Public Link Time Limit'}>
+            <RenderMaxTime seconds={publicLink.maxTime} />
+          </TemplatePreviewElement>
+          <TemplatePreviewElement label={'Public Link Participant Limit'}>
+            <RenderLimit limit={publicLink.maxParticipants} />
+          </TemplatePreviewElement>
+        </>
+      )}
+      {/* TODO: FROM_EXISTING_LIST */}
+      {method !== FROM_PUBLIC_LINK && (
+        <TemplatePreviewElement
+          label={`Your participants (${participantsConfig.participants.length})`}>
+          <ParticipantList contactables={participantsConfig.participants} />
+        </TemplatePreviewElement>
+      )}
+      {/* Step 3 */}
       <TemplatePreviewElement label='Send results to participants?'>
-        {sendMessageContactables.length ? 'Yes, send' : "No, don't send"}
+        {sendToAll ? 'Yes, send' : "No, don't send"}
       </TemplatePreviewElement>
     </div>
   )

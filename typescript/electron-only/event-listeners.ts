@@ -16,12 +16,17 @@ import {
 } from './participant-lists'
 import {
   updateTemplate,
-  createProcess,
   getTemplate,
   getTemplates,
   cloneTemplate
 } from './templates'
-import { cloneProcess, getProcess, getProcesses, runProcess } from './processes'
+import {
+  createProcess,
+  cloneProcess,
+  getProcess,
+  getProcesses,
+  runProcess
+} from './processes'
 const { IPC } = EVENTS
 
 // TODO handle failure cases
@@ -33,8 +38,11 @@ const attachEventListeners = () => {
 
   ipc.on(
     IPC.CREATE_PROCESS,
-    async (event: electron.IpcMessageEvent, data: TemplateSubmitInput) => {
-      const processId = await createProcess(data)
+    async (
+      event: electron.IpcMessageEvent,
+      processData: TemplateSubmitInput
+    ) => {
+      const processId = await createProcess(processData)
       event.sender.send(IPC.PROCESS_CREATED, processId)
     }
   )

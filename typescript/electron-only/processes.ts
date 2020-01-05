@@ -1,40 +1,27 @@
 import * as electron from 'electron'
 import * as fs from 'fs'
+import * as socketClient from 'socket.io-client'
+import { Statement, Option, ContactableConfig } from 'rsf-types'
 import {
-  Statement,
-  Option,
-  ContactableConfig
-} from 'rsf-types'
-import {
-  RegisterConfig,
-  FormInputs,
+  ProcessConfig,
   Process,
-  Template,
   ExpectedInput,
   GraphConnection,
-  Graph,
   Handler,
-  HandlerInput,
-  NofloSignalPayload
+  NofloSignalPayload,
+  TemplateSubmitInput
 } from '../types'
-import {
-  CONTACTABLE_CONFIG_PORT_NAME,
-  EVENTS
-} from '../constants'
-import {
-  guidGenerator
-} from '../utils'
-import {
-  USER_PROCESSES_PATH
-} from '../folders'
+import { CONTACTABLE_CONFIG_PORT_NAME, EVENTS } from '../constants'
+import { guidGenerator } from '../utils'
+import { USER_PROCESSES_PATH } from '../folders'
 
 import {
   getContactablesFromRegistration,
-} from './participant_register'
-import {
-  overrideJsonGraph,
-  start
-} from './run_graph'
+  createParticipantRegister
+} from './participant-register'
+import { overrideJsonGraph, start } from './run-graph'
+import { FROM_PUBLIC_LINK } from '../process-config'
+import { getGraph } from './templates'
 
 const { BrowserWindow } = electron
 
@@ -62,9 +49,11 @@ const getProcesses = async (): Promise<Process[]> => {
         return
       }
       // filter out .DS_Store and any other weird files
-      const templates = files.filter(f => f.includes('.json')).map(filename => {
-        return getProcessAsObject(filename.replace('.json', ''))
-      })
+      const templates = files
+        .filter(f => f.includes('.json'))
+        .map(filename => {
+          return getProcessAsObject(filename.replace('.json', ''))
+        })
       resolve(templates)
     })
   })
@@ -74,7 +63,11 @@ const getProcess = async (id: string): Promise<Process> => {
   return getProcessAsObject(id)
 }
 
-const setProcessProp = async (id: string, key: string, value: any): Promise<boolean> => {
+const setProcessProp = async (
+  id: string,
+  key: string,
+  value: any
+): Promise<boolean> => {
   console.log(`updating process ${id} value ${key}: ${JSON.stringify(value)}`)
   const orig = await getProcess(id)
   const newProcess = {
@@ -106,67 +99,54 @@ const newProcessDefaults = () => {
 
 /*
 
-const { maxTime, maxParticipants, processContext, id, wsUrl } = registerConfig
   return getContactablesFromRegistration(
-    wsUrl,
-    id,
-    maxTime,
-    maxParticipants,
-    processContext,
+    publicLink.id,
     callback
   )
-  updateParticipants(processId, process, finalInput, true)
+  updateParticipants(processId, finalInput, true)
 */
 
-const getRegisterConfig = (formInputs: FormInputs, process: string, id: string, wsUrl: string): RegisterConfig => {
-  return {
-    stage: process,
-    isFacilitator: formInputs[`${process}-check-facil_register`] === 'facil_register',
-    processContext: formInputs[`${process}-ParticipantRegister-process_context`] || process,
-    maxTime: (parseFloat(formInputs[`${process}-ParticipantRegister-max_time`]) || 5) * 60, // five minute default, converted to seconds
-    maxParticipants: formInputs[`${process}-ParticipantRegister-max_participants`] || '*', // unlimited default
-    id,
-    wsUrl
-  }
-}
-
-const updateParticipants = async (processId: string, name: string, newParticipants: ContactableConfig[], overwrite: boolean) => {
+const updateParticipants = async (
+  processId: string,
+  newParticipants: ContactableConfig[],
+  // if not overwrite, conjoins with existing participants
+  overwrite: boolean
+) => {
   const p = await getProcess(processId)
-  const participants = {
-    ...p.participants,
-    [name]: overwrite ? newParticipants : p.participants[name].concat(newParticipants)
+  const { processConfig } = p
+  const { participantsConfig } = processConfig
+  const { participants } = participantsConfig
+  const newProcessConfig = {
+    ...processConfig,
+    participantsConfig: {
+      ...participantsConfig,
+      participants: overwrite
+        ? newParticipants
+        : participants.concat(newParticipants)
+    }
   }
-  await setProcessProp(processId, 'participants', participants)
+  await setProcessProp(processId, 'processConfig', newProcessConfig)
 }
 
-const newProcess = async (
-  formInputs: FormInputs,
-  templateId: string,
-  template: Template,
-  graph: Graph,
-  registerWsUrl: string
-): Promise<string> => {
+const createProcess = async ({
+  processConfig,
+  templateId,
+  template
+}: TemplateSubmitInput): Promise<string> => {
+  // not a bug, templateId is shared with graphId
+  const graph = getGraph(template.graphName)
 
-  const registerConfigs = {}
-  const participants = {}
-  template.expectedInputs
-    .filter((expectedInput: ExpectedInput) => expectedInput.port === CONTACTABLE_CONFIG_PORT_NAME)
-    .forEach((expectedInput: ExpectedInput) => {
-      const { process } = expectedInput
-      const id = guidGenerator()
-      const registerConfig = getRegisterConfig(formInputs, process, id, registerWsUrl)
-      registerConfigs[process] = registerConfig
-      participants[process] = [] // empty for now
-    })
+  const { method, publicLink } = processConfig.participantsConfig
+  if (method === FROM_PUBLIC_LINK) {
+    await createParticipantRegister(publicLink)
+  }
 
   const newProcess: Process = {
     ...newProcessDefaults(),
     templateId,
     template,
     graph,
-    formInputs,
-    registerConfigs,
-    participants
+    processConfig
   }
   writeProcess(newProcess.id, newProcess)
   console.log('created a new process configuration', newProcess.id)
@@ -187,35 +167,38 @@ const cloneProcess = async (processId: string): Promise<string> => {
 /*
   HANDLERS
 */
-const handleText: Handler = async ({ input }): Promise<string> => {
+const defaultHandler: Handler = async (input: any): Promise<any> => {
   return input
 }
-const handleInt: Handler = async ({ input }): Promise<number> => {
+const handleText: Handler = async (input: string): Promise<string> => {
+  return input
+}
+const handleInt: Handler = async (input: string): Promise<number> => {
   return parseInt(input)
 }
-const handleArray: Handler = async ({ input }): Promise<Array<any>> => {
+const handleArray: Handler = async (input: string): Promise<Array<any>> => {
   return JSON.parse(input)
 }
-const handleObject: Handler = async ({ input }): Promise<object> => {
+const handleObject: Handler = async (input: string): Promise<object> => {
   return JSON.parse(input)
 }
-const handleMaxTime: Handler = async ({ input }): Promise<number> => {
+const handleFloat: Handler = async (input: string): Promise<number> => {
   return parseFloat(input)
 }
-const handleOptionsData: Handler = async ({ input }): Promise<Option[]> => {
+const handleOptionsData: Handler = async (input: string): Promise<Option[]> => {
   // e.g. a+A=Agree, b+B=Block
-  return input
-    .split(',')
-    .map((s: string) => {
-      // trim cleans white space
-      const [triggersString, text] = s.trim().split('=')
-      return {
-        triggers: triggersString.split('+'),
-        text
-      }
-    })
+  return input.split(',').map((s: string) => {
+    // trim cleans white space
+    const [triggersString, text] = s.trim().split('=')
+    return {
+      triggers: triggersString.split('+'),
+      text
+    }
+  })
 }
-const handleStatementsData: Handler = async ({ input }): Promise<Array<Statement>> => {
+const handleStatementsData: Handler = async (
+  input: string
+): Promise<Array<Statement>> => {
   return input.split('\n').map(s => ({ text: s }))
 }
 
@@ -227,27 +210,30 @@ const nofloTypeMap = {
   string: handleText,
   number: handleText,
   int: handleInt,
-  boolean: () => { }, // TODO
+  boolean: () => {}, // TODO
   array: handleArray,
   object: handleObject,
-  all: handleText
+  all: defaultHandler
   // TODO: the rest
 }
 const specialPorts = {
-  contactable_configs: handleText, // HACK
+  contactable_configs: defaultHandler,
   statements: handleStatementsData,
   options: handleOptionsData,
-  max_time: handleMaxTime
+  max_time: handleFloat
 }
 
-// TODO: create a default?
 const mapInputToHandler = (expectedInput: ExpectedInput): Handler => {
   const { type, port } = expectedInput
-  // specialPorts > basic type
-  return specialPorts[port] || nofloTypeMap[type]
+  // specialPorts > basic type > default
+  return specialPorts[port] || nofloTypeMap[type] || defaultHandler
 }
 
-const convertToGraphConnection = (process: string, port: string, data: any): GraphConnection => {
+const convertToGraphConnection = (
+  process: string,
+  port: string,
+  data: any
+): GraphConnection => {
   return {
     tgt: {
       process,
@@ -257,51 +243,79 @@ const convertToGraphConnection = (process: string, port: string, data: any): Gra
   }
 }
 
-const getHandlerInput = (
+const resolveAndConvert = async (
   expectedInput: ExpectedInput,
-  formInputs: FormInputs
-): HandlerInput => {
+  processConfig: ProcessConfig
+): Promise<GraphConnection> => {
   const { process, port } = expectedInput
-  return {
-    input: formInputs[`${process}--${port}`]
-  }
-}
-
-const resolveExpectedInput = async (
-  expectedInput: ExpectedInput,
-  formInputs: FormInputs
-) => {
-  const handler: Handler = mapInputToHandler(expectedInput)
-  const handlerInput: HandlerInput = getHandlerInput(
-    expectedInput,
-    formInputs,
-  )
-  const finalInput = await handler(handlerInput)
-  return finalInput
-}
-
-const resolveAndConvert = async (expectedInput: ExpectedInput, formInputs: FormInputs): Promise<GraphConnection> => {
-  const { process, port } = expectedInput
-  const finalInput = await resolveExpectedInput(expectedInput, formInputs)
+  const givenInput = processConfig.templateSpecific[`${process}--${port}`]
+  // a handler will perform any conversion of
+  // the data that's necessary
+  const finalInput = await mapInputToHandler(expectedInput)(givenInput)
+  // convert it to a GraphConnection input for noflo
   return convertToGraphConnection(process, port, finalInput)
 }
 
-const runProcess = async (processId: string, runtimeAddress: string, runtimeSecret: string) => {
-  const {
-    formInputs,
-    graph,
-    template,
-  } = await getProcess(processId)
+const runProcess = async (
+  processId: string,
+  runtimeAddress: string,
+  runtimeSecret: string
+) => {
+  const { processConfig, graph, template } = await getProcess(processId)
 
-  const graphConnections = await Promise.all(template.expectedInputs.map((e: ExpectedInput) => {
-    return resolveAndConvert(e, formInputs)
-  }))
+  const graphConnections = await Promise.all(
+    template.expectedInputs
+      .filter(e => e.port !== CONTACTABLE_CONFIG_PORT_NAME)
+      .map((expectedInput: ExpectedInput) => {
+        return resolveAndConvert(expectedInput, processConfig)
+      })
+  )
 
   // once they're all ready, now commence the process
   // mark as running now
   await setProcessProp(processId, 'configuring', false)
   await setProcessProp(processId, 'running', true)
   await setProcessProp(processId, 'startTime', Date.now())
+
+  // handle the public link option
+  const { method, publicLink } = processConfig.participantsConfig
+  let participants: ContactableConfig[] = []
+  if (method === FROM_PUBLIC_LINK) {
+    participants = await getContactablesFromRegistration(
+      publicLink.id,
+      (contactableConfig: ContactableConfig) => {
+        const overwrite = false
+        updateParticipants(processId, [contactableConfig], overwrite)
+      }
+    )
+    const overwrite = true
+    await updateParticipants(processId, participants, overwrite)
+  } else {
+    participants = processConfig.participantsConfig.participants
+  }
+
+  // handle the contactable_configs
+  // including the special case
+  // for sending results to everyone, which
+  // we should respect the preference/override in the processConfig
+  template.expectedInputs
+    .filter(e => e.port === CONTACTABLE_CONFIG_PORT_NAME)
+    .forEach((expectedInput: ExpectedInput) => {
+      const { process, port } = expectedInput
+      // use the same participants for SendMessageToAll
+      // unless they shouldn't be sent at all
+      const contactable_configs = process.includes('SendMessageToAll')
+        ? processConfig.sendToAll
+          ? participants
+          : []
+        : participants
+      const graphConnection = convertToGraphConnection(
+        process,
+        port,
+        contactable_configs
+      )
+      graphConnections.push(graphConnection)
+    })
 
   const jsonGraph = overrideJsonGraph(graphConnections, graph)
   const results: Array<any> = []
@@ -327,10 +341,9 @@ export {
   getProcesses,
   getProcess,
   setProcessProp,
-  newProcess,
+  createProcess,
   cloneProcess,
   runProcess,
-  getRegisterConfig,
   convertToGraphConnection,
   handleOptionsData,
   mapInputToHandler

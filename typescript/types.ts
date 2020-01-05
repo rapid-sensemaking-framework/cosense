@@ -1,20 +1,10 @@
-import { ContactableConfig } from 'rsf-types'
+import { ContactableConfig, ParticipantRegisterConfig } from 'rsf-types'
 
 interface ParticipantList {
   name: string
   slug: string
   createdAt: number
   participants: ContactableConfig[]
-}
-
-interface RegisterConfig {
-  stage: string
-  isFacilitator: boolean
-  processContext: string
-  maxTime: number
-  maxParticipants: number | string
-  id: string
-  wsUrl: string // websocket to connect to, if not isFacilitator
 }
 
 interface ExpectedInput {
@@ -49,7 +39,7 @@ interface UpdateTemplateInput {
 }
 
 interface TemplateSubmitInput {
-  inputs: FormInputs
+  processConfig: ProcessConfig
   templateId: string
   template: Template
 }
@@ -59,15 +49,19 @@ interface GetTemplateInput {
   userDefined: boolean
 }
 
-type RegisterConfigSet = {
-  [key: string]: RegisterConfig
+interface ProcessConfig {
+  // step 1
+  templateSpecific: object
+  // step 2
+  participantsConfig: {
+    method: string
+    participants: ContactableConfig[]
+    participantList: ParticipantList
+    publicLink: ParticipantRegisterConfig
+  }
+  // step 3
+  sendToAll: boolean
 }
-
-type ContactableConfigSet = {
-  [key: string]: ContactableConfig[]
-}
-
-type FormInputs = object
 
 interface Process {
   id: string
@@ -83,9 +77,7 @@ interface Process {
   createdTime: number
   startTime: number
   endTime: number
-  formInputs: FormInputs
-  registerConfigs: RegisterConfigSet
-  participants: ContactableConfigSet
+  processConfig: ProcessConfig
 }
 
 interface Graph {
@@ -132,28 +124,20 @@ interface NofloSignal {
   payload: NofloSignalPayload
 }
 
-interface HandlerInput {
-  input: string
-}
-
-type Handler = (handlerInput: HandlerInput) => Promise<any>
+type Handler = (handlerInput: any) => Promise<any>
 
 export {
   ParticipantList,
-  ContactableConfigSet,
-  RegisterConfig,
-  RegisterConfigSet,
   Template,
   UpdateTemplateInput,
   TemplateSubmitInput,
   GetTemplateInput,
-  FormInputs,
+  ProcessConfig,
   ExpectedInput,
   Process,
   GraphConnection,
   NofloSignal,
   NofloSignalPayload,
   Graph,
-  Handler,
-  HandlerInput
+  Handler
 }

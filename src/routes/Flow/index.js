@@ -7,11 +7,12 @@ import {
   cloneProcess,
   onProcessUpdate
 } from '../../ipc'
-import { CONTACTABLE_CONFIG_PORT_NAME } from '../../ts-built/constants'
 import ExpectedInputs from '../../components/ExpectedInputs'
 import LabeledValue from '../../components/LabeledValue'
 import ParticipantList from '../../components/ParticipantList'
+import ParticipantRegister from '../../components/ParticipantRegister'
 import './Flow.css'
+import { FROM_PUBLIC_LINK } from '../../ts-built/process-config'
 
 const formatByResultType = (r, type) => {
   switch (type) {
@@ -101,14 +102,8 @@ export default function Process() {
     return <>404 not found (requested: {processId})</>
   }
 
-  // For now, only display one
-  // register config, for the whole thing
-  const contactableInput = process.template.expectedInputs.find(
-    e => e.port === CONTACTABLE_CONFIG_PORT_NAME
-  )
-  const ident = contactableInput.process + '--' + CONTACTABLE_CONFIG_PORT_NAME
-  const registerConfig = process.registerConfigs[contactableInput.process]
-  const participants = process.formInputs[ident]
+  const { participantsConfig } = process.processConfig
+  const { method, participants } = participantsConfig
 
   const run = () => {
     runProcess(processId)
@@ -160,6 +155,14 @@ export default function Process() {
           </button>
         </p>
       )}
+      {method === FROM_PUBLIC_LINK && (
+        <div className='participant-register-wrapper'>
+          <ParticipantRegister
+            participantRegisterConfig={participantsConfig.publicLink}
+            startTime={process.startTime}
+          />
+        </div>
+      )}
       <LabeledValue label={'Participants'} value={participants.length} />
       <button
         className='button'
@@ -172,8 +175,6 @@ export default function Process() {
         value={process.results ? process.results.length : 0}
       />
       <ExpectedInputs process={process} />
-      {/* display registered participants, or the info to register them */}
-      {/* <Register {...{ registerConfig, participants, startTime }} /> */}
       <div className='flow-label flow-responses-feed-label'>Responses Feed</div>
       {/* Download (placeholder) */}
       <div className='flow-responses-feed'>

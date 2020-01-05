@@ -14,7 +14,8 @@ const URLS = {
 
 const EVENTS = {
   SEND: {
-    PARTICIPANT_REGISTER: 'participant_register'
+    PARTICIPANT_REGISTER: 'participant_register',
+    OPEN_REGISTER: 'open_register'
   },
   RECEIVE: {
     // final / sum

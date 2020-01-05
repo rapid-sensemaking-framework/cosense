@@ -4,18 +4,20 @@ import './PublicLinkForm.css'
 import FormLimitPicker from '../forms/FormLimitPicker'
 import FormTimePicker from '../forms/FormTimePicker'
 
-export default function PublicLinkForm({ template, formData, onChange }) {
-  const PROCESS_DESCRIPTION_IDENT = 'public-link--process-description'
+export default function PublicLinkForm({ publicLink, updatePublicLink }) {
+  const DESCRIPTION_KEY = 'description'
+  const MAX_TIME_KEY = 'maxTime'
+  const MAX_PARTICIPANTS_KEY = 'maxParticipants'
+
+  const description = publicLink[DESCRIPTION_KEY]
+  const maxTime = publicLink[MAX_TIME_KEY]
+  const maxParticipants = publicLink[MAX_PARTICIPANTS_KEY]
 
   const participantLimitInput = {
-    process: 'public-link',
-    port: 'participant-limit',
     shortLabel: 'Number of participants',
     label: 'Maximum number of participants who can register'
   }
   const timeLimitInput = {
-    process: 'public-link',
-    port: 'time-limit',
     shortLabel: 'Time allowed for registration',
     label: 'Time you’d like to leave for participants to register'
   }
@@ -30,22 +32,24 @@ export default function PublicLinkForm({ template, formData, onChange }) {
           is about and what it will involve (optional)
         </div>
         <textarea
-          id={PROCESS_DESCRIPTION_IDENT}
-          name={PROCESS_DESCRIPTION_IDENT}
-          onChange={evt =>
-            onChange(PROCESS_DESCRIPTION_IDENT, evt.target.value)
-          }
+          value={description}
+          onChange={evt => updatePublicLink(DESCRIPTION_KEY, evt.target.value)}
         />
       </div>
       <div className='input-row'>
         <div className='input-wrapper'>
           <FormLimitPicker
+            value={maxParticipants}
             expectedInput={participantLimitInput}
-            onChange={onChange}
+            onChange={val => updatePublicLink(MAX_PARTICIPANTS_KEY, val)}
           />
         </div>
         <div className='input-wrapper'>
-          <FormTimePicker expectedInput={timeLimitInput} onChange={onChange} />
+          <FormTimePicker
+            value={maxTime}
+            expectedInput={timeLimitInput}
+            onChange={val => updatePublicLink(MAX_TIME_KEY, val)}
+          />
         </div>
       </div>
     </div>

@@ -1,14 +1,7 @@
 import * as path from 'path'
 import * as fs from 'fs'
-import {
-  Template, Graph, ExpectedInput, TemplateSubmitInput, UpdateTemplateInput,
-} from '../types'
-import {
-  newProcess,
-} from './processes'
-import {
-  getRegisterAddress, guidGenerator
-} from '../utils'
+import { Template, Graph, ExpectedInput, UpdateTemplateInput } from '../types'
+import { guidGenerator } from '../utils'
 import { componentMeta } from './fbp'
 import {
   USER_TEMPLATES_PATH, // user defined
@@ -18,17 +11,23 @@ import {
 
 const getGraph = (graphName: string): Graph => {
   const graphPath = path.join(SYSTEM_GRAPHS_PATH, graphName)
-  return JSON.parse(fs.readFileSync(graphPath, { encoding: "utf8" }))
+  return JSON.parse(fs.readFileSync(graphPath, { encoding: 'utf8' }))
 }
 
-const getTemplatePath = (templateId: string, userDefined: boolean = false): string => {
+const getTemplatePath = (
+  templateId: string,
+  userDefined: boolean = false
+): string => {
   const whichOnes = userDefined ? USER_TEMPLATES_PATH : SYSTEM_TEMPLATES_PATH
   return `${whichOnes}/${templateId}.template.json`
 }
 
-const getTemplateAsObject = (templateId: string, userDefined: boolean = false): Template => {
+const getTemplateAsObject = (
+  templateId: string,
+  userDefined: boolean = false
+): Template => {
   const templatePath = getTemplatePath(templateId, userDefined)
-  const templateString = fs.readFileSync(templatePath, { encoding: "utf8" })
+  const templateString = fs.readFileSync(templatePath, { encoding: 'utf8' })
   const template: Template = JSON.parse(templateString)
   return template
 }
@@ -41,9 +40,12 @@ const writeTemplate = (templateId: string, template: Template): boolean => {
   return true
 }
 
-const updateTemplate = async (
-  { name, description, expectedInputs, templateId }: UpdateTemplateInput
-): Promise<boolean> => {
+const updateTemplate = async ({
+  name,
+  description,
+  expectedInputs,
+  templateId
+}: UpdateTemplateInput): Promise<boolean> => {
   const orig = getTemplateAsObject(templateId)
   const newTemplate: Template = {
     ...orig,
@@ -66,47 +68,43 @@ const updateTemplate = async (
   return writeTemplate(templateId, newTemplate)
 }
 
-// TODO: should this be in processes file?
-const createProcess = async (
-  { inputs, templateId, template }: TemplateSubmitInput
-) => {
-  const registerWsUrl = getRegisterAddress(process.env, 'REGISTER_WS_PROTOCOL')
-  // not a bug, templateId is shared with graphId
-  const graph = getGraph(template.graphName)
-  const processId = await newProcess(
-    inputs,
-    templateId,
-    template,
-    graph,
-    registerWsUrl
-  )
-  return processId
-}
-
-const getTemplates = async (userDefined: boolean = false): Promise<Template[]> => {
+const getTemplates = async (
+  userDefined: boolean = false
+): Promise<Template[]> => {
   return new Promise((resolve, reject) => {
-    const templatesPath = userDefined ? USER_TEMPLATES_PATH : SYSTEM_TEMPLATES_PATH
+    const templatesPath = userDefined
+      ? USER_TEMPLATES_PATH
+      : SYSTEM_TEMPLATES_PATH
     fs.readdir(templatesPath, (err, files) => {
       if (err) {
         reject(err)
         return
       }
       // filter out .DS_Store and any other weird files
-      const templates = files.filter(f => f.includes('.template.json')).map(filename => {
-        const templatePath = `${templatesPath}/${filename}`
-        const templateString = fs.readFileSync(templatePath, { encoding: 'utf8' })
-        const template: Template = JSON.parse(templateString)
-        const shortName = filename.replace('.template.json', '')
-        // react router route
-        template.path = `/template/${shortName}`
-        return template
-      })
+      const templates = files
+        .filter(f => f.includes('.template.json'))
+        .map(filename => {
+          const templatePath = `${templatesPath}/${filename}`
+          const templateString = fs.readFileSync(templatePath, {
+            encoding: 'utf8'
+          })
+          const template: Template = JSON.parse(templateString)
+          const shortName = filename.replace('.template.json', '')
+          // react router route
+          template.path = `/template/${shortName}`
+          return template
+        })
       resolve(templates)
     })
   })
 }
 
-const getTemplate = async (templateId: string, userDefined: boolean = false, runtimeAddress: string, runtimeSecret: string): Promise<Template> => {
+const getTemplate = async (
+  templateId: string,
+  userDefined: boolean = false,
+  runtimeAddress: string,
+  runtimeSecret: string
+): Promise<Template> => {
   let template: Template
   try {
     template = getTemplateAsObject(templateId, userDefined)
@@ -120,7 +118,12 @@ const getTemplate = async (templateId: string, userDefined: boolean = false, run
     // use parentTemplate as the default,
     // because it will have the id that matches the graph file name
     const graph = getGraph(template.graphName)
-    expectedInputs = await componentMeta(template.expectedInputs, graph, runtimeAddress, runtimeSecret)
+    expectedInputs = await componentMeta(
+      template.expectedInputs,
+      graph,
+      runtimeAddress,
+      runtimeSecret
+    )
   }
   return {
     ...template,
@@ -129,7 +132,10 @@ const getTemplate = async (templateId: string, userDefined: boolean = false, run
   }
 }
 
-const cloneTemplate = async (templateId: string, userDefined: boolean = false): Promise<string> => {
+const cloneTemplate = async (
+  templateId: string,
+  userDefined: boolean = false
+): Promise<string> => {
   let orig = getTemplateAsObject(templateId, userDefined)
   const newGuid = guidGenerator()
   const id = orig.id + '-' + newGuid
@@ -144,10 +150,4 @@ const cloneTemplate = async (templateId: string, userDefined: boolean = false): 
   return newTemplate.id
 }
 
-export {
-  updateTemplate,
-  createProcess,
-  getTemplates,
-  getTemplate,
-  cloneTemplate
-}
+export { getGraph, updateTemplate, getTemplates, getTemplate, cloneTemplate }
