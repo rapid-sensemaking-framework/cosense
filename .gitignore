@@ -1,5 +1,5 @@
 # electron
-RSF-darwin-x64
+CoSense-darwin-x64
 electron
 processes/**
 templates/*-*-**.template.json
