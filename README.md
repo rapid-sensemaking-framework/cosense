@@ -36,6 +36,11 @@ Setup for connection with a rsf noflo server runtime:
 RUNTIME_ADDRESS=ws://127.0.0.1:3569
 RUNTIME_SECRET=1lkj3134jn
 ```
+If you're trying to connect to a server using `wss` and a self-signed certificate, make sure you also set:
+```
+NODE_TLS_REJECT_UNAUTHORIZED=0
+```
+or else it won't connect to the Noflo runtime.
 
 ## For development:
 
