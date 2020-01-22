@@ -18,12 +18,15 @@ function TemplatePreviewElement({ label, children }) {
 
 export default function TemplatePreview({
   template,
-  processConfig: { templateSpecific, participantsConfig, sendToAll }
+  processConfig: { name, templateSpecific, participantsConfig, sendToAll }
 }) {
   const { method, publicLink } = participantsConfig
   return (
     <div className='template-preview'>
       {/* Step 1 */}
+      <TemplatePreviewElement label={'Flow Name'}>
+        {name}
+      </TemplatePreviewElement>
       {template.expectedInputs
         .filter(e => e.port !== CONTACTABLE_CONFIG_PORT_NAME)
         .map(expectedInput => {

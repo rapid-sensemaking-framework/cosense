@@ -128,7 +128,7 @@ export default function Process() {
   return (
     <div className='flow'>
       <div className='flow-intro'>
-        <div className='flow-name'>My Template1</div>
+        <div className='flow-name'>{process.name}</div>
         {process.running && <div className='flow-live'>Live</div>}
         <div className='flow-date'>
           {process.configuring ? (

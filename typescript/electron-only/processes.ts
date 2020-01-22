@@ -85,7 +85,6 @@ const setProcessProp = async (
 const newProcessDefaults = () => {
   return {
     id: guidGenerator(),
-    name: 'Temporary Name',
     createdTime: Date.now(),
     startTime: null,
     endTime: null,
@@ -134,6 +133,7 @@ const createProcess = async ({
 
   const newProcess: Process = {
     ...newProcessDefaults(),
+    name: processConfig.name,
     templateId,
     template,
     graph,

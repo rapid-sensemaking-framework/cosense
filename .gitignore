@@ -1,5 +1,6 @@
 # electron
 CoSense-darwin-x64
+CoSense-linux-x64
 electron
 processes/**
 templates/*-*-**.template.json

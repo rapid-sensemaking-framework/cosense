@@ -51,6 +51,7 @@ interface GetTemplateInput {
 
 interface ProcessConfig {
   // step 1
+  name: string
   templateSpecific: object
   // step 2
   participantsConfig: {

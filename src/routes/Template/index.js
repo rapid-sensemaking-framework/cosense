@@ -139,6 +139,7 @@ export default function Template() {
           updateParticipantsConfig={participantsConfigOnChange}
           updateSendToAll={sendToAllOnChange}
           processConfig={processConfig}
+          updateProcessConfig={setProcessConfig}
           template={template}
           startNow={startNow}
           startLater={startLater}

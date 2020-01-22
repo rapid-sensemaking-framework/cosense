@@ -8,6 +8,7 @@ const FROM_PUBLIC_LINK = 'from_public_link'
 function defaultProcessConfig(): ProcessConfig {
   return {
     // step 1
+    name: '',
     templateSpecific: {},
     // step 2
     participantsConfig: {

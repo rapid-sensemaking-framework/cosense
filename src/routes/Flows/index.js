@@ -27,7 +27,7 @@ function FlowGridElement({ flow }) {
           <button className='button'>See Details</button>
         </div>
       </div>
-      <div className='flow-grid-name'>My Flow 1</div>
+      <div className='flow-grid-name'>{flow.name}</div>
       <div className='flow-grid-one-liner'>{flow.template.name}</div>
     </Link>
   )
