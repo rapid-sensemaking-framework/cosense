@@ -115,13 +115,18 @@ const attachEventListeners = () => {
       const { templateId, userDefined } = data
       const runtimeAddress = process.env.RUNTIME_ADDRESS
       const runtimeSecret = process.env.RUNTIME_SECRET
-      const template = await getTemplate(
-        templateId,
-        userDefined,
-        runtimeAddress,
-        runtimeSecret
-      )
-      event.sender.send(IPC.RETURN_TEMPLATE, template)
+      try {
+        const template = await getTemplate(
+          templateId,
+          userDefined,
+          runtimeAddress,
+          runtimeSecret
+        )
+        event.sender.send(IPC.RETURN_TEMPLATE, template)
+      } catch (error) {
+        console.log(error)
+        event.sender.send(IPC.RETURN_TEMPLATE_ERROR, error)
+      }
     }
   )
 

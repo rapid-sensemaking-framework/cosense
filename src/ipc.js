@@ -3,10 +3,13 @@ import { getElectron } from './electron-require'
 const ipc = getElectron().ipcRenderer
 const { IPC } = EVENTS
 
-const promisifyEvents = (sendEvent, sendInputs, receiveEvent) => {
+const promisifyEvents = (sendEvent, sendInputs, receiveEvent, errorEvent) => {
   ipc.send(sendEvent, sendInputs)
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     ipc.once(receiveEvent, (event, result) => resolve(result))
+    if (errorEvent) {
+      ipc.once(errorEvent, (event, error) => reject(error))
+    }
   })
 }
 
@@ -37,7 +40,8 @@ const getTemplate = (templateId, userDefined) => {
       templateId,
       userDefined
     },
-    IPC.RETURN_TEMPLATE
+    IPC.RETURN_TEMPLATE,
+    IPC.RETURN_TEMPLATE_ERROR
   )
 }
 

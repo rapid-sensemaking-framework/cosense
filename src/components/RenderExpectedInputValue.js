@@ -6,6 +6,10 @@ import RenderLimit from './RenderLimit'
 export default function RenderExpectedInputValue({ expectedInput, input }) {
   switch (expectedInput.port) {
     // TODO: change these to reference inputTypeOverride ?
+    // booleans
+    case 'anonymous':
+    case 'share':
+      return input.toString()
     case 'max_responses':
       return <RenderLimit limit={input} />
     case 'max_time':

@@ -31,6 +31,22 @@
     },
     {
       "process": "rsf/CollectResponses_ey8mk",
+      "port": "share",
+      "shortLabel": "Response Visibility",
+      "label": "Should responses be sent immediately to other participants to see",
+      "inputTypeOverride": "Boolean",
+      "defaultValue": false
+    },
+    {
+      "process": "rsf/CollectResponses_ey8mk",
+      "port": "anonymous",
+      "shortLabel": "Response Anonymity",
+      "label": "Should responses be made anonymously",
+      "inputTypeOverride": "Boolean",
+      "defaultValue": false
+    },
+    {
+      "process": "rsf/CollectResponses_ey8mk",
       "port": "contactable_configs"
     },
     {

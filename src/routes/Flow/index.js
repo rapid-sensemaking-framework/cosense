@@ -189,9 +189,11 @@ export default function Process() {
                   {formatByResultType(result, process.template.resultType)}
                 </div>
                 <div className='flow-responses-feed-item-meta'>
-                  <div className='flow-responses-feed-item-actor'>
-                    {result.contact.id}
-                  </div>
+                  {result.contact && (
+                    <div className='flow-responses-feed-item-actor'>
+                      {result.contact.id}
+                    </div>
+                  )}
                   <div className='flow-responses-feed-item-time'>
                     {moment(result.timestamp).calendar()}
                   </div>

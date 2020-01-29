@@ -21,6 +21,7 @@ export default function Template() {
   const defaultTemplate = null
   const defaultActiveStep = 1
   const [activeStep, setActiveStep] = useState(defaultActiveStep)
+  const [error, setError] = useState()
   const [loading, setLoading] = useState(true)
   const [template, setTemplate] = useState(defaultTemplate)
   const [processConfig, setProcessConfig] = useState(defaultProcessConfig())
@@ -28,11 +29,32 @@ export default function Template() {
   const { templateId } = useParams()
 
   useEffect(() => {
-    getTemplate(templateId).then(template => {
-      setTemplate(template)
-      setLoading(false)
-    })
+    // can't use async function neatly within useEffect
+    getTemplate(templateId)
+      .then(template => {
+        setTemplate(template)
+        setLoading(false)
+      })
+      .catch(error => {
+        console.log(error)
+        setError(error)
+      })
   }, [templateId])
+
+  if (error) {
+    switch (error.code) {
+      case 'ECONNREFUSED':
+        return (
+          <>
+            Error: attempted connection to noflo-rapid-sensemaking-server at{' '}
+            {error.address}:{error.port} was refused. The server is likely
+            offline.
+          </>
+        )
+      default:
+        return <>Error: {JSON.stringify(error)}</>
+    }
+  }
 
   if (loading) {
     return <>Loading...</>

@@ -216,7 +216,7 @@ const nofloTypeMap = {
   string: handleText,
   number: handleText,
   int: handleInt,
-  boolean: () => {}, // TODO
+  boolean: defaultHandler,
   array: handleArray,
   object: handleObject,
   all: defaultHandler

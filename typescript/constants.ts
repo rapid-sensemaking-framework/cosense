@@ -39,8 +39,11 @@ const EVENTS = {
     TEMPLATE_CLONED: 'template_cloned',
     GET_PROCESSES: 'get_processes',
     RETURN_PROCESSES: 'return_processes',
+
     GET_TEMPLATE: 'get_template',
     RETURN_TEMPLATE: 'return_template',
+    RETURN_TEMPLATE_ERROR: 'return_template_error',
+
     GET_SYSTEM_TEMPLATES: 'get_system_templates',
     RETURN_SYSTEM_TEMPLATES: 'return_system_templates',
     GET_USER_TEMPLATES: 'get_user_templates',
