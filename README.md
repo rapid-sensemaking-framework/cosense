@@ -70,7 +70,7 @@ npm run tsbuild-react
 npm run build
 ```
 
-To test this build, run
+To open the app and test this build, run
 
 ```
 npm run electron
