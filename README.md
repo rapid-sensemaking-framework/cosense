@@ -49,6 +49,7 @@ Create a file called `.env-dev`, and set the appropriate environment variables, 
 run
 
 ```
+npm install
 npm run tsbuild-electron
 npm run tsbuild-react
 npm start
@@ -63,6 +64,7 @@ If you make changes in `src` to the UI, you will get live reload for development
 Create a file called `.env-prod`, and set the appropriate environment variables, based on the above documentation.
 
 ```
+npm install
 npm run tsbuild-electron
 npm run tsbuild-react
 npm run build
