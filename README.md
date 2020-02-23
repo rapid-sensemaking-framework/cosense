@@ -12,7 +12,7 @@ So **someone who has a frame for a conversation**, and **wants to foster engagem
 
 > ![cosense app screen for configuring a generate ideas flow](https://raw.githubusercontent.com/rapid-sensemaking-framework/noflo-rsf/master/screenshots/rsf-electron.png)
 
-As they draft the flow, they setup either an opt-in flow where participants will select themselves, or if they have verbal or written consent via a personal connection, they could input each participant. To input a participant just requires adding the relevant info for the contact method they want to connect via, such as email, text, or something else.
+As they draft the flow, they setup either an opt-in flow where participants will select themselves, or if they have verbal or written consent via a personal connection, they could input each participant. To input a participant just requires adding the relevant info for the contact method they want to connect via, such as Telegram, SMS, or something else.
 
 #### Configure Public Link
 > ![cosense app screen for configuring public link](https://raw.githubusercontent.com/rapid-sensemaking-framework/noflo-rsf/master/screenshots/cosense-configure-public-link.png)
