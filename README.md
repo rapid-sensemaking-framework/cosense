@@ -1,4 +1,4 @@
-## CoSense
+# CoSense
 
 Design and run rapid sensemaking flows from a native Mac, Linux and Windows app!
 
@@ -28,6 +28,8 @@ Once every step of the process has completed, the final results are saved to the
 
 This app is currently at a functional prototype readiness level, and under development at the [rsf-electron](https://github.com/rapid-sensemaking-framework/rsf-electron) repository, where you can download and test a release of the [app for Mac](https://github.com/rapid-sensemaking-framework/rsf-electron/releases)!
 
+
+# For Developers
 
 ## Registration Page Server
 
