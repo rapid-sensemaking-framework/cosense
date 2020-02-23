@@ -1,6 +1,6 @@
 ## CoSense
 
-Design and run rapid sensemaking processes from a native Mac, Linux and Windows app!
+Design and run rapid sensemaking flows from a native Mac, Linux and Windows app!
 
 ## Using the CoSense App
 
