@@ -6,6 +6,8 @@ This app is currently at a functional prototype readiness level and is under dev
 
 To explore the larger context of the Rapid Sensemaking Framework, check out the [this README](https://github.com/rapid-sensemaking-framework/noflo-rsf/blob/master/README.md).
 
+## [Download the App!](https://github.com/rapid-sensemaking-framework/cosense/releases/tag/v1.1.0)
+
 ## Using the CoSense App
 
 For any good "conversation", there is always a frame. The conversation, at least loosely, has a direction that the people who will participate in it are agreeable to and interested in. Divergent phases and convergent phases of the conversation should nicely flow and blend.
