@@ -2,6 +2,8 @@
 
 Design and run rapid sensemaking flows from a native Mac, Linux and Windows app!
 
+This app is currently at a functional prototype readiness level and is under development. You can download and test a release of the [app for Mac](https://github.com/rapid-sensemaking-framework/rsf-electron/releases)!
+
 ## Using the CoSense App
 
 For any good "conversation", there is always a frame. The conversation, at least loosely, has a direction that the people who will participate in it are agreeable to and interested in. Divergent phases and convergent phases of the conversation should nicely flow and blend.
@@ -25,8 +27,6 @@ A live dashboard of events taking place in the process, and results coming in ar
 ![cosense app screen for flow dashboard](https://raw.githubusercontent.com/rapid-sensemaking-framework/noflo-rsf/master/screenshots/cosense-flow-dashboard.png)
 
 Once every step of the process has completed, the final results are saved to the computer that was hosting the process. From there, they could be uploaded to somewhere available online, or posted into a database for longevity.
-
-This app is currently at a functional prototype readiness level, and under development at the [rsf-electron](https://github.com/rapid-sensemaking-framework/rsf-electron) repository, where you can download and test a release of the [app for Mac](https://github.com/rapid-sensemaking-framework/rsf-electron/releases)!
 
 
 # For Developers
