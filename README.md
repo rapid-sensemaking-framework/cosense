@@ -25,6 +25,10 @@ As they draft the flow, they setup either an opt-in flow where participants will
 
 Finally, kickoff the flow...
 
+Participants will interact with this flow by interacting with bots or automated systems, and providing inputs!
+
+> ![screenshot of an rsf flow occuring in a telegram chat between a participant and a bot](./images/rsf-in-telegram.png)
+
 A live dashboard of events taking place in the flow, and results coming in are viewable. 
 
 > ![cosense app screen for flow dashboard](https://raw.githubusercontent.com/rapid-sensemaking-framework/noflo-rsf/master/screenshots/cosense-flow-dashboard.png)
