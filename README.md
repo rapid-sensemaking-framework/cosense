@@ -8,11 +8,11 @@ This app is currently at a functional prototype readiness level and is under dev
 
 For any good "conversation", there is always a frame. The conversation, at least loosely, has a direction that the people who will participate in it are agreeable to and interested in. Divergent phases and convergent phases of the conversation should nicely flow and blend.
 
-So **someone who has a frame for a conversation**, and **wants to foster engagement** begins with a selection of available recipes for a social process. Things that this person would be tuning could include amount of time available for each part of the process.
+So **someone who has a frame for a conversation**, and **wants to foster engagement** begins with a selection of available recipes for a social flow. Things that this person would be tuning could include amount of time available for each part of the flow.
 
 > ![cosense app screen for configuring a generate ideas flow](https://raw.githubusercontent.com/rapid-sensemaking-framework/noflo-rsf/master/screenshots/rsf-electron.png)
 
-As they draft the flow, they setup either an opt-in process where participants will select themselves, or if they have verbal or written consent via a personal connection, they could input each participant. To input a participant just requires adding the relevant info for the contact method they want to connect via, such as email, text, or something else.
+As they draft the flow, they setup either an opt-in flow where participants will select themselves, or if they have verbal or written consent via a personal connection, they could input each participant. To input a participant just requires adding the relevant info for the contact method they want to connect via, such as email, text, or something else.
 
 #### Configure Public Link
 > ![cosense app screen for configuring public link](https://raw.githubusercontent.com/rapid-sensemaking-framework/noflo-rsf/master/screenshots/cosense-configure-public-link.png)
@@ -20,13 +20,13 @@ As they draft the flow, they setup either an opt-in process where participants w
 #### Participant Registration at the Public Link
 > ![cosense app screen for configuring participants](https://raw.githubusercontent.com/rapid-sensemaking-framework/noflo-rsf/master/screenshots/participant-register.png)
 
-Finally, kickoff the process...
+Finally, kickoff the flow...
 
-A live dashboard of events taking place in the process, and results coming in are viewable. 
+A live dashboard of events taking place in the flow, and results coming in are viewable. 
 
 > ![cosense app screen for flow dashboard](https://raw.githubusercontent.com/rapid-sensemaking-framework/noflo-rsf/master/screenshots/cosense-flow-dashboard.png)
 
-Once every step of the process has completed, the final results are saved to the computer that was hosting the process. From there, they could be uploaded to somewhere available online, or posted into a database for longevity.
+Once every step of the flow has completed, the final results are saved to the computer that was hosting the flow. From there, they could be uploaded to somewhere available online, or posted into a database for longevity.
 
 
 # For Developers
@@ -122,4 +122,4 @@ npm run package-win
 - `typescript/*.js`
   - typescript code shared between the UI, and the electron code
 - `typescript/electron-only/*.js`
-  - typescript code just for running in the main electron process, not the UI
+  - typescript code just for running in the main electron flow, not the UI
