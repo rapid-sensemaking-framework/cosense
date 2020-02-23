@@ -8,8 +8,8 @@
     {
       "process": "rsf/ResponseForEach_x4cv2",
       "port": "statements",
-      "shortLabel": "Statements",
-      "label": "Provide a list of statements, one on each line, for participants to respond to"
+      "shortLabel": "Prompts",
+      "label": "Provide a list of prompts, one on each line, for participants to respond to"
     },
     {
       "process": "rsf/ResponseForEach_x4cv2",
