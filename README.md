@@ -13,22 +13,26 @@ For any good "conversation", there is always a frame. The conversation, at least
 
 So **someone who has a frame for a conversation**, and **wants to foster engagement** begins with a selection of available recipes for a social flow. Things that this person would be tuning could include amount of time available for each part of the flow.
 
+#### Facilitator: Configures a Flow
+
 > ![cosense app screen for configuring a generate ideas flow](https://raw.githubusercontent.com/rapid-sensemaking-framework/noflo-rsf/master/screenshots/rsf-electron.png)
 
 As they draft the flow, they setup either an opt-in flow where participants will register themselves via a webpage, or if they have verbal or written consent via a personal connection, they could input each participants details. To input a participant just requires adding the relevant info for the contact method they want to connect via, such as Telegram, SMS, or something else.
 
-#### Configure Public Link
+#### Facilitator: Configure Public Link Registration
 > ![cosense app screen for configuring public link](https://raw.githubusercontent.com/rapid-sensemaking-framework/noflo-rsf/master/screenshots/cosense-configure-public-link.png)
 
-#### Participant Registration at the Public Link
+#### Participant: Registration at the Public Link
 > ![cosense app screen for configuring participants](https://raw.githubusercontent.com/rapid-sensemaking-framework/noflo-rsf/master/screenshots/participant-register.png)
 
-Finally, kickoff the flow...
+The flow starts up once the conditions for the public link are reached, either the time or participant limit.
 
+#### Participant: Interaction in a Chat
 Participants will interact with this flow by interacting with bots or automated systems, and providing inputs!
 
 > ![screenshot of an rsf flow occuring in a telegram chat between a participant and a bot](./images/rsf-in-telegram.png)
 
+#### Facilitator: Track Results
 A live dashboard of events taking place in the flow, and results coming in are viewable. 
 
 > ![cosense app screen for flow dashboard](https://raw.githubusercontent.com/rapid-sensemaking-framework/noflo-rsf/master/screenshots/cosense-flow-dashboard.png)
