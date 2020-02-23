@@ -1,6 +1,6 @@
-## CoSense (working name) App
+## CoSense
 
-Design and run rapid sensemaking processes!
+Design and run rapid sensemaking processes from a native Mac, Linux and Windows app!
 
 ## Using the CoSense App
 
