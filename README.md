@@ -4,6 +4,8 @@ Design and run rapid sensemaking flows from a native Mac, Linux and Windows app!
 
 This app is currently at a functional prototype readiness level and is under development. You can download and test a release of the [app for Mac](https://github.com/rapid-sensemaking-framework/rsf-electron/releases)!
 
+To explore the larger context of the Rapid Sensemaking Framework, check out the [this README](https://github.com/rapid-sensemaking-framework/noflo-rsf/blob/master/README.md).
+
 ## Using the CoSense App
 
 For any good "conversation", there is always a frame. The conversation, at least loosely, has a direction that the people who will participate in it are agreeable to and interested in. Divergent phases and convergent phases of the conversation should nicely flow and blend.
