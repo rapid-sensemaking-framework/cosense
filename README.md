@@ -1,5 +1,4 @@
-# CoSense
-
+# CoSense :: Collective Intelligence Design
 Design and run rapid sensemaking flows from a native Mac, Linux and Windows app!
 
 This app is currently at a functional prototype readiness level and is under development. You can download and test a release of the [app for Mac](https://github.com/rapid-sensemaking-framework/cosense/releases/tag/v1.1.0)!
