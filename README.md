@@ -2,7 +2,7 @@
 
 Design and run rapid sensemaking flows from a native Mac, Linux and Windows app!
 
-This app is currently at a functional prototype readiness level and is under development. You can download and test a release of the [app for Mac](https://github.com/rapid-sensemaking-framework/rsf-electron/releases)!
+This app is currently at a functional prototype readiness level and is under development. You can download and test a release of the [app for Mac](https://github.com/rapid-sensemaking-framework/cosense/releases/tag/v1.1.0)!
 
 To explore the larger context of the Rapid Sensemaking Framework, check out the [this README](https://github.com/rapid-sensemaking-framework/noflo-rsf/blob/master/README.md).
 
