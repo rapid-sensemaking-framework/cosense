@@ -17,9 +17,15 @@ function defaultProcessConfig(): ProcessConfig {
       participantList: null,
       publicLink: {
         id: guidGenerator(),
+        title: 'You are invited to join a rapid sensemaking flow',
         description: '',
         maxTime: 5 * 60, // 5 minutes, in seconds
-        maxParticipants: '*' // Unlimited
+        maxParticipants: '*', // Unlimited
+        types: {
+          telegram: true,
+          sms: true,
+          mattermost: true
+        }
       }
     },
     // step 3

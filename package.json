@@ -9,6 +9,7 @@
     "react-scripts": "^3.2.0"
   },
   "dependencies": {
+    "@types/react": "^16.9.23",
     "@types/socket.io-client": "^1.4.32",
     "dotenv": "^8.2.0",
     "electron-log": "^3.0.8",
@@ -23,7 +24,7 @@
     "rsf-mattermostable": "1.0.15",
     "rsf-smsable": "1.0.21",
     "rsf-telegramable": "1.0.82",
-    "rsf-types": "0.0.35",
+    "rsf-types": "0.0.36",
     "socket.io-client": "^2.3.0",
     "typescript": "^3.7.2"
   },

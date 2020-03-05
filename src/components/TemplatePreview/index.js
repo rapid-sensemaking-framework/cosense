@@ -46,8 +46,15 @@ export default function TemplatePreview({
       {/* Step 2 */}
       {method === FROM_PUBLIC_LINK && (
         <>
+          <TemplatePreviewElement label={'Public Link Title'}>
+            {publicLink.title}
+          </TemplatePreviewElement>
           <TemplatePreviewElement label={'Public Link Description'}>
             {publicLink.description}
+          </TemplatePreviewElement>
+          <TemplatePreviewElement label={'Apps Enabled'}>
+            {/* filter out ones with FALSE value */}
+            {Object.keys(publicLink.types).filter((type) => publicLink.types[type]).map(type => <div>{type}</div>)}
           </TemplatePreviewElement>
           <TemplatePreviewElement label={'Public Link Time Limit'}>
             <RenderMaxTime seconds={publicLink.maxTime} />
