@@ -12,7 +12,10 @@ import LabeledValue from '../../components/LabeledValue'
 import ParticipantList from '../../components/ParticipantList'
 import ParticipantRegister from '../../components/ParticipantRegister'
 import './Flow.css'
+import { USER_PROCESSES_PATH } from '../../ts-built/folders'
 import { FROM_PUBLIC_LINK } from '../../ts-built/process-config'
+import { getElectron } from '../../electron-require'
+const { shell } = getElectron()
 
 const formatByResultType = (r, type) => {
   switch (type) {
@@ -125,12 +128,17 @@ export default function Process() {
 
   const sortByTimestamps = (r1, r2) => (r1.timestamp < r2.timestamp ? 1 : -1)
 
+  const openFlowFile = e => {
+    e.preventDefault()
+    shell.openItem(USER_PROCESSES_PATH + `/${processId}.json`)
+  }
+
   return (
-    <div className='flow'>
-      <div className='flow-intro'>
-        <div className='flow-name'>{process.name}</div>
-        {process.running && <div className='flow-live'>Live</div>}
-        <div className='flow-date'>
+    <div className="flow">
+      <div className="flow-intro">
+        <div className="flow-name">{process.name}</div>
+        {process.running && <div className="flow-live">Live</div>}
+        <div className="flow-date">
           {process.configuring ? (
             <>Created {createdTimeString}</>
           ) : (
@@ -141,9 +149,9 @@ export default function Process() {
           )}
         </div>
       </div>
-      <div className='flow-template'>{process.template.name}</div>
+      <div className="flow-template">{process.template.name}</div>
       {process.complete && (
-        <button className='button' onClick={clone}>
+        <button className="button" onClick={clone}>
           Clone This Flow
         </button>
       )}
@@ -152,13 +160,13 @@ export default function Process() {
           The flow is ready to be started.
           <br />
           <br />
-          <button className='button' onClick={run}>
+          <button className="button" onClick={run}>
             Run It
           </button>
         </p>
       )}
       {method === FROM_PUBLIC_LINK && (
-        <div className='participant-register-wrapper'>
+        <div className="participant-register-wrapper">
           <ParticipantRegister
             reachedParticipantLimit={reachedParticipantLimit}
             participantRegisterConfig={publicLink}
@@ -168,8 +176,9 @@ export default function Process() {
       )}
       <LabeledValue label={'Participants'} value={participants.length} />
       <button
-        className='button'
-        onClick={() => setShowContactables(!showContactables)}>
+        className="button"
+        onClick={() => setShowContactables(!showContactables)}
+      >
         {showContactables ? 'Hide List' : 'See List'}
       </button>
       {showContactables && <ParticipantList contactables={participants} />}
@@ -178,23 +187,23 @@ export default function Process() {
         value={process.results ? process.results.length : 0}
       />
       <ExpectedInputs process={process} />
-      <div className='flow-label flow-responses-feed-label'>Responses Feed</div>
+      <div className="flow-label flow-responses-feed-label">Responses Feed</div>
       {/* Download (placeholder) */}
-      <div className='flow-responses-feed'>
+      <div className="flow-responses-feed">
         {process.results &&
           process.results.sort(sortByTimestamps).map(result => {
             return (
-              <div className='flow-responses-feed-item'>
-                <div className='flow-responses-feed-item-value'>
+              <div className="flow-responses-feed-item">
+                <div className="flow-responses-feed-item-value">
                   {formatByResultType(result, process.template.resultType)}
                 </div>
-                <div className='flow-responses-feed-item-meta'>
+                <div className="flow-responses-feed-item-meta">
                   {result.contact && (
-                    <div className='flow-responses-feed-item-actor'>
+                    <div className="flow-responses-feed-item-actor">
                       {result.contact.id}
                     </div>
                   )}
-                  <div className='flow-responses-feed-item-time'>
+                  <div className="flow-responses-feed-item-time">
                     {moment(result.timestamp).calendar()}
                   </div>
                 </div>
@@ -212,6 +221,10 @@ export default function Process() {
           </p>
         </>
       )}
+      <div className="divider" />
+      <a href="#" onClick={openFlowFile}>
+        Show Data File
+      </a>
     </div>
   )
 }
