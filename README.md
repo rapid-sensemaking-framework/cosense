@@ -5,7 +5,7 @@ This app is currently at a functional prototype readiness level and is under dev
 
 To explore the larger context of the Rapid Sensemaking Framework, check out the [this README](https://github.com/rapid-sensemaking-framework/noflo-rsf/blob/master/README.md).
 
-## [Download the App!](https://github.com/rapid-sensemaking-framework/cosense/releases/tag/v1.1.0)
+## [Download the App!](https://github.com/rapid-sensemaking-framework/cosense/releases/tag/v1.2.1)
 
 ## Using the CoSense App
 
