@@ -1,0 +1,17 @@
+.register-types {
+  margin-top: 10px;
+}
+
+.register-type {
+  color: #4a4a4a;
+  font-size: 18px;
+}
+
+.register-type input {
+  cursor: pointer;
+}
+
+.register-type label {
+  margin-left: 6px;
+  cursor: pointer;
+}

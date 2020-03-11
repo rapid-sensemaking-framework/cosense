@@ -1,33 +1,47 @@
 import React, { Component } from 'react'
 import {
+  NavLink,
   HashRouter as Router,
   Switch,
   Route,
-  Link
 } from 'react-router-dom'
-// import './App.css'
-import Template from './routes/Template/Template'
-import Process from './routes/Process'
+import './App.css'
+import Template from './routes/Template'
+import EditTemplate from './routes/EditTemplate'
+import Flow from './routes/Flow'
+import Flows from './routes/Flows'
 import Home from './routes/Home'
 
 class App extends Component {
   render() {
+
+    const menuItems = [
+      ['Home', '/'],
+      ['My Dashboard', '/process'],
+      // ['Participant Lists', '/']
+    ]
     return (
       <Router>
-        <div className="main">
-          <Switch>
-            <Route path="/template/:templateId">
-              <Link to="/">Home</Link>
-              <Template />
-            </Route>
-            <Route path="/process/:processId">
-              <Link to="/">Home</Link>
-              <Process />
-            </Route>
-            <Route path="/">
-              <Home />
-            </Route>
-          </Switch>
+        <div className="app">
+          <div className="menu">
+            <div className="logo" />
+            <div className="nav">
+              {menuItems.map(([label, path], index) => {
+                return <NavLink to={path} key={index} exact={path === '/'} activeClassName="active">
+                  <div className="menuImage" />
+                  {label}
+                </NavLink>
+              })}
+            </div>
+          </div>
+          <div className="main">
+            <Switch>
+              <Route exact path="/template/:templateId" component={Template} />
+              <Route path="/template/:templateId/edit" component={EditTemplate} />
+              <Route path="/process" component={Flows} />
+              <Route path="/" component={Home} />
+            </Switch>
+          </div>
         </div>
       </Router>
     )

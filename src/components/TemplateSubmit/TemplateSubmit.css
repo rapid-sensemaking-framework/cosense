@@ -1,0 +1,18 @@
+.template-submit {
+  text-align: center;
+}
+
+.template-submit-header {
+  color: #4a4a4a;
+  margin-bottom: 80px;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.template-submit .participant-register-wrapper {
+  margin-bottom: 32px;
+}
+
+.template-submit .input-wrapper button {
+  margin-top: 40px;
+}

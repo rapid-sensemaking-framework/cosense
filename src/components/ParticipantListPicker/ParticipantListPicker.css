@@ -1,0 +1,51 @@
+.participant-list-picker {
+  margin-top: 75px;
+}
+
+.participant-list-picker-selected div.input-label,
+.participant-list-picker-change {
+  display: inline-block;
+  align-items: center;
+}
+
+.participant-list-picker-change {
+  color: #969696;
+  font-size: 16px;
+  line-height: 18px;
+  margin-left: 28px;
+  cursor: pointer;
+}
+
+/* ListPickerModal */
+
+.participant-list-picker-header {
+  padding: 60px 60px 0 60px;
+}
+
+.participant-list-picker-list {
+  margin-top: 30px;
+  overflow: scroll;
+  max-height: 500px;
+}
+
+.participant-list-item {
+  border-bottom: 1px solid #ebebeb;
+  padding: 30px 60px;
+}
+.participant-list-item:hover {
+  background: rgb(243, 243, 243);
+}
+
+.participant-list-item-name {
+  cursor: pointer;
+}
+
+.participant-list-item-created-at {
+  cursor: pointer;
+}
+
+.participant-list-item-expand {
+  color: #372888;
+  margin: 20px 0;
+  cursor: pointer;
+}

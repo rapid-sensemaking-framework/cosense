@@ -1,68 +1,72 @@
+import { ContactableConfig, ParticipantRegisterConfig } from 'rsf-types'
 
-interface ContactableConfig {
-  type: string
-  id: string
-  name?: string
-}
-
-interface Statement {
-  text: string
-}
-
-interface Option {
-  triggers: string[],
-  text: string
-}
-
-interface RegisterConfig {
-  stage: string
-  isFacilitator: boolean
-  processContext: string
-  maxTime: number
-  maxParticipants: number | string,
-  id: string
-  wsUrl: string // websocket to connect to, if not isFacilitator
+interface ParticipantList {
+  name: string
+  slug: string
+  createdAt: number
+  participants: ContactableConfig[]
 }
 
 interface ExpectedInput {
   process: string
   port: string
   help?: string
+  shortLabel?: string
   label?: string
   type?: string
   component?: string
   inputTypeOverride?: string
   defaultValue?: any
-  placeholder?: string,
-}
-
-interface Stage {
-  name: string
-  description: string
-  expectedInputs: ExpectedInput[]
+  placeholder?: string
 }
 
 interface Template {
   name: string
+  graphName: string
   description: string
-  stages: Stage[],
-  resultConnection: string,
+  resultType: string
+  expectedInputs: ExpectedInput[]
   id: string
   path?: string
+  parentTemplate?: string // references another template by its id
 }
 
-type RegisterConfigSet = {
-  [key: string]: RegisterConfig
+interface UpdateTemplateInput {
+  name: string
+  description: string
+  expectedInputs: ExpectedInput[]
+  templateId: string
 }
 
-type ContactableConfigSet = {
-  [key: string]: ContactableConfig[]
+interface TemplateSubmitInput {
+  processConfig: ProcessConfig
+  templateId: string
+  template: Template
 }
 
-type FormInputs = object
+interface GetTemplateInput {
+  templateId: string
+  userDefined: boolean
+}
+
+interface ProcessConfig {
+  // step 1
+  name: string
+  templateSpecific: object
+  // step 2
+  participantsConfig: {
+    method: string
+    participants: ContactableConfig[]
+    participantList: ParticipantList
+    publicLink: ParticipantRegisterConfig
+  }
+  // step 3
+  sendToAll: boolean
+}
 
 interface Process {
   id: string
+  name: string
   templateId: string
   template: Template
   graph: Graph
@@ -71,17 +75,11 @@ interface Process {
   complete: boolean
   results?: any
   error?: any
+  createdTime: number
   startTime: number
-  formInputs: FormInputs
-  registerConfigs: RegisterConfigSet
-  participants: ContactableConfigSet
+  endTime: number
+  processConfig: ProcessConfig
 }
-
-/*
-interface Reaction {
-	statement
-}
-*/
 
 interface Graph {
   properties: object
@@ -95,7 +93,8 @@ interface Graph {
 }
 
 interface GraphConnection {
-  tgt: { // target
+  tgt: {
+    // target
     process: string
     port: string
   }
@@ -107,18 +106,39 @@ interface GraphConnection {
   data?: any
 }
 
+interface NofloSignalPayload {
+  id: string // like 'rsf/CollectResponses_ey8mk() STATEMENT -> IN core/Output()'
+  graph: string // like '9.383107155431603randomid'
+  src?: {
+    node: string
+    port: string
+  }
+  tgt: {
+    node: string
+    port: string
+  }
+  data: any
+}
+
+interface NofloSignal {
+  command: string
+  payload: NofloSignalPayload
+}
+
+type Handler = (handlerInput: any) => Promise<any>
+
 export {
-  ContactableConfig,
-  ContactableConfigSet,
-  Statement,
-  Option,
-  RegisterConfig,
-  RegisterConfigSet,
+  ParticipantList,
   Template,
-  Stage,
-  FormInputs,
+  UpdateTemplateInput,
+  TemplateSubmitInput,
+  GetTemplateInput,
+  ProcessConfig,
   ExpectedInput,
   Process,
   GraphConnection,
-  Graph
+  NofloSignal,
+  NofloSignalPayload,
+  Graph,
+  Handler
 }

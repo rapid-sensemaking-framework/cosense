@@ -32,6 +32,16 @@
                 "height": 72
             }
         },
+        "core/Output": {
+          "component": "core/Output",
+          "metadata": {
+            "label": "Output",
+            "x": 1008,
+            "y": 360,
+            "width": 72,
+            "height": 72
+          }
+        },
         "rsf/ResponseForEach_x4cv2": {
             "component": "rsf/ResponseForEach",
             "metadata": {
@@ -108,6 +118,17 @@
             "metadata": {
                 "route": 0
             }
+        },
+        {
+          "src": {
+            "process": "rsf/ResponseForEach_x4cv2",
+            "port": "reaction"
+          },
+          "tgt": {
+            "process": "core/Output",
+            "port": "in"
+          },
+          "metadata": {}
         },
         {
             "src": {

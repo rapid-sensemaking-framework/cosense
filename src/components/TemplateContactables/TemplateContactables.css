@@ -1,0 +1,42 @@
+.contactables-selected-method div {
+  display: inline-block;
+  align-items: center;
+}
+
+.contactables-selected-method-selected {
+  color: #4a4a4a;
+  font-size: 20px;
+  line-height: 22px;
+  font-weight: bold;
+}
+
+.contactables-selected-method-change {
+  color: #969696;
+  font-size: 16px;
+  line-height: 18px;
+  margin-left: 28px;
+  cursor: pointer;
+}
+
+.contactables-select-method {
+  padding-top: 80px;
+  padding-left: 60px;
+}
+
+.contactables-select-method div {
+  margin-bottom: 55px;
+}
+
+.contactables-select-method input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.contactables-select-method label {
+  font-size: 16px;
+  line-height: 18px;
+  color: #4a4a4a;
+  cursor: pointer;
+  margin-left: 10px;
+}

@@ -1,0 +1,149 @@
+.menu {
+  padding: 60px 20px 60px 40px;
+  border-right: 1px solid #e3e3e3;
+  position: fixed;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.logo {
+  width: 77px;
+  height: 77px;
+  border-radius: 38px;
+  background-color: #dedede;
+  margin-bottom: 50px;
+}
+
+.nav > a {
+  margin-top: 24px;
+  padding: 8px;
+  min-width: 190px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: #707070;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+}
+.nav > a:hover,
+.nav > a.active {
+  background-color: #f2f2f2;
+}
+
+.nav .menuImage {
+  background-color: #dedede;
+  border-radius: 18px;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  margin-right: 12px;
+}
+
+.main {
+  padding: 60px 0 60px 60px;
+  margin-left: 267px; /* left menu */
+  box-sizing: border-box;
+  height: 100vh;
+}
+
+.main h1 {
+  margin: 0;
+}
+
+.main h2 {
+  margin: 10px 0 60px 0;
+}
+
+h1 {
+  font-size: 40px;
+  color: #4a4a4a;
+  font-weight: normal;
+}
+
+h2 {
+  font-size: 22px;
+  color: #707070;
+  font-weight: normal;
+}
+
+.button {
+  background-color: #4a4a4a;
+  color: #ffffff;
+  border: 1px solid #b4b4b4;
+  border-radius: 4px;
+  font-family: Helvetica, sans-serif;
+  font-size: 16px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-right: 16px;
+  margin-top: 16px;
+}
+.button:hover {
+  background-color: #333;
+}
+
+.button.button-white {
+  background-color: #ffffff;
+  color: #b1b1b1;
+}
+.button.button-white:hover {
+  background-color: #dddddd;
+}
+
+.divider {
+  margin: 40px 0;
+  border-top: 1px solid #f2f2f2;
+  width: 100%;
+}
+
+.input-wrapper {
+  margin-bottom: 36px;
+}
+
+.input-label {
+  font-family: Helvetica, sans-serif;
+  font-size: 18px;
+  line-height: 20px;
+  color: #4a4a4a;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.input-help-label {
+  color: #969696;
+  font-size: 14px;
+}
+
+input[type='text'],
+textarea,
+select {
+  border: 1px solid #b1b1b1;
+  padding: 10px;
+  font-size: 14px;
+  line-height: 17px;
+  border-radius: 4px;
+  font-family: Helvetica, sans-serif;
+  color: #4d4f5c;
+  display: inline-block;
+  margin-top: 16px;
+  background: #ffffff;
+}
+
+input[type='text']::placeholder,
+textarea::placeholder {
+  color: #b1b1b1;
+}
+
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}

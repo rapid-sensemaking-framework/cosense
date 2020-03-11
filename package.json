@@ -4,21 +4,29 @@
   "private": true,
   "devDependencies": {
     "electron": "^1.7.9",
-    "react-scripts": "^3.2.0",
-    "foreman": "^3.0.1"
+    "foreman": "^3.0.1",
+    "nodemon": "^2.0.2",
+    "react-scripts": "^3.2.0"
   },
   "dependencies": {
+    "@types/react": "^16.9.23",
+    "@types/socket.io-client": "^1.4.32",
     "dotenv": "^8.2.0",
     "electron-log": "^3.0.8",
     "electron-packager": "^14.1.0",
     "fbp-client": "^0.4.0",
     "fbp-graph": "^0.4.0",
     "fix-path": "^2.1.0",
+    "moment": "^2.24.0",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
     "react-router-dom": "^5.1.2",
+    "rsf-mattermostable": "1.0.15",
+    "rsf-smsable": "1.0.21",
+    "rsf-telegramable": "1.0.82",
+    "rsf-types": "0.0.36",
     "socket.io-client": "^2.3.0",
-    "typescript": "^3.6.4"
+    "typescript": "^3.7.2"
   },
   "homepage": "./",
   "main": "electron/electron-only/electron-starter.js",
@@ -28,14 +36,14 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "electron": "electron .",
-    "electron-start": "node electron/electron-only/electron-wait-react",
+    "electron-start": "nodemon electron/electron-only/electron-wait-react",
     "react-start": "BROWSER=none react-scripts start",
     "tswatch-electron": "tsc --build tsconfig-electron.json --watch",
     "tsbuild-electron": "tsc --build tsconfig-electron.json",
     "tswatch-react": "tsc --build tsconfig-react.json --watch",
     "tsbuild-react": "tsc --build tsconfig-react.json",
-    "package-mac": "electron-packager . RSF --platform=darwin --overwrite",
-    "package-win": "electron-packager . RSF --platform=win32 --overwrite"
+    "package-mac": "electron-packager . CoSense --platform=darwin --overwrite",
+    "package-win": "electron-packager . CoSense --platform=win32 --overwrite"
   },
   "browserslist": {
     "production": [
