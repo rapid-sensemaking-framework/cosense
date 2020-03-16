@@ -12,7 +12,10 @@ import LabeledValue from '../../components/LabeledValue'
 import ParticipantList from '../../components/ParticipantList'
 import ParticipantRegister from '../../components/ParticipantRegister'
 import './Flow.css'
+import { USER_PROCESSES_PATH } from '../../ts-built/folders'
 import { FROM_PUBLIC_LINK } from '../../ts-built/process-config'
+import { getElectron } from '../../electron-require'
+const { shell } = getElectron()
 
 const formatByResultType = (r, type) => {
   switch (type) {
@@ -125,6 +128,11 @@ export default function Process() {
 
   const sortByTimestamps = (r1, r2) => (r1.timestamp < r2.timestamp ? 1 : -1)
 
+  const openFlowFile = e => {
+    e.preventDefault()
+    shell.openItem(USER_PROCESSES_PATH + `/${processId}.json`)
+  }
+
   return (
     <div className='flow'>
       <div className='flow-intro'>
@@ -169,7 +177,8 @@ export default function Process() {
       <LabeledValue label={'Participants'} value={participants.length} />
       <button
         className='button'
-        onClick={() => setShowContactables(!showContactables)}>
+        onClick={() => setShowContactables(!showContactables)}
+      >
         {showContactables ? 'Hide List' : 'See List'}
       </button>
       {showContactables && <ParticipantList contactables={participants} />}
@@ -212,6 +221,10 @@ export default function Process() {
           </p>
         </>
       )}
+      <div className='divider' />
+      <a href='#' onClick={openFlowFile}>
+        Show Data File
+      </a>
     </div>
   )
 }
