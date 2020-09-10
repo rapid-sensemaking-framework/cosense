@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "electron": "^1.7.9",
+    "electron": "^7.2.4",
     "foreman": "^3.0.1",
     "nodemon": "^2.0.2",
     "react-scripts": "^3.2.0"
